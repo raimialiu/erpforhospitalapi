@@ -13,7 +13,7 @@ namespace medicloud.emr.api.Mocks
             new MockUser { Id = 2, FirstName = "Ujunwa", LastName = "Anusionwu", Email = "uanusionwu@medismarts.com.ng", Password = "uanusionwu", Role = "Doctor"},
             new MockUser { Id = 3, FirstName = "Joy", LastName = "Aghogho", Email = "jaghogho@medismarts.com.ng", Password = "jaghogho", Role = "Nurse"},
             new MockUser { Id = 4, FirstName = "Victor", LastName = "Mbarachi", Email = "vmbarachi@medismarts.com.ng", Password = "vmbarachi", Role = "Doctor"},
-            new MockUser { Id = 5, FirstName = "Victor", LastName = "Onyebuchi", Email = "vonyebuchi@medismarts.com.ng", Password = "vonyebuchi", Role = "Staff"},
+            new MockUser { Id = 5, FirstName = "Victor", LastName = "Onyebuchi", Email = "vonyebuchi@medismarts.com.ng", Password = "vonyebuchi", Role = "Nurse"},
             new MockUser { Id = 6, FirstName = "Gbenga", LastName = "Adeyeye", Email = "gadeyeye@medismarts.com.ng", Password = "gadeyeye", Role = "Nurse"},
             new MockUser { Id = 7, FirstName = "Oghenetega", LastName = "Akprese", Email = "oakprese@medismarts.com.ng", Password = "oakprese", Role = "Staff"},
         };

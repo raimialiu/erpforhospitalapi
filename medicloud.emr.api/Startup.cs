@@ -41,8 +41,8 @@ namespace medicloud.emr.api
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                builder => builder.AllowAnyOrigin()
-                            .AllowAnyMethod()
+                builder => builder.WithOrigins(new []{"http://localhost:4200"})
+                            .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
                             .AllowAnyHeader());
             });
 
@@ -68,6 +68,7 @@ namespace medicloud.emr.api
             });
 
             services.AddScoped<MockAuthRepository>();
+            services.AddScoped<MockDataRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,12 +79,14 @@ namespace medicloud.emr.api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStatusCodePages("text/plain", "HTTP Error with {0} Status Code");
+            app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
 
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseCors("CorsPolicy");
+            
 
             app.UseEndpoints(endpoints =>
             {
