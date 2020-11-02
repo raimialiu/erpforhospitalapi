@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using medicloud.emr.api.Data;
 using medicloud.emr.api.Helpers;
 using medicloud.emr.api.Mocks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -41,10 +43,15 @@ namespace medicloud.emr.api
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                builder => builder.WithOrigins(new []{"http://localhost:4200"})
-                            .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
+                builder => builder.AllowAnyOrigin()
+                .AllowAnyMethod()
                             .AllowAnyHeader());
-            });
+
+            //builder => builder.WithOrigins(new[] { "http://localhost:4200" })
+            //            .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
+            //            .AllowAnyHeader());
+
+        });
 
             services.AddAuthentication(options =>
             {
@@ -69,6 +76,9 @@ namespace medicloud.emr.api
 
             services.AddScoped<MockAuthRepository>();
             services.AddScoped<MockDataRepository>();
+            //inject data context
+            services.AddDbContext<DataContext>(options =>
+        options.UseSqlServer(Configuration.GetConnectionString("lagoonDB")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
