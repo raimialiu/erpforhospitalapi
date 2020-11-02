@@ -126,7 +126,7 @@ namespace medicloud.emr.api.Controllers
             SQLDataManager sql = new SQLDataManager(false);
 
            
-            string query_create = "CREATE TABLE template_" + formname.Replace(" ", "").ToLower() + " (Id INT IDENTITY(1,1) PRIMARY KEY, accountid int, locationid int";
+            string query_create = "CREATE TABLE template_" + formname.Replace(" ", "").ToLower() + " (Id INT IDENTITY(1,1) PRIMARY KEY, accountid int, locationid int, patientid varchar(100)";
 
             //List<Component> request = new List<Component>();
             try
