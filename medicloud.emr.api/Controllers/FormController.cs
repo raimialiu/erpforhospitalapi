@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using medicloud.emr.api.Data;
-using medicloud.emr.api.Entities;
+//using medicloud.emr.api.Data;
+//using medicloud.emr.api.Entities;
 using medicloud.emr.api.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,35 +19,35 @@ namespace medicloud.emr.api.Controllers
     [ApiController]
     public class FormController : ControllerBase
     {
-        private readonly DataContext _dataContext;
+        //private readonly DataContext _dataContext;
         
-        //inject into the instance 
-        public FormController(DataContext dataContext)
-        {
-            _dataContext = dataContext;
-        }
+        ////inject into the instance 
+        //public FormController(DataContext dataContext)
+        //{
+        //    _dataContext = dataContext;
+        //}
 
         //get all forms
         //[Authorize(Roles = "Admin, Nurse")]
-        [HttpGet]
-        public IActionResult GetData() => Ok((from t in _dataContext.TemplateMaster
-                                              join tc in _dataContext.TemplateCategory on t.Tempcatid equals tc.Tempcatid
-                                              join l in _dataContext.Location on t.Locationid equals l.Locationid into location
-                                              from subset in location.DefaultIfEmpty()
-                                              orderby t.Formname ascending
-                                              where (t.Iscurrent == true)
-                                              select new {t.Masterid, t.Jsonform, t.Tempcatid, t.Formname, t.Formdescription, t.Formcomments, t.Adjusterid, t.Accountid, t.Iscurrent, t.Dateadded, tc.Categoryname, t.Locationid, locationname = subset.Locationname ?? "All Locations" }).ToList());
+        //[HttpGet]
+        //public IActionResult GetData() => Ok((from t in _dataContext.TemplateMaster
+        //                                      join tc in _dataContext.TemplateCategory on t.Tempcatid equals tc.Tempcatid
+        //                                      join l in _dataContext.Location on t.Locationid equals l.Locationid into location
+        //                                      from subset in location.DefaultIfEmpty()
+        //                                      orderby t.Formname ascending
+        //                                      where (t.Iscurrent == true)
+        //                                      select new {t.Masterid, t.Jsonform, t.Tempcatid, t.Formname, t.Formdescription, t.Formcomments, t.Adjusterid, t.Accountid, t.Iscurrent, t.Dateadded, tc.Categoryname, t.Locationid, locationname = subset.Locationname ?? "All Locations" }).ToList());
 
 
-        //[Authorize(Roles = "Admin, Nurse")]
-        [HttpGet("{id}")]
-        public IActionResult GetSingleForm(string id)
-        {
-            int masterid = Convert.ToInt32(id);
-            var data = _dataContext.TemplateMaster.Where(x=> x.Masterid == masterid).FirstOrDefault();
-            if (data is null) return NotFound("Form Not Found");
-            return Ok(data);
-        }
+        ////[Authorize(Roles = "Admin, Nurse")]
+        //[HttpGet("{id}")]
+        //public IActionResult GetSingleForm(string id)
+        //{
+        //    int masterid = Convert.ToInt32(id);
+        //    var data = _dataContext.TemplateMaster.Where(x=> x.Masterid == masterid).FirstOrDefault();
+        //    if (data is null) return NotFound("Form Not Found");
+        //    return Ok(data);
+        //}
 
         //[Authorize(Roles = "Admin, Nurse")]
         //[HttpGet("{name}")]
@@ -61,43 +61,43 @@ namespace medicloud.emr.api.Controllers
 
         //insert forms
         //[Authorize(Roles = "Admin, Nurse")]
-        [HttpPost("create")]
-        public IActionResult Create(TemplateMaster request )
-        {
+        //[HttpPost("create")]
+        //public IActionResult Create(TemplateMaster request )
+        //{
 
-            if (request != null && request.Formname != null && request.Jsonform != null && request.Iscurrent != null && request.Tempcatid != null )
-            {
-                var checkexisting = _dataContext.TemplateMaster.Where(x => x.Formname == request.Formname).FirstOrDefault();
+        //    if (request != null && request.Formname != null && request.Jsonform != null && request.Iscurrent != null && request.Tempcatid != null )
+        //    {
+        //        var checkexisting = _dataContext.TemplateMaster.Where(x => x.Formname == request.Formname).FirstOrDefault();
  
-                if (checkexisting == null)
-                {
-                    string createtable = CreateTable(request.Jsonform, request.Formname);
-                    if(createtable == "Success")
-                    {
-                        _dataContext.TemplateMaster.Add(request);
-                        _dataContext.SaveChanges();
-                        return Ok("Success");
-                        //return CreatedAtAction(nameof(GetSingleForm), new { id = request.Masterid }, request);
-                    }
-                    else
-                    {
-                        return BadRequest("Unable to create table");
-                    }
+        //        if (checkexisting == null)
+        //        {
+        //            string createtable = CreateTable(request.Jsonform, request.Formname);
+        //            if(createtable == "Success")
+        //            {
+        //                _dataContext.TemplateMaster.Add(request);
+        //                _dataContext.SaveChanges();
+        //                return Ok("Success");
+        //                //return CreatedAtAction(nameof(GetSingleForm), new { id = request.Masterid }, request);
+        //            }
+        //            else
+        //            {
+        //                return BadRequest("Unable to create table");
+        //            }
 
-                }
-                else
-                {
-                    return BadRequest("Form Exists");
-                }
-            }
-            else
-            {
-                return BadRequest("Invalid/Bad Request");
-            }
+        //        }
+        //        else
+        //        {
+        //            return BadRequest("Form Exists");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("Invalid/Bad Request");
+        //    }
 
         
 
-        }
+        //}
 
         [HttpPost("save")]
         public IActionResult SaveData(FormData request)
