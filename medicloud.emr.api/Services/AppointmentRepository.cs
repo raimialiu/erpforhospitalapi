@@ -128,7 +128,7 @@ namespace medicloud.emr.api.Services
                 .Include(s => s.Location)
                 .Include(s => s.Spec)
                 .Include(s => s.Prov)
-                .Where(s => provids.Contains(s.Provschid) && s.Iscurrent)
+                .Where(s => provids.Contains(s.Provid.Value) && s.Iscurrent)
                 .Select(s => new ProvSchedule
                 {
                     Provschid = s.Provschid,
