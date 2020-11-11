@@ -5,6 +5,11 @@ namespace medicloud.emr.api.Entities
 {
     public partial class ApplicationUser
     {
+        public ApplicationUser()
+        {
+            ProviderSchedule = new HashSet<ProviderSchedule>();
+        }
+
         public int Appuserid { get; set; }
         public string Username { get; set; }
         public string Firstname { get; set; }
@@ -18,5 +23,6 @@ namespace medicloud.emr.api.Entities
         public int? Locationid { get; set; }
 
         public virtual Location Location { get; set; }
+        public virtual ICollection<ProviderSchedule> ProviderSchedule { get; set; }
     }
 }

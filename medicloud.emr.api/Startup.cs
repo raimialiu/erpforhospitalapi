@@ -66,10 +66,10 @@ namespace medicloud.emr.api
                 };
             });
 
-            services.AddScoped<MockAuthRepository>();
             services.AddScoped<MockDataRepository>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            services.AddScoped<ILocationRepository, LocationRepository>();
 
  
             const string connectionString = "lagoonDB";

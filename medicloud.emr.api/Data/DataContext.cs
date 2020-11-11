@@ -134,6 +134,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<Provider> Provider { get; set; }
         public virtual DbSet<ProviderChange> ProviderChange { get; set; }
         public virtual DbSet<ProviderNetwork> ProviderNetwork { get; set; }
+        public virtual DbSet<ProviderSchedule> ProviderSchedule { get; set; }
         public virtual DbSet<QuestionCategory> QuestionCategory { get; set; }
         public virtual DbSet<Questionnaire> Questionnaire { get; set; }
         public virtual DbSet<QueueManager> QueueManager { get; set; }
@@ -5189,6 +5190,67 @@ namespace medicloud.emr.api.Data
                     .HasForeignKey(d => d.Providerid)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_provider_network_provider");
+            });
+
+            modelBuilder.Entity<ProviderSchedule>(entity =>
+            {
+                entity.HasKey(e => e.Provschid)
+                    .HasName("PK__Provider__0EF5CA8BD8860088");
+
+                entity.Property(e => e.Provschid).HasColumnName("provschid");
+
+                entity.Property(e => e.Adjuster)
+                    .IsRequired()
+                    .HasColumnName("adjuster")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Dateadded)
+                    .HasColumnName("dateadded")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Days)
+                    .IsRequired()
+                    .HasColumnName("days")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Duration).HasColumnName("duration");
+
+                entity.Property(e => e.Endtime)
+                    .IsRequired()
+                    .HasColumnName("endtime")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Iscurrent).HasColumnName("iscurrent");
+
+                entity.Property(e => e.Locationid).HasColumnName("locationid");
+
+                entity.Property(e => e.Provid).HasColumnName("provid");
+
+                entity.Property(e => e.Specid).HasColumnName("specid");
+
+                entity.Property(e => e.Starttime)
+                    .IsRequired()
+                    .HasColumnName("starttime")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Location)
+                    .WithMany(p => p.ProviderSchedule)
+                    .HasForeignKey(d => d.Locationid)
+                    .HasConstraintName("FK__ProviderS__locat__24885067");
+
+                entity.HasOne(d => d.Prov)
+                    .WithMany(p => p.ProviderSchedule)
+                    .HasForeignKey(d => d.Provid)
+                    .HasConstraintName("FK__ProviderS__provi__267098D9");
+
+                entity.HasOne(d => d.Spec)
+                    .WithMany(p => p.ProviderSchedule)
+                    .HasForeignKey(d => d.Specid)
+                    .HasConstraintName("FK__ProviderS__speci__257C74A0");
             });
 
             modelBuilder.Entity<QuestionCategory>(entity =>
