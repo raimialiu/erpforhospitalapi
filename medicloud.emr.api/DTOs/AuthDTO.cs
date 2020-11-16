@@ -1,4 +1,5 @@
 ﻿using medicloud.emr.api.Helpers;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -32,22 +33,18 @@ namespace medicloud.emr.api.DTOs
         public IFormFile Image { get; set; }
         public string ImageLocation { get; set; }
 
-        public async Task UploadImage()
+        public async Task UploadImage(IWebHostEnvironment environment)
         {
-            string folder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads\\Images");
-            if (!Directory.Exists(folder))
-            {
-                Directory.CreateDirectory(folder);
-            }
-
+            string folder = Path.Combine(environment.WebRootPath, "images");
             string fileName = $"{Guid.NewGuid()}_{Image.FileName}";
             string fullPath = Path.Combine(folder, fileName);
+
             using (var stream = new FileStream(fullPath, FileMode.Create))
             {
                 await Image.CopyToAsync(stream);
             }
 
-            ImageLocation = Path.Combine("Uploads\\Images", fileName); ;
+            ImageLocation = Path.Combine("images", fileName); ;
         }
 
         public bool ValidateExtension()
