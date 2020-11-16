@@ -1,4 +1,3 @@
-using System.IO;
 using System.Text;
 using medicloud.emr.api.Data;
 using medicloud.emr.api.Helpers;
@@ -7,11 +6,9 @@ using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
@@ -87,12 +84,7 @@ namespace medicloud.emr.api
 
             app.UseCors(corsPolicy);
             app.UseStatusCodePages("text/plain", "HTTP Error with {0} Status Code");
-
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
-                RequestPath = new PathString("/Uploads")
-            });
+            app.UseStaticFiles();
 
             app.UseRouting();
             app.UseAuthentication();
