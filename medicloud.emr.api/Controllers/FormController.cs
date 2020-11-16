@@ -9,6 +9,7 @@ using medicloud.emr.api.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 
@@ -20,7 +21,7 @@ namespace medicloud.emr.api.Controllers
     public class FormController : ControllerBase
     {
         private readonly DataContext _dataContext;
-        
+
         //inject into the instance 
         public FormController(DataContext dataContext)
         {
@@ -36,7 +37,7 @@ namespace medicloud.emr.api.Controllers
                                               from subset in location.DefaultIfEmpty()
                                               orderby t.Formname ascending
                                               where (t.Iscurrent == true)
-                                              select new {t.Masterid, t.Jsonform, t.Tempcatid, t.Formname, t.Formdescription, t.Formcomments, t.Adjusterid, t.Accountid, t.Iscurrent, t.Dateadded, tc.Categoryname, t.Locationid, locationname = subset.Locationname ?? "All Locations" }).ToList());
+                                              select new { t.Masterid, t.Jsonform, t.Tempcatid, t.Formname, t.Formdescription, t.Formcomments, t.Adjusterid, t.Accountid, t.Iscurrent, t.Dateadded, tc.Categoryname, t.Locationid, locationname = subset.Locationname ?? "All Locations" }).ToList());
 
 
         //[Authorize(Roles = "Admin, Nurse")]
@@ -44,35 +45,35 @@ namespace medicloud.emr.api.Controllers
         public IActionResult GetSingleForm(string id)
         {
             int masterid = Convert.ToInt32(id);
-            var data = _dataContext.TemplateMaster.Where(x=> x.Masterid == masterid).FirstOrDefault();
+            var data = _dataContext.TemplateMaster.Where(x => x.Masterid == masterid).FirstOrDefault();
             if (data is null) return NotFound("Form Not Found");
             return Ok(data);
         }
 
-        //[Authorize(Roles = "Admin, Nurse")]
-        //[HttpGet("{name}")]
-        //public IActionResult GetFormByName(string name)
-        //{
-             
-        //    var data = _dataContext.TemplateMaster.Where(x => x.Formname == name).FirstOrDefault();
-        //    if (data is null) return NotFound("Form Not Found");
-        //    return Ok(data);
-        //}
+        // [Authorize(Roles = "Admin, Nurse")]
+        [HttpGet("{name}")]
+        public IActionResult GetFormByName(string name)
+        {
+
+            var data = _dataContext.TemplateMaster.Where(x => x.Formname == name).FirstOrDefault();
+            if (data is null) return NotFound("Form Not Found");
+            return Ok(data);
+        }
 
         //insert forms
         //[Authorize(Roles = "Admin, Nurse")]
         [HttpPost("create")]
-        public IActionResult Create(TemplateMaster request )
+        public IActionResult Create(TemplateMaster request)
         {
 
-            if (request != null && request.Formname != null && request.Jsonform != null && request.Iscurrent != null && request.Tempcatid != null )
+            if (request != null && request.Formname != null && request.Jsonform != null && request.Iscurrent != null && request.Tempcatid != null)
             {
                 var checkexisting = _dataContext.TemplateMaster.Where(x => x.Formname == request.Formname).FirstOrDefault();
- 
+
                 if (checkexisting == null)
                 {
                     string createtable = CreateTable(request.Jsonform, request.Formname);
-                    if(createtable == "Success")
+                    if (createtable == "Success")
                     {
                         _dataContext.TemplateMaster.Add(request);
                         _dataContext.SaveChanges();
@@ -95,7 +96,7 @@ namespace medicloud.emr.api.Controllers
                 return BadRequest("Invalid/Bad Request");
             }
 
-        
+
 
         }
 
@@ -118,7 +119,14 @@ namespace medicloud.emr.api.Controllers
 
         }
 
-
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetTemplateCategories()
+        {
+            var categories = await _dataContext.TemplateCategory
+                                .Select(c => new { c.Tempcatid, c.Categoryname })
+                                .ToListAsync();
+            return Ok(categories);
+        }
 
         public string CreateTable(string formdata, string formname)
         {
@@ -126,7 +134,7 @@ namespace medicloud.emr.api.Controllers
             SQLDataManager sql = new SQLDataManager(false);
 
            
-            string query_create = "CREATE TABLE template_" + formname.Replace(" ", "").ToLower() + " (Id INT IDENTITY(1,1) PRIMARY KEY, accountid int, locationid int";
+            string query_create = "CREATE TABLE template_" + formname.Replace(" ", "").ToLower() + " (Id INT IDENTITY(1,1) PRIMARY KEY, accountid int, locationid int, patientid varchar(100)";
 
             //List<Component> request = new List<Component>();
             try

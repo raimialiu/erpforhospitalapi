@@ -7,7 +7,12 @@ namespace medicloud.emr.api.Entities
     {
         public Location()
         {
+            ApplicationUser = new HashSet<ApplicationUser>();
             Asset = new HashSet<Asset>();
+            GeneralSchedule = new HashSet<GeneralSchedule>();
+            ProviderSchedule = new HashSet<ProviderSchedule>();
+            Specialization = new HashSet<Specialization>();
+            SpecializationSchedule = new HashSet<SpecializationSchedule>();
             UserLocation = new HashSet<UserLocation>();
         }
 
@@ -23,7 +28,12 @@ namespace medicloud.emr.api.Entities
         public DateTime? Dateadded { get; set; }
         public string Locationdescription { get; set; }
 
+        public virtual ICollection<ApplicationUser> ApplicationUser { get; set; }
         public virtual ICollection<Asset> Asset { get; set; }
+        public virtual ICollection<GeneralSchedule> GeneralSchedule { get; set; }
+        public virtual ICollection<ProviderSchedule> ProviderSchedule { get; set; }
+        public virtual ICollection<Specialization> Specialization { get; set; }
+        public virtual ICollection<SpecializationSchedule> SpecializationSchedule { get; set; }
         public virtual ICollection<UserLocation> UserLocation { get; set; }
     }
 }

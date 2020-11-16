@@ -21,7 +21,9 @@ namespace medicloud.emr.api.Entities
         public string Lastname { get; set; }
         public DateTime? Dateadded { get; set; }
         public int? ProviderId { get; set; }
+        public int? IdentificationModeid { get; set; }
 
+        public virtual IdentificationMode IdentificationMode { get; set; }
         public virtual AccountManager Provider { get; set; }
         public virtual Title Title { get; set; }
         public virtual ICollection<UserLocation> UserLocation { get; set; }

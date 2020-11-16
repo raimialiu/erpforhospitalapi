@@ -61,7 +61,6 @@ namespace medicloud.emr.api.Entities
             Supplier = new HashSet<Supplier>();
             Tariff = new HashSet<Tariff>();
             VerificationLog = new HashSet<VerificationLog>();
-            VitalSigns = new HashSet<VitalSigns>();
         }
 
         public int ProviderId { get; set; }
@@ -132,6 +131,5 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<Supplier> Supplier { get; set; }
         public virtual ICollection<Tariff> Tariff { get; set; }
         public virtual ICollection<VerificationLog> VerificationLog { get; set; }
-        public virtual ICollection<VitalSigns> VitalSigns { get; set; }
     }
 }
