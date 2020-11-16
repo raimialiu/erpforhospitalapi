@@ -9,6 +9,7 @@ using medicloud.emr.api.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 
@@ -49,7 +50,7 @@ namespace medicloud.emr.api.Controllers
             return Ok(data);
         }
 
-        [Authorize(Roles = "Admin, Nurse")]
+        // [Authorize(Roles = "Admin, Nurse")]
         [HttpGet("{name}")]
         public IActionResult GetFormByName(string name)
         {
@@ -118,7 +119,14 @@ namespace medicloud.emr.api.Controllers
 
         }
 
-
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetTemplateCategories()
+        {
+            var categories = await _dataContext.TemplateCategory
+                                .Select(c => new { c.Tempcatid, c.Categoryname })
+                                .ToListAsync();
+            return Ok(categories);
+        }
 
         public string CreateTable(string formdata, string formname)
         {
