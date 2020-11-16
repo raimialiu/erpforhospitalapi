@@ -15,6 +15,7 @@ namespace medicloud.emr.api.Services
         Task<IEnumerable<SpecSchedule>> GetSpecializationSchedules(int locationId, int specId);
         Task<IEnumerable<ProvSchedule>> GetProviderSchedules(int locationId, int specId, int provId);
         Task<IEnumerable<ProvSchedule>> GetMultipleProviderSchedules(IEnumerable<int> provids);
+        Task<IEnumerable<Status>> GetStatuses();
         Task AddGeneralSchedule(GenSchCreate model);
         Task AddSpecializationSchedule(SpecSchCreate model);
         Task AddProviderSchedule(ProvSchCreate model);
@@ -202,6 +203,18 @@ namespace medicloud.emr.api.Services
                 Locationname = s.Location.Locationname,
                 Specname = s.Spec.Specname
             }).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<Status>> GetStatuses()
+        {
+            return await _context.AppointmentStatus.Select(s => new Status
+            { 
+               Id = s.Statusid,
+               Name = s.Statusname,
+               Color = s.Statuscolor
+            
+            }).AsNoTracking().ToListAsync();
+
         }
     }
 }

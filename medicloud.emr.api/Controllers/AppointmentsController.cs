@@ -68,5 +68,8 @@ namespace medicloud.emr.api.Controllers
             await _repository.AddProviderSchedule(model);
             return NoContent();
         }
+
+        [HttpGet("statuses")]
+        public async Task<IActionResult> GetAppointmentStatuses() => Ok(await _repository.GetStatuses());
     }
 }

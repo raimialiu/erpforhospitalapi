@@ -31,6 +31,9 @@ namespace medicloud.emr.api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromForm] Register model) 
         {
+            var isValidUsername = await _authRepository.UniqueUsername(model.Username.Trim());
+            if (!isValidUsername) return BadRequest(new ErrorResponse { ErrorMessage = "Username has been taken" });
+
             if (model.Image != null)
             {
                 bool isValidExtension = model.ValidateExtension();
@@ -41,9 +44,6 @@ namespace medicloud.emr.api.Controllers
 
                 await model.UploadImage();
             }
-
-            var isValidUsername = await _authRepository.UniqueUsername(model.Username.Trim());
-            if (!isValidUsername) return BadRequest(new ErrorResponse { ErrorMessage = "Username has been taken" });
 
             await _authRepository.RegisterUser(model);
 

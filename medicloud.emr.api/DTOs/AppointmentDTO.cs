@@ -63,4 +63,11 @@ namespace medicloud.emr.api.DTOs
         public string Providername { get; set; }
         public int Provid { get; set; }
     }
+
+    public class Status
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Color { get; set; }
+    }
 }
