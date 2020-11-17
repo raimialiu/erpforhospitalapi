@@ -16,9 +16,12 @@ namespace medicloud.emr.api.Services
         Task<IEnumerable<ProvSchedule>> GetProviderSchedules(int locationId, int specId, int provId);
         Task<IEnumerable<ProvSchedule>> GetMultipleProviderSchedules(IEnumerable<int> provids);
         Task<IEnumerable<Status>> GetStatuses();
+        Task<IEnumerable<BlockSchedule>> GetBlockSchedules(int locationId, int provId);
         Task AddGeneralSchedule(GenSchCreate model);
         Task AddSpecializationSchedule(SpecSchCreate model);
         Task AddProviderSchedule(ProvSchCreate model);
+        Task AddBlockSchedule(BlockScheduleCreate model);
+        Task<bool> RemoveBlockSchedule(int blockid);
 
     }
 
@@ -29,6 +32,31 @@ namespace medicloud.emr.api.Services
         public AppointmentRepository(DataContext context)
         {
             _context = context;
+        }
+
+        public async Task AddBlockSchedule(BlockScheduleCreate model)
+        {
+            var activeSchedule = await _context.BreakBlockSchedule.SingleOrDefaultAsync(s => s.Provid == model.ProviderId && s.Iscurrent);
+
+            if (activeSchedule != null)
+                activeSchedule.Iscurrent = false;
+
+
+            var newSchedule = new BreakBlockSchedule
+            {
+                Starttime = model.Start,
+                Endtime = model.End,
+                Adjuster = model.Adjuster,
+                Iscurrent = true,
+                Dateadded = DateTime.Now,
+                Locationid = model.LocationId,
+                Provid = model.ProviderId,
+                Days = model.Days,
+                Blockname = model.Blockname
+            };
+
+            _context.BreakBlockSchedule.Add(newSchedule);
+            await _context.SaveChangesAsync();
         }
 
         public async Task AddGeneralSchedule(GenSchCreate model)
@@ -102,6 +130,31 @@ namespace medicloud.emr.api.Services
 
             _context.SpecializationSchedule.Add(newSchedule);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<BlockSchedule>> GetBlockSchedules(int locationId, int provId)
+        {
+            var schedules = _context.BreakBlockSchedule
+                .Include(s => s.Location)
+                .Include(s => s.Prov)
+                .Where(s => s.Locationid == locationId && s.Iscurrent);
+
+            if (provId > 0)
+                schedules = schedules.Where(s => s.Provid == provId);
+
+            return await schedules.Select(s => new BlockSchedule
+            {
+                Id = s.Blockid,
+                Start = s.Starttime,
+                End = s.Endtime,
+                Days = s.Days,
+                Adjuster = s.Adjuster,
+                Iscurrent = s.Iscurrent,
+                Dateadded = s.Dateadded,
+                Location = s.Location.Locationname,
+                Provider = $"{s.Prov.Firstname} {s.Prov.Lastname}",
+                Name = s.Blockname
+            }).AsNoTracking().ToListAsync();
         }
 
         public async Task<IEnumerable<GenSchedule>> GetGeneralSchedules(int locationId)
@@ -215,6 +268,17 @@ namespace medicloud.emr.api.Services
             
             }).AsNoTracking().ToListAsync();
 
+        }
+
+        public async Task<bool> RemoveBlockSchedule(int blockid)
+        {
+            var blockSchedule = await _context.BreakBlockSchedule.FindAsync(blockid);
+            if (blockSchedule is null)
+                return false;
+
+            blockSchedule.Iscurrent = false;
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

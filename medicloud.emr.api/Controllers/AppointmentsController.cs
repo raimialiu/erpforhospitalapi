@@ -69,5 +69,30 @@ namespace medicloud.emr.api.Controllers
 
         [HttpGet("statuses")]
         public async Task<IActionResult> GetAppointmentStatuses() => Ok(await _repository.GetStatuses());
+
+        [HttpGet("blocks/{locationid}/provider/{provid}")]
+        public async Task<IActionResult> GetBlockSchedules(int locationid, int provid)
+            => Ok(await _repository.GetBlockSchedules(locationid, provid));
+
+
+        [HttpPost("blocks/{locationid}/provider")]
+        public async Task<IActionResult> AddBlockSchedules(int locationid, BlockScheduleCreate model)
+        {
+            if (locationid != model.LocationId)
+                return BadRequest(new ErrorResponse { ErrorMessage = "LocationId does not match" });
+
+            await _repository.AddBlockSchedule(model);
+            return NoContent();
+        }
+
+        [HttpPut("blocks/{blockid}/break")]
+        public async Task<IActionResult> BreakBlockSchedule(int blockid)
+        {
+            bool scheduleRemoved = await _repository.RemoveBlockSchedule(blockid);
+            if (!scheduleRemoved)
+                return BadRequest(new ErrorResponse { ErrorMessage = "Invalid ID" });
+
+            return NoContent();
+        }
     }
 }

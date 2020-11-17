@@ -67,4 +67,34 @@ namespace medicloud.emr.api.DTOs
         public string Name { get; set; }
         public string Color { get; set; }
     }
+
+    public class BlockSchedule
+    {
+        public int Id { get; set; }
+        public string Start { get; set; }
+        public string End { get; set; }
+        public string Days { get; set; }
+        public string Name { get; set; }
+        public string Adjuster { get; set; }
+        public string Location { get; set; }
+        public string Provider { get; set; }
+        public DateTime Dateadded { get; set; }
+        public bool Iscurrent { get; set; }
+    }
+
+    public class BlockScheduleCreate
+    {
+        [Required]
+        public string Start { get; set; }
+        [Required]
+        public string End { get; set; }
+        [Required]
+        public string Days { get; set; }
+        [Required]
+        public string Adjuster { get; set; }
+        [Required]
+        public string Blockname { get; set; }
+        public int LocationId { get; set; }
+        public int ProviderId { get; set; }
+    }
 }
