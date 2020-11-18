@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Helpers;
 using medicloud.emr.api.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace medicloud.emr.api.Controllers
