@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text;
 using medicloud.emr.api.Data;
+using medicloud.emr.api.DataContextRepo;
 using medicloud.emr.api.Helpers;
 using medicloud.emr.api.Mocks;
 using medicloud.emr.api.Services;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace medicloud.emr.api
 {
@@ -26,6 +28,7 @@ namespace medicloud.emr.api
         }
 
         public IConfiguration Configuration { get; }
+        private SwaggerSettings swaggerSettings;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -36,7 +39,16 @@ namespace medicloud.emr.api
             services.AddControllers(setupActions =>
             {
                 setupActions.ReturnHttpNotAcceptable = true;
-            }).AddXmlDataContractSerializerFormatters();
+            }).AddXmlDataContractSerializerFormatters()
+            
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.IgnoreNullValues = true;
+                options.JsonSerializerOptions.WriteIndented = true;
+                
+                // .SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
+                //options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            });
 
             services.AddCors(options =>
             {
@@ -44,6 +56,20 @@ namespace medicloud.emr.api
                                   builder => builder.WithOrigins(new[] { "http://localhost:4200", "http://test.medicloud.ng/lagoonhis" })
                                                     .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" }).AllowAnyHeader());
             });
+
+            swaggerSettings = new SwaggerSettings();
+
+            Configuration.Bind(nameof(SwaggerSettings), swaggerSettings);
+
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc(swaggerSettings.Title, new Microsoft.OpenApi.Models.OpenApiInfo()
+            //    {
+            //        Version = swaggerSettings.Version,
+            //        Description = swaggerSettings.Description
+
+            //    });
+            //});
 
             services.AddAuthentication(options =>
             {
@@ -67,6 +93,7 @@ namespace medicloud.emr.api
             });
 
             services.AddScoped<MockDataRepository>();
+            services.AddSingleton<IPatientRepo, PatientRepo>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
@@ -88,16 +115,34 @@ namespace medicloud.emr.api
             app.UseCors(corsPolicy);
             app.UseStatusCodePages("text/plain", "HTTP Error with {0} Status Code");
 
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
-                RequestPath = new PathString("/Uploads")
-            });
+            //app.UseStaticFiles(new StaticFileOptions()
+            //{
+            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
+            //    RequestPath = new PathString("/Uploads")
+            //});
+
+
+            //app.UseExceptionMiddleware();
 
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+
             
+
+            //app.UseSwagger(c =>
+            //{
+            //    c.RouteTemplate = swaggerSettings.RouteTemplate;
+            //});
+
+            //app.UseSwaggerUI(c =>
+            //{
+            //    c.SwaggerEndpoint(swaggerSettings.RouteEndpoint, swaggerSettings.Title);
+            //});
+            app.UseAuthentication();
+            
+            app.UseAuthorization();
+
+           
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
