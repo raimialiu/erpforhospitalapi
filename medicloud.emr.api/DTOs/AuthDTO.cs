@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -16,6 +17,28 @@ namespace medicloud.emr.api.DTOs
     {
         public string Username { get; set; }
         public string Password { get; set; }
+    }
+
+    public class BaseResponse
+    {
+        public object data { get; set; }
+        public string message { get; set; }
+        public string description { get; set; }
+        public string statusCode { get; set; }
+        public BaseResponse(object data, string description, string statusCode)
+        {
+            this.data = data; this.description = description; 
+            this.message = statusCode == "00" ? "success" :"failed";
+            this.statusCode = statusCode;
+        }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+
+        public static BaseResponse GetResponse(object data, string description, string statusCode)
+                => new BaseResponse(data, description, statusCode);
     }
 
     public class Register
