@@ -8,6 +8,7 @@ namespace medicloud.emr.api.Entities
         public Patient()
         {
             Admission = new HashSet<Admission>();
+            AppointmentSchedule = new HashSet<AppointmentSchedule>();
             Bill = new HashSet<Bill>();
             BillPayable = new HashSet<BillPayable>();
             Biometric = new HashSet<Biometric>();
@@ -111,6 +112,7 @@ namespace medicloud.emr.api.Entities
         public virtual Sponsor Spons { get; set; }
         public virtual State State { get; set; }
         public virtual ICollection<Admission> Admission { get; set; }
+        public virtual ICollection<AppointmentSchedule> AppointmentSchedule { get; set; }
         public virtual ICollection<Bill> Bill { get; set; }
         public virtual ICollection<BillPayable> BillPayable { get; set; }
         public virtual ICollection<Biometric> Biometric { get; set; }

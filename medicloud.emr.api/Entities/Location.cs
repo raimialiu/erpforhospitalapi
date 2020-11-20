@@ -8,6 +8,7 @@ namespace medicloud.emr.api.Entities
         public Location()
         {
             ApplicationUser = new HashSet<ApplicationUser>();
+            AppointmentSchedule = new HashSet<AppointmentSchedule>();
             Asset = new HashSet<Asset>();
             BreakBlockSchedule = new HashSet<BreakBlockSchedule>();
             GeneralSchedule = new HashSet<GeneralSchedule>();
@@ -30,6 +31,7 @@ namespace medicloud.emr.api.Entities
         public string Locationdescription { get; set; }
 
         public virtual ICollection<ApplicationUser> ApplicationUser { get; set; }
+        public virtual ICollection<AppointmentSchedule> AppointmentSchedule { get; set; }
         public virtual ICollection<Asset> Asset { get; set; }
         public virtual ICollection<BreakBlockSchedule> BreakBlockSchedule { get; set; }
         public virtual ICollection<GeneralSchedule> GeneralSchedule { get; set; }

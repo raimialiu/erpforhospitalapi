@@ -3,16 +3,15 @@ using System.Collections.Generic;
 
 namespace medicloud.emr.api.Entities
 {
-    public partial class AppointmentStatus
+    public partial class VisitType
     {
-        public AppointmentStatus()
+        public VisitType()
         {
             AppointmentSchedule = new HashSet<AppointmentSchedule>();
         }
 
-        public int Statusid { get; set; }
-        public string Statusname { get; set; }
-        public string Statuscolor { get; set; }
+        public int Typeid { get; set; }
+        public string Typename { get; set; }
         public DateTime Dateadded { get; set; }
 
         public virtual ICollection<AppointmentSchedule> AppointmentSchedule { get; set; }

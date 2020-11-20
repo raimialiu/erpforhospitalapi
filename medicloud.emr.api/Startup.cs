@@ -115,13 +115,7 @@ namespace medicloud.emr.api
             app.UseCors(corsPolicy);
             app.UseStatusCodePages("text/plain", "HTTP Error with {0} Status Code");
 
-            //app.UseStaticFiles(new StaticFileOptions()
-            //{
-            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
-            //    RequestPath = new PathString("/Uploads")
-            //});
-
-
+            app.UseStaticFiles();
             //app.UseExceptionMiddleware();
 
             app.UseRouting();

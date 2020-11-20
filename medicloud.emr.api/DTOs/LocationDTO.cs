@@ -1,6 +1,6 @@
 ﻿namespace medicloud.emr.api.DTOs
 {
-    public class OptionsDTO
+    public abstract class OptionsDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -11,5 +11,13 @@
     public class SpecializationDTO : OptionsDTO { }
 
     public class ProviderDTO : OptionsDTO { }
+
+    public class ReminderDTO : OptionsDTO { }
+
+    public class ReferralDTO : OptionsDTO { }
+
+    public class ReferringDTO : OptionsDTO { }
+
+    public class VisitTypeDTO : OptionsDTO { }
 
 }

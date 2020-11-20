@@ -94,5 +94,37 @@ namespace medicloud.emr.api.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateAppointment(AppointmentCreate model)
+        {
+            await _repository.AddAppointment(model);
+            return NoContent();
+        }
+
+        [HttpPut("update/{apptId}")]
+        public async Task<IActionResult> UpdateAppointment(int apptId, AppointmentCreate model)
+        {
+            if (apptId != model.Id)
+                return BadRequest(new ErrorResponse { ErrorMessage = "Id does not match" });
+
+            bool updated = await _repository.UpdateAppointment(model);
+            if (!updated)
+                return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
+
+            return NoContent();
+        }
+
+        [HttpGet("retrieve/{apptId}")]
+        public async Task<IActionResult> GetSingleAppointment(int apptId) => Ok(await _repository.GetAppointmentForEdit(apptId));
+
+        [HttpGet("calendar")]
+        public async Task<IActionResult> GetAppointmentsForScheduler([FromQuery] int locationid, [FromQuery] int specid, [FromQuery] IEnumerable<int> provids, [FromQuery] int statusid)
+        {
+            return Ok(await _repository.GetScheduleAppointments(locationid, specid, provids, statusid));
+        }
+
+        [HttpGet("list")]
+        public async Task<IActionResult> GetAppointmentsForTable() => Ok(await _repository.GetListAppointments());
     }
 }

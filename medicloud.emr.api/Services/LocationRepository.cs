@@ -12,6 +12,10 @@ namespace medicloud.emr.api.Services
         Task<IEnumerable<LocationDTO>> GetLocations();
         Task<IEnumerable<SpecializationDTO>> GetSpecializations(int locationid);
         Task<IEnumerable<ProviderDTO>> GetProviders(int locationid, int specid);
+        Task<IEnumerable<VisitTypeDTO>> GetVisitTypes();
+        Task<IEnumerable<ReferralDTO>> GetReferralTypes();
+        Task<IEnumerable<ReferringDTO>> GetReferringPhysicians();
+        Task<IEnumerable<ReminderDTO>> GetReminderOptions();
     }
     public class LocationRepository : ILocationRepository
     {
@@ -36,6 +40,24 @@ namespace medicloud.emr.api.Services
                 .AsNoTracking().ToListAsync();
         }
 
+        public async Task<IEnumerable<ReferralDTO>> GetReferralTypes()
+        {
+            return await _context.Referral.Select(r => new ReferralDTO { Id = r.Refid, Name = r.Reftype })
+                                        .AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<ReferringDTO>> GetReferringPhysicians()
+        {
+            return await _context.ReferringPhysician.Select(r => new ReferringDTO { Id = r.Refid, Name = r.Physicianname })
+                                        .AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<ReminderDTO>> GetReminderOptions()
+        {
+            return await _context.Reminder.Select(r => new ReminderDTO { Id = r.Reminderid, Name = r.Reminder1 })
+                                        .AsNoTracking().ToListAsync();
+        }
+
         public async Task<IEnumerable<SpecializationDTO>> GetSpecializations(int locationid)
         {
             return await _context.Specialization.Where(s => s.Locationid == locationid)
@@ -43,5 +65,10 @@ namespace medicloud.emr.api.Services
                         .AsNoTracking().ToListAsync();
         }
 
+        public async Task<IEnumerable<VisitTypeDTO>> GetVisitTypes()
+        {
+            return await _context.VisitType.Select(v => new VisitTypeDTO { Id = v.Typeid, Name = v.Typename })
+                                        .AsNoTracking().ToListAsync();
+        }
     }
 }

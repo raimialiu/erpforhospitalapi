@@ -27,6 +27,16 @@ namespace medicloud.emr.api.Controllers
         [HttpGet("{locationid}/specializations/{specid}/providers")]
         public async Task<IActionResult> GetProviders(int locationid, int specid) => Ok(await _repository.GetProviders(locationid, specid));
 
+        [HttpGet("referraltypes")]
+        public async Task<IActionResult> GetReferralTypes() => Ok(await _repository.GetReferralTypes());
 
+        [HttpGet("referringphysicians")]
+        public async Task<IActionResult> GetReferringPhysicians() => Ok(await _repository.GetReferringPhysicians());
+
+        [HttpGet("reminderoptions")]
+        public async Task<IActionResult> GetReminderOptions() => Ok(await _repository.GetReminderOptions());
+
+        [HttpGet("visittypes")]
+        public async Task<IActionResult> GetVisitTypes() => Ok(await _repository.GetVisitTypes());
     }
 }

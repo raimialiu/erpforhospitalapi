@@ -17,11 +17,16 @@ namespace medicloud.emr.api.Services
         Task<IEnumerable<ProvSchedule>> GetMultipleProviderSchedules(IEnumerable<int> provids);
         Task<IEnumerable<Status>> GetStatuses();
         Task<IEnumerable<BlockSchedule>> GetBlockSchedules(int locationId, int provId);
+        Task<AppointmentCreate> GetAppointmentForEdit(int apptId);
+        Task<IEnumerable<AppointmentView>> GetScheduleAppointments(int locationId, int specId, IEnumerable<int> provIds, int statusId);
+        Task<IEnumerable<AppointmentList>> GetListAppointments();
         Task AddGeneralSchedule(GenSchCreate model);
         Task AddSpecializationSchedule(SpecSchCreate model);
         Task AddProviderSchedule(ProvSchCreate model);
         Task AddBlockSchedule(BlockScheduleCreate model);
         Task<bool> RemoveBlockSchedule(int blockid);
+        Task AddAppointment(AppointmentCreate model);
+        Task<bool> UpdateAppointment(AppointmentCreate model);
 
     }
 
@@ -32,6 +37,35 @@ namespace medicloud.emr.api.Services
         public AppointmentRepository(DataContext context)
         {
             _context = context;
+        }
+
+        public async Task AddAppointment(AppointmentCreate model)
+        {
+            var generalSchedule = await _context.GeneralSchedule.FirstOrDefaultAsync(s => s.Locationid == model.LocationId);
+            int duration = generalSchedule?.Timeinterval ?? 30;
+
+            var appointment = new AppointmentSchedule
+            {
+                Starttime = model.Date,
+                Endtime = model.Date.AddMinutes(duration),
+                Reason = model.Reason,
+                Isrecurring = model.IsRecurring,
+                Recurrencerule = model.RecurrenceRule,
+                Dateadded = DateTime.Now,
+                Adjuster = model.Adjuster,
+                Locationid = model.LocationId,
+                Specid = model.SpecId,
+                Provid = model.ProviderId,
+                Referralid = model.ReferralTypeId,
+                Referringid = model.ReferringPhysicianId,
+                Visittypeid = model.VisitTypeId,
+                Reminderid = model.ReminderId,
+                Statusid = model.StatusId,
+                PatientNumber = model.PatientNo
+            };
+
+            _context.AppointmentSchedule.Add(appointment);
+            await _context.SaveChangesAsync();
         }
 
         public async Task AddBlockSchedule(BlockScheduleCreate model)
@@ -132,6 +166,30 @@ namespace medicloud.emr.api.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<AppointmentCreate> GetAppointmentForEdit(int apptId)
+        {
+            return await _context.AppointmentSchedule.Where(x => x.Apptid == apptId)
+                .Select(a => new AppointmentCreate
+                {
+                    Id = a.Apptid,
+                    Date = a.Starttime,
+                    Reason = a.Reason,
+                    IsRecurring = a.Isrecurring,
+                    RecurrenceRule = a.Recurrencerule,
+                    Adjuster = a.Adjuster,
+                    LocationId = a.Locationid.Value,
+                    SpecId = a.Specid.Value,
+                    ProviderId = a.Provid.Value,
+                    ReferralTypeId = a.Referralid.Value,
+                    ReferringPhysicianId = a.Referringid.Value,
+                    VisitTypeId = a.Visittypeid.Value,
+                    ReminderId = a.Reminderid.Value,
+                    StatusId = a.Statusid.Value,
+                    PatientNo = a.PatientNumber
+                })
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<BlockSchedule>> GetBlockSchedules(int locationId, int provId)
         {
             var schedules = _context.BreakBlockSchedule
@@ -174,6 +232,31 @@ namespace medicloud.emr.api.Services
                     Locationname = g.Location.Locationname
                 })
                 .AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<AppointmentList>> GetListAppointments()
+        {
+            return await _context.AppointmentSchedule
+            .Include(s => s.PatientNumberNavigation)
+            .ThenInclude(p => p.Gender)
+            .Include(s => s.Location)
+            .Include(s => s.Prov)
+            .Include(s => s.Status)
+            .Select(s => new AppointmentList
+            { 
+               Id = s.Apptid,
+               PatientNo = s.PatientNumberNavigation.Patientid,
+               Name = $"{s.PatientNumberNavigation.Firstname} {s.PatientNumberNavigation.Lastname}",
+               Age = DateTime.Now.Year - s.PatientNumberNavigation.Dob.Value.Year,
+               Gender = s.PatientNumberNavigation.Gender.Gendername,
+               Date = s.Starttime,
+               Status = s.Status.Statusname,
+               Color = s.Status.Statuscolor,
+               Location = s.Location.Locationname,
+               Phone = s.PatientNumberNavigation.Mobilephone,
+               Provider = $"Dr. {s.Prov.Firstname} {s.Prov.Lastname}"
+            }).ToListAsync();
+
         }
 
         public async Task<IEnumerable<ProvSchedule>> GetMultipleProviderSchedules(IEnumerable<int> provids)
@@ -233,6 +316,37 @@ namespace medicloud.emr.api.Services
             }).AsNoTracking().ToListAsync();
         }
 
+        public async Task<IEnumerable<AppointmentView>> GetScheduleAppointments(int locationId, int specId, IEnumerable<int> provIds, int statusId)
+        {
+            var appointmentsQuery = _context.AppointmentSchedule.Where(a => a.Locationid == locationId);
+
+            if (specId > 0)
+                appointmentsQuery = appointmentsQuery.Where(a => a.Specid == specId);
+
+            if (provIds.Count() > 0)
+                appointmentsQuery = appointmentsQuery.Where(a => provIds.Contains(a.Provid.Value));
+
+            if (statusId > 0)
+                appointmentsQuery = appointmentsQuery.Where(a => a.Statusid == statusId);
+
+            var appointments = await appointmentsQuery
+            .Include(p => p.PatientNumberNavigation)
+            .Include(p => p.Spec)
+            .Include(p => p.Status)
+            .Select(s => new AppointmentView
+            {
+                Id = s.Apptid,
+                Start = s.Starttime,
+                End = s.Endtime,
+                StatusColor = s.Status.Statuscolor,
+                ProviderId = s.Provid.Value,
+                Specialization = s.Spec.Specname,
+                RecurrenceRule = s.Recurrencerule,
+                PatientName = $"{s.PatientNumberNavigation.Firstname} {s.PatientNumberNavigation.Lastname}"
+            }).ToListAsync();
+            return appointments;
+        }
+
         public async Task<IEnumerable<SpecSchedule>> GetSpecializationSchedules(int locationId, int specId)
         {
             var schedules = _context.SpecializationSchedule
@@ -279,6 +393,35 @@ namespace medicloud.emr.api.Services
             blockSchedule.Iscurrent = false;
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<bool> UpdateAppointment(AppointmentCreate model)
+        {
+            var appointment = await _context.AppointmentSchedule.FindAsync(model.Id);
+            if (appointment is null)
+                return false;
+
+            var generalSchedule = await _context.GeneralSchedule.FirstOrDefaultAsync(s => s.Locationid == model.LocationId);
+            int duration = generalSchedule?.Timeinterval ?? 30;
+
+
+            appointment.Starttime = model.Date;
+            appointment.Endtime = model.Date.AddMinutes(duration);
+            appointment.Reason = model.Reason;
+            appointment.Isrecurring = model.IsRecurring;
+            appointment.Recurrencerule = model.RecurrenceRule;
+            appointment.Adjuster = model.Adjuster;
+            appointment.Locationid = model.LocationId;
+            appointment.Specid = model.SpecId;
+            appointment.Provid = model.ProviderId;
+            appointment.Referralid = model.ReferralTypeId;
+            appointment.Referringid = model.ReferringPhysicianId;
+            appointment.Visittypeid = model.VisitTypeId;
+            appointment.Reminderid = model.ReminderId;
+            appointment.Statusid = model.StatusId;
+            appointment.PatientNumber = model.PatientNo;
+            
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }
