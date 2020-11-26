@@ -22,14 +22,12 @@ namespace medicloud.emr.api.Controllers
     {
         private readonly DataContext _dataContext;
 
-        //inject into the instance 
         public FormController(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
 
-        //get all forms
-        //[Authorize(Roles = "Admin, Nurse")]
+        
         [HttpGet]
         public IActionResult GetData() => Ok((from t in _dataContext.TemplateMaster
                                               join tc in _dataContext.TemplateCategory on t.Tempcatid equals tc.Tempcatid
@@ -40,7 +38,6 @@ namespace medicloud.emr.api.Controllers
                                               select new { t.Masterid, t.Jsonform, t.Tempcatid, t.Formname, t.Formdescription, t.Formcomments, t.Adjusterid, t.Accountid, t.Iscurrent, t.Dateadded, tc.Categoryname, t.Locationid, locationname = subset.Locationname ?? "All Locations" }).ToList());
 
 
-        //[Authorize(Roles = "Admin, Nurse")]
         [HttpGet("{id}")]
         public IActionResult GetSingleForm(string id)
         {
@@ -50,18 +47,7 @@ namespace medicloud.emr.api.Controllers
             return Ok(data);
         }
 
-        // [Authorize(Roles = "Admin, Nurse")]
-        [HttpGet("{name}")]
-        public IActionResult GetFormByName(string name)
-        {
-
-            var data = _dataContext.TemplateMaster.Where(x => x.Formname == name).FirstOrDefault();
-            if (data is null) return NotFound("Form Not Found");
-            return Ok(data);
-        }
-
-        //insert forms
-        //[Authorize(Roles = "Admin, Nurse")]
+        
         [HttpPost("create")]
         public IActionResult Create(TemplateMaster request)
         {
