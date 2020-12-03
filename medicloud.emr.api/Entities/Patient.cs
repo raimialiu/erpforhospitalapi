@@ -32,6 +32,7 @@ namespace medicloud.emr.api.Entities
             QueueManager = new HashSet<QueueManager>();
             ReferenceMaterial = new HashSet<ReferenceMaterial>();
             VerificationLog = new HashSet<VerificationLog>();
+            CheckIn = new HashSet<CheckIn>();
         }
 
         public string Patientid { get; set; }
@@ -112,6 +113,7 @@ namespace medicloud.emr.api.Entities
         public virtual Sponsor Spons { get; set; }
         public virtual State State { get; set; }
         public virtual ICollection<Admission> Admission { get; set; }
+        public virtual ICollection<CheckIn> CheckIn { get; set; }
         public virtual ICollection<AppointmentSchedule> AppointmentSchedule { get; set; }
         public virtual ICollection<Bill> Bill { get; set; }
         public virtual ICollection<BillPayable> BillPayable { get; set; }

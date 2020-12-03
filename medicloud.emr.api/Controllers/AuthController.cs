@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Hosting;
@@ -25,10 +26,18 @@ namespace medicloud.emr.api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(LoginRequest model)
         {
-            var user = await _authRepository.LoginUser(model.Username.Trim(), model.Password.Trim());
-            if (user == null) return BadRequest(new ErrorResponse { ErrorMessage = "Invalid Username/Password" });
+            try
+            {
+                var user = await _authRepository.LoginUser(model.Username.Trim(), model.Password.Trim());
+                if (user == null) return BadRequest(new ErrorResponse { ErrorMessage = "Invalid Username/Password" });
 
-            return Ok(new LoginResponse(user, _configuration));
+                return Ok(new LoginResponse(user, _configuration));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         [HttpPost("register")]

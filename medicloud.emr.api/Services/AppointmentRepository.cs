@@ -27,6 +27,7 @@ namespace medicloud.emr.api.Services
         Task<bool> RemoveBlockSchedule(int blockid);
         Task AddAppointment(AppointmentCreate model);
         Task<bool> UpdateAppointment(AppointmentCreate model);
+        Task<List<UpcomingAppointmentList>> UpcomingAppointment(int locationId, int accountId, string searchWord);
 
     }
 
@@ -422,6 +423,47 @@ namespace medicloud.emr.api.Services
             appointment.PatientNumber = model.PatientNo;
             
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<List<UpcomingAppointmentList>> UpcomingAppointment (int locationId, int accountId, string searchWord)
+        {
+            if (!string.IsNullOrEmpty(searchWord))
+            {
+                var _appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.Provid == accountId &&
+                                a.Starttime.Date == DateTime.Today.Date && a.Starttime >= DateTime.Now)
+                .Select(r => new UpcomingAppointmentList()
+                {
+                    Location = _context.Location.Where(l => l.Locationid == r.Locationid).Select(e => e.Locationname).FirstOrDefault(),
+                    Date = r.Starttime,
+                    Patient = _context.Patient.Where(p => p.Patientid == r.PatientNumber).FirstOrDefault(),
+                    Provider = _context.AccountManager.Where(p => p.ProviderId == r.Provid).Select(e => e.HospitalName).FirstOrDefault(),
+                    Id = r.Apptid,
+                    Status = (int)r.Statusid,
+                    Gender = _context.Patient.Where(p => p.Patientid == r.PatientNumber).Select(g => g.Gender.Gendername).FirstOrDefault(),
+
+
+                }).ToListAsync();
+
+                var appointmentSearch = _appointments.Where(r => r.Patient.Patientid.ToUpper().Contains(searchWord.ToUpper()) || r.Patient.Firstname.ToUpper().Contains(searchWord.ToUpper()) ||
+                                                    r.Patient.Lastname.ToUpper().Contains(searchWord.ToUpper()) /*|| r.EncounterId.ToString().ToUpper().Contains(searchWord.ToUpper())*/).ToList();
+                return appointmentSearch;
+            }
+
+            var appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.Provid == accountId &&
+                                a.Starttime.Date == DateTime.Today.Date && a.Starttime >= DateTime.Now)
+                .Select(r => new UpcomingAppointmentList()
+                {
+                    Location = _context.Location.Where(l => l.Locationid == r.Locationid).Select(e => e.Locationname).FirstOrDefault(),
+                    Date = r.Starttime,
+                    Patient = _context.Patient.Where(p => p.Patientid == r.PatientNumber).FirstOrDefault(),
+                    Provider = _context.AccountManager.Where(p => p.ProviderId == r.Provid).Select(e => e.HospitalName).FirstOrDefault(),
+                    Id = r.Apptid,
+                    Status = (int)r.Statusid,
+                    Gender = _context.Patient.Where(p => p.Patientid == r.PatientNumber).Select(g => g.Gender.Gendername).FirstOrDefault(),
+
+
+                }).ToListAsync();
+            return appointments;
         }
     }
 }

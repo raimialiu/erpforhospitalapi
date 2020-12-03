@@ -1,4 +1,5 @@
-﻿using System;
+﻿using medicloud.emr.api.Entities;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace medicloud.emr.api.DTOs
@@ -144,5 +145,19 @@ namespace medicloud.emr.api.DTOs
         public string Provider { get; set; }
         public string Status { get; set; }
         public string Color { get; set; }
+    }
+
+    public class UpcomingAppointmentList
+    {
+        public int Id { get; set; }
+        public int Age { get; set; }
+        public string Gender { get; set; }
+        public DateTime Date { get; set; }
+        public string Location { get; set; }
+        public string Provider { get; set; }
+        public int Status { get; set; }
+        public string Color { get; set; }
+        public Patient Patient { get; set; }
+
     }
 }

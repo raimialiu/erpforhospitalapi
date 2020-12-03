@@ -15,7 +15,13 @@ namespace medicloud.emr.api.Controllers
         private readonly IAppointmentRepository _repository;
 
         public AppointmentsController(IAppointmentRepository repository) => _repository = repository;
-      
+
+        [HttpGet, Route("GetUpcomingAppointments")]
+        public async Task<IActionResult> GetUpcomingAppointments(int locationId, int accountId, string searchWord)
+        {
+            var appointments = await _repository.UpcomingAppointment(locationId, accountId, searchWord);
+            return Ok(appointments);
+        }
 
         [HttpGet("schedules/{locationid}")]
         public async Task<IActionResult> GetGenSchedules(int locationid) => Ok(await _repository.GetGeneralSchedules(locationid));

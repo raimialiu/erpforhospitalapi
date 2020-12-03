@@ -16,6 +16,8 @@ namespace medicloud.emr.api.Data
         {
         }
 
+        #region Dbset
+
         public virtual DbSet<AccessControl> AccessControl { get; set; }
         public virtual DbSet<AccesscontrolUser> AccesscontrolUser { get; set; }
         public virtual DbSet<AccountCategory> AccountCategory { get; set; }
@@ -264,16 +266,23 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<VerificationLog> VerificationLog { get; set; }
         public virtual DbSet<VisitType> VisitType { get; set; }
         public virtual DbSet<Ward> Ward { get; set; }
+        public virtual DbSet<CheckIn> CheckIn { get; set; }
+
+        #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=52.251.49.79;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=medismarts;Password=md2015@tech");
+
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code.
+#warning See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                //optionsBuilder.UseSqlServer("Data Source=52.251.49.79;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=medismarts;Password=md2015@tech;MultipleActiveResultSets=True");
+                optionsBuilder.UseSqlServer("Data Source=DESKTOP-RV56AB0;Database=medismartsemr_db;Trusted_Connection=True;MultipleActiveResultSets=true;");
             }
         }
 
+        #region OnModelCreating
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AccessControl>(entity =>
@@ -6146,6 +6155,46 @@ namespace medicloud.emr.api.Data
                     .HasMaxLength(1000)
                     .IsUnicode(false);
             });
+            
+            modelBuilder.Entity<CheckIn>(entity =>
+            {
+                entity.HasKey(e => e.Encounterid)
+                    .HasName("PK__Checke__3A71E2D82A4295FC");
+
+                entity.Property(e => e.Encounterid).HasColumnName("encounterId");
+
+                entity.Property(e => e.CheckInDate)
+                    .HasColumnName("checkindate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.CheckOutDate)
+                    .HasColumnName("checkoutdate")
+                    .HasColumnType("datetime");
+
+                entity.HasOne(d => d.Patient)
+                   .WithMany(p => p.CheckIn)
+                   .HasForeignKey(d => d.Patientid)
+                   .HasConstraintName("FK_CheckIn_Patient");
+
+                entity.HasOne(d => d.Location)
+                   .WithMany(p => p.CheckIn)
+                   .HasForeignKey(d => d.Locationid)
+                   .HasConstraintName("FK_CheckIn_Location");
+
+                entity.HasOne(d => d.AccountManager)
+                   .WithMany(p => p.CheckIn)
+                   .HasForeignKey(d => d.Accountid)
+                   .HasConstraintName("FK_CheckIn_Patient_Account");
+
+                entity.Property(e => e.IsCheckedIn)
+                    .HasColumnName("ischeckedin")
+                    .HasColumnType("bit");
+                
+                entity.Property(e => e.IsCheckedOut)
+                    .HasColumnName("ischeckedout")
+                    .HasColumnType("bit");
+
+            });
 
             modelBuilder.Entity<Tariff>(entity =>
             {
@@ -10386,6 +10435,8 @@ namespace medicloud.emr.api.Data
 
             OnModelCreatingPartial(modelBuilder);
         }
+
+        #endregion
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
