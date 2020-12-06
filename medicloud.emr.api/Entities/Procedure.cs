@@ -8,6 +8,7 @@ namespace medicloud.emr.api.Entities
         public Procedure()
         {
             ProcedureUtilization = new HashSet<ProcedureUtilization>();
+            PaRequest = new HashSet<PaRequest>();
         }
 
         public int Id { get; set; }
@@ -26,5 +27,6 @@ namespace medicloud.emr.api.Entities
 
         public virtual AccountManager Provider { get; set; }
         public virtual ICollection<ProcedureUtilization> ProcedureUtilization { get; set; }
+        public virtual ICollection<PaRequest> PaRequest { get; set; }
     }
 }

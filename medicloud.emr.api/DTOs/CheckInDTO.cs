@@ -14,6 +14,7 @@ namespace medicloud.emr.api.DTOs
         public string PatientId { get; set; }
         public DateTime CheckInDate { get; set; }
         public DateTime CheckOutDate { get; set; }
+        public DateTime AppointmentDate { get; set; }
         public bool isCheckedOut { get; set; }
         public bool isCheckedIn { get; set; }
         public Patient PatientDetails { get; set; }

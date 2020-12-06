@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace medicloud.emr.api.Migrations
 {
-    public partial class init : Migration
+    public partial class pa : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -352,6 +352,19 @@ namespace medicloud.emr.api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HealthCareFacilitator", x => x.facilitatorid);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HospitalUnit",
+                columns: table => new
+                {
+                    HospitalUnitId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    HospitalUnitName = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HospitalUnit", x => x.HospitalUnitId);
                 });
 
             migrationBuilder.CreateTable(
@@ -5000,6 +5013,43 @@ namespace medicloud.emr.api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CheckIn",
+                columns: table => new
+                {
+                    encounterId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Patientid = table.Column<string>(nullable: true),
+                    Accountid = table.Column<int>(nullable: false),
+                    Locationid = table.Column<int>(nullable: false),
+                    ischeckedin = table.Column<bool>(type: "bit", nullable: false),
+                    ischeckedout = table.Column<bool>(type: "bit", nullable: false),
+                    checkindate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    checkoutdate = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__Checke__3A71E2D82A4295FC", x => x.encounterId);
+                    table.ForeignKey(
+                        name: "FK_CheckIn_Patient_Account",
+                        column: x => x.Accountid,
+                        principalTable: "AccountManager",
+                        principalColumn: "ProviderID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CheckIn_Location",
+                        column: x => x.Locationid,
+                        principalTable: "Location",
+                        principalColumn: "locationid",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CheckIn_Patient",
+                        column: x => x.Patientid,
+                        principalTable: "Patient",
+                        principalColumn: "patientid",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Consultation_Check",
                 columns: table => new
                 {
@@ -5387,6 +5437,52 @@ namespace medicloud.emr.api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaRequest",
+                columns: table => new
+                {
+                    PARequestId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AccountId = table.Column<int>(nullable: false),
+                    LocationId = table.Column<int>(nullable: false),
+                    PaStatus = table.Column<string>(nullable: true),
+                    PaNumber = table.Column<string>(nullable: true),
+                    ProcedureId = table.Column<int>(nullable: false),
+                    UnitCharge = table.Column<decimal>(nullable: false),
+                    Quantity = table.Column<decimal>(nullable: false),
+                    IssuerComment = table.Column<string>(nullable: true),
+                    RequestDate = table.Column<DateTime>(nullable: true),
+                    PatientId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaRequest", x => x.PARequestId);
+                    table.ForeignKey(
+                        name: "FK_PaRequest_Account",
+                        column: x => x.AccountId,
+                        principalTable: "AccountManager",
+                        principalColumn: "ProviderID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PaRequest_Location",
+                        column: x => x.LocationId,
+                        principalTable: "Location",
+                        principalColumn: "locationid",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PaRequest_Patient",
+                        column: x => x.PatientId,
+                        principalTable: "Patient",
+                        principalColumn: "patientid",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PaRequest_Procedure",
+                        column: x => x.ProcedureId,
+                        principalTable: "procedure",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Patient_MedicalHistory",
                 columns: table => new
                 {
@@ -5538,6 +5634,48 @@ namespace medicloud.emr.api.Migrations
                         column: x => x.qid,
                         principalTable: "Questionnaire",
                         principalColumn: "qid",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientQueue",
+                columns: table => new
+                {
+                    PatientQueueId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PatientId = table.Column<string>(nullable: true),
+                    AccountId = table.Column<int>(nullable: false),
+                    LocationId = table.Column<int>(nullable: false),
+                    HospitalUnitId = table.Column<int>(nullable: false),
+                    EncounterId = table.Column<int>(nullable: false),
+                    LastVisit = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientQueue", x => x.PatientQueueId);
+                    table.ForeignKey(
+                        name: "FK_PatientQueue_Account",
+                        column: x => x.AccountId,
+                        principalTable: "AccountManager",
+                        principalColumn: "ProviderID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientQueue_HospitalUnit",
+                        column: x => x.HospitalUnitId,
+                        principalTable: "HospitalUnit",
+                        principalColumn: "HospitalUnitId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientQueue_Location",
+                        column: x => x.LocationId,
+                        principalTable: "Location",
+                        principalColumn: "locationid",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientQueue_Patient",
+                        column: x => x.PatientId,
+                        principalTable: "Patient",
+                        principalColumn: "patientid",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -6672,6 +6810,21 @@ namespace medicloud.emr.api.Migrations
                 column: "ProviderID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CheckIn_Accountid",
+                table: "CheckIn",
+                column: "Accountid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CheckIn_Locationid",
+                table: "CheckIn",
+                column: "Locationid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CheckIn_Patientid",
+                table: "CheckIn",
+                column: "Patientid");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_claims_diagnosisID",
                 table: "claims",
                 column: "diagnosisID");
@@ -7122,6 +7275,26 @@ namespace medicloud.emr.api.Migrations
                 column: "ordertypeid");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PaRequest_AccountId",
+                table: "PaRequest",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaRequest_LocationId",
+                table: "PaRequest",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaRequest_PatientId",
+                table: "PaRequest",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaRequest_ProcedureId",
+                table: "PaRequest",
+                column: "ProcedureId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Patient_bloodgroupid",
                 table: "Patient",
                 column: "bloodgroupid");
@@ -7255,6 +7428,26 @@ namespace medicloud.emr.api.Migrations
                 name: "IX_Patient_Questionnaire_qid",
                 table: "Patient_Questionnaire",
                 column: "qid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientQueue_AccountId",
+                table: "PatientQueue",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientQueue_HospitalUnitId",
+                table: "PatientQueue",
+                column: "HospitalUnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientQueue_LocationId",
+                table: "PatientQueue",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientQueue_PatientId",
+                table: "PatientQueue",
+                column: "PatientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Personnel_deptid",
@@ -7576,6 +7769,9 @@ namespace medicloud.emr.api.Migrations
                 name: "CentralStore");
 
             migrationBuilder.DropTable(
+                name: "CheckIn");
+
+            migrationBuilder.DropTable(
                 name: "claims");
 
             migrationBuilder.DropTable(
@@ -7705,6 +7901,9 @@ namespace medicloud.emr.api.Migrations
                 name: "Nursing_Record");
 
             migrationBuilder.DropTable(
+                name: "PaRequest");
+
+            migrationBuilder.DropTable(
                 name: "Patient_MedicalHistory");
 
             migrationBuilder.DropTable(
@@ -7712,6 +7911,9 @@ namespace medicloud.emr.api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Patient_Questionnaire");
+
+            migrationBuilder.DropTable(
+                name: "PatientQueue");
 
             migrationBuilder.DropTable(
                 name: "PatientType");
@@ -8105,6 +8307,9 @@ namespace medicloud.emr.api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Questionnaire");
+
+            migrationBuilder.DropTable(
+                name: "HospitalUnit");
 
             migrationBuilder.DropTable(
                 name: "procedure");

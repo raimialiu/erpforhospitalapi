@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using medicloud.emr.api.DTOs;
@@ -21,6 +22,48 @@ namespace medicloud.emr.api.Controllers
         {
             var appointments = await _repository.UpcomingAppointment(locationId, accountId, searchWord);
             return Ok(appointments);
+        }
+
+        [HttpGet, Route("TotalAppointmentToday")]
+        public async Task<IActionResult> TotalAppointmentToday(int locationId, int accountId)
+        {
+            try
+            {
+                var result = await _repository.GetTotalAppointmentTodayCount(locationId, accountId);
+
+                TotalsPercentDto response = new TotalsPercentDto
+                {
+                    isIncrease = result.Item3,
+                    TodayTotals = result.Item1,
+                    PercentIncrease = result.Item2
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+        
+        [HttpGet, Route("TotalAppointmentNoShowToday")]
+        public async Task<IActionResult> TotalAppointmentNoShowToday(int locationId, int accountId)
+        {
+            try
+            {
+                var result = await _repository.GetAppointmentNoShowTodayCount(locationId, accountId);
+
+                TotalsPercentDto response = new TotalsPercentDto
+                {
+                    isIncrease = result.Item3,
+                    TodayTotals = result.Item1,
+                    PercentIncrease = result.Item2
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("schedules/{locationid}")]

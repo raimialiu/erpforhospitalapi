@@ -267,6 +267,9 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<VisitType> VisitType { get; set; }
         public virtual DbSet<Ward> Ward { get; set; }
         public virtual DbSet<CheckIn> CheckIn { get; set; }
+        public virtual DbSet<PaRequest> PaRequest { get; set; }
+        public virtual DbSet<PatientQueue> PatientQueue { get; set; }
+        public virtual DbSet<HospitalUnit> HospitalUnit { get; set; }
 
         #endregion
 
@@ -6196,7 +6199,63 @@ namespace medicloud.emr.api.Data
 
             });
 
-            modelBuilder.Entity<Tariff>(entity =>
+            modelBuilder.Entity<PatientQueue>(entity =>
+            {
+                entity.HasKey(e => e.PatientQueueId);
+                
+                entity.HasOne(d => d.Patient)
+                   .WithMany(p => p.PatientQueue)
+                   .HasForeignKey(d => d.PatientId)
+                   .HasConstraintName("FK_PatientQueue_Patient");
+                
+                entity.HasOne(d => d.HospitalUnit)
+                   .WithMany(p => p.PatientQueue)
+                   .HasForeignKey(d => d.HospitalUnitId)
+                   .HasConstraintName("FK_PatientQueue_HospitalUnit");
+
+                entity.HasOne(d => d.Location)
+                   .WithMany(p => p.PatientQueue)
+                   .HasForeignKey(d => d.LocationId)
+                   .HasConstraintName("FK_PatientQueue_Location");
+
+                entity.HasOne(d => d.AccountManager)
+                   .WithMany(p => p.PatientQueue)
+                   .HasForeignKey(d => d.AccountId)
+                   .HasConstraintName("FK_PatientQueue_Account");
+            });
+            
+            modelBuilder.Entity<HospitalUnit>(entity =>
+            {
+                entity.HasKey(e => e.HospitalUnitId);
+            });
+            
+            modelBuilder.Entity<PaRequest>(entity =>
+            {
+                entity.HasKey(e => e.PARequestId);
+
+                entity.HasOne(d => d.Procedure)
+                   .WithMany(p => p.PaRequest)
+                   .HasForeignKey(d => d.ProcedureId)
+                   .HasConstraintName("FK_PaRequest_Procedure");
+
+
+                entity.HasOne(d => d.Patient)
+                   .WithMany(p => p.PaRequest)
+                   .HasForeignKey(d => d.PatientId)
+                   .HasConstraintName("FK_PaRequest_Patient");
+
+                entity.HasOne(d => d.Location)
+                   .WithMany(p => p.PaRequest)
+                   .HasForeignKey(d => d.LocationId)
+                   .HasConstraintName("FK_PaRequest_Location");
+
+                entity.HasOne(d => d.AccountManager)
+                   .WithMany(p => p.PaRequest)
+                   .HasForeignKey(d => d.AccountId)
+                   .HasConstraintName("FK_PaRequest_Account");
+            });
+
+                modelBuilder.Entity<Tariff>(entity =>
             {
                 entity.Property(e => e.Tariffid).HasColumnName("tariffid");
 

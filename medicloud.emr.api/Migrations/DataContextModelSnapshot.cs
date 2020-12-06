@@ -4592,6 +4592,21 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("HmoType");
                 });
 
+            modelBuilder.Entity("medicloud.emr.api.Entities.HospitalUnit", b =>
+                {
+                    b.Property<int>("HospitalUnitId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("HospitalUnitName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("HospitalUnitId");
+
+                    b.ToTable("HospitalUnit");
+                });
+
             modelBuilder.Entity("medicloud.emr.api.Entities.Hshhs", b =>
                 {
                     b.Property<int>("Id")
@@ -5494,6 +5509,56 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("OrderType");
                 });
 
+            modelBuilder.Entity("medicloud.emr.api.Entities.PaRequest", b =>
+                {
+                    b.Property<int>("PARequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IssuerComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PatientId")
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<int>("ProcedureId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("RequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("UnitCharge")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("PARequestId");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("PatientId");
+
+                    b.HasIndex("ProcedureId");
+
+                    b.ToTable("PaRequest");
+                });
+
             modelBuilder.Entity("medicloud.emr.api.Entities.Patient", b =>
                 {
                     b.Property<string>("Patientid")
@@ -6160,6 +6225,44 @@ namespace medicloud.emr.api.Migrations
                     b.HasIndex("Qid");
 
                     b.ToTable("Patient_Questionnaire");
+                });
+
+            modelBuilder.Entity("medicloud.emr.api.Entities.PatientQueue", b =>
+                {
+                    b.Property<int>("PatientQueueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DateAdded")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EncounterId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HospitalUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PatientId")
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("PatientQueueId");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("HospitalUnitId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("PatientQueue");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.PatientType", b =>
@@ -14589,6 +14692,35 @@ namespace medicloud.emr.api.Migrations
                         .HasConstraintName("fk_ordertype_orderlisting");
                 });
 
+            modelBuilder.Entity("medicloud.emr.api.Entities.PaRequest", b =>
+                {
+                    b.HasOne("medicloud.emr.api.Entities.AccountManager", "AccountManager")
+                        .WithMany("PaRequest")
+                        .HasForeignKey("AccountId")
+                        .HasConstraintName("FK_PaRequest_Account")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("medicloud.emr.api.Entities.Location", "Location")
+                        .WithMany("PaRequest")
+                        .HasForeignKey("LocationId")
+                        .HasConstraintName("FK_PaRequest_Location")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("medicloud.emr.api.Entities.Patient", "Patient")
+                        .WithMany("PaRequest")
+                        .HasForeignKey("PatientId")
+                        .HasConstraintName("FK_PaRequest_Patient");
+
+                    b.HasOne("medicloud.emr.api.Entities.Procedure", "Procedure")
+                        .WithMany("PaRequest")
+                        .HasForeignKey("ProcedureId")
+                        .HasConstraintName("FK_PaRequest_Procedure")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("medicloud.emr.api.Entities.Patient", b =>
                 {
                     b.HasOne("medicloud.emr.api.Entities.BloodGroup", "Bloodgroup")
@@ -14737,6 +14869,35 @@ namespace medicloud.emr.api.Migrations
                         .WithMany("PatientQuestionnaire")
                         .HasForeignKey("Qid")
                         .HasConstraintName("FK_Patient_Questionnaire_Questionnaire");
+                });
+
+            modelBuilder.Entity("medicloud.emr.api.Entities.PatientQueue", b =>
+                {
+                    b.HasOne("medicloud.emr.api.Entities.AccountManager", "AccountManager")
+                        .WithMany("PatientQueue")
+                        .HasForeignKey("AccountId")
+                        .HasConstraintName("FK_PatientQueue_Account")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("medicloud.emr.api.Entities.HospitalUnit", "HospitalUnit")
+                        .WithMany("PatientQueue")
+                        .HasForeignKey("HospitalUnitId")
+                        .HasConstraintName("FK_PatientQueue_HospitalUnit")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("medicloud.emr.api.Entities.Location", "Location")
+                        .WithMany("PatientQueue")
+                        .HasForeignKey("LocationId")
+                        .HasConstraintName("FK_PatientQueue_Location")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("medicloud.emr.api.Entities.Patient", "Patient")
+                        .WithMany("PatientQueue")
+                        .HasForeignKey("PatientId")
+                        .HasConstraintName("FK_PatientQueue_Patient");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.Personnel", b =>

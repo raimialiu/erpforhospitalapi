@@ -23,8 +23,16 @@ namespace medicloud.emr.api.Controllers
         [HttpGet, Route("GetCheckedInList")]
         public async Task<IActionResult> GetCheckedInList(int locationId, int accountId, string searchword)
         {
-            var checkin = await _checkInRepository.GetCheckInList(locationId, searchword, accountId);
-            return Ok(checkin);
+            try
+            {
+                var checkin = await _checkInRepository.GetCheckInList(locationId, searchword, accountId);
+                return Ok(checkin);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+            
         }
         
         [HttpGet, Route("GetCheckedInPatient")]
@@ -63,11 +71,33 @@ namespace medicloud.emr.api.Controllers
             
         }
         
+
         [HttpGet, Route("CheckOutPatient")]
         public async Task<IActionResult> CheckOutPatient(string patientId, int locationId, int accountId)
         {
             await _checkInRepository.CheckOutPatient(patientId, locationId, accountId);
             return NoContent();
+        }
+        
+        [HttpGet, Route("TotalCheckInToday")]
+        public async Task<IActionResult> TotalCheckInToday(int locationId, int accountId)
+        {
+            try
+            {
+                var result = await _checkInRepository.GetTotalCheckInTodayCount(locationId, accountId);
+
+                TotalsPercentDto response = new TotalsPercentDto
+                {
+                    isIncrease = result.Item3,
+                    TodayTotals = result.Item1,
+                    PercentIncrease = result.Item2
+                };
+                return Ok(response);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
     }

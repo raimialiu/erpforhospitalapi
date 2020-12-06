@@ -15,6 +15,7 @@ namespace medicloud.emr.api.Services
         Task<(string, bool)> CreaateCheckIn(string patientId, int providerId, int locationId);
         Task<List<CheckInDTO>> GetCheckInList(int locationId, string searchWord, int accountId);
         Task<CheckIn> GetCheckedInPatient(int locationId, string patientId, int accountId);
+        Task<(int, int, bool)> GetTotalCheckInTodayCount(int locationId, int accountId);
     }
 
     public class CheckInRepository : ICheckInRepository
@@ -46,6 +47,20 @@ namespace medicloud.emr.api.Services
                 await _context.AddAsync(checkIn);
                 await _context.SaveChangesAsync();
 
+                // insert to patientQueue
+                PatientQueue patientQueue = new PatientQueue
+                {
+                    EncounterId = checkIn.Encounterid,
+                    AccountId = checkIn.Accountid,
+                    HospitalUnitId = _context.HospitalUnit.Where(h => h.HospitalUnitName.Contains("frontdesk")).Select(n => n.HospitalUnitId).FirstOrDefault(),
+                    LocationId = checkIn.Locationid,
+                    PatientId = checkIn.Patientid,
+                    DateAdded = DateTime.Now
+                };
+
+                await _context.AddAsync(patientQueue);
+                await _context.SaveChangesAsync();
+
                 return ("Patient has been successfully checked-In", true);
             }
             else
@@ -59,7 +74,7 @@ namespace medicloud.emr.api.Services
         {
             if (!string.IsNullOrEmpty(searchWord))
             {
-                var _result = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false && c.Accountid == accountId).Include(s => s.Patient)/*.ThenInclude(g => g.Gender)*/
+                var _result = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false && c.Accountid == accountId && c.CheckInDate.Date == DateTime.Today.Date).Include(s => s.Patient)/*.ThenInclude(g => g.Gender)*/
                 .Select(r => new CheckInDTO
                 {
                     CheckInDate = r.CheckInDate,
@@ -70,7 +85,8 @@ namespace medicloud.emr.api.Services
                     LocationId = r.Locationid,
                     PatientId = r.Patientid,
                     ProviderId = r.Accountid,
-                    PatientDetails = r.Patient
+                    PatientDetails = r.Patient,
+                    AppointmentDate = _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.PatientNumber == r.Patientid && a.Provid == accountId && a.Starttime.Date == DateTime.Today.Date).Select(ap => ap.Starttime).FirstOrDefault()
 
                 }).ToListAsync();
 
@@ -79,7 +95,7 @@ namespace medicloud.emr.api.Services
                 return checkInList;
             }
 
-            var result = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false && c.Accountid == accountId).Include(s => s.Patient)/*.ThenInclude(g => g.Gender)*/
+            var result = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false && c.Accountid == accountId && c.CheckInDate.Date == DateTime.Today.Date).Include(s => s.Patient)/*.ThenInclude(g => g.Gender)*/
                 .Select(r => new CheckInDTO
                 {
                     CheckInDate = r.CheckInDate,
@@ -90,10 +106,42 @@ namespace medicloud.emr.api.Services
                     LocationId = r.Locationid,
                     PatientId = r.Patientid,
                     ProviderId = r.Accountid,
-                    PatientDetails = r.Patient
+                    PatientDetails = r.Patient,
+                    AppointmentDate = _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.PatientNumber == r.Patientid && a.Provid == accountId && a.Starttime.Date == DateTime.Today.Date).Select(ap => ap.Starttime).FirstOrDefault()
 
                 }).ToListAsync();
             return result;
+        }
+        
+        public async Task<(int, int, bool)> GetTotalCheckInTodayCount(int locationId, int accountId)
+        {
+            var totalCheckedInToday = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false &&
+                         c.Accountid == accountId && c.CheckInDate.Date == DateTime.Today.Date).CountAsync();
+
+            var totalCheckedInSixmonthsAgo = await _context.CheckIn.Where(c => c.Locationid == locationId &&
+                            c.Accountid == accountId && c.CheckInDate.Date >= DateTime.Today.AddMonths(-6).Date).CountAsync();
+
+            var increase = totalCheckedInToday - totalCheckedInSixmonthsAgo;
+
+            decimal percentIncrease;
+            decimal div;
+            div = (decimal)(increase) / (decimal)totalCheckedInSixmonthsAgo;
+
+            percentIncrease = div * 100;
+
+            var isIncrease = false;
+
+            if (percentIncrease > 0)
+            {
+                isIncrease = true;
+            }
+            else if (percentIncrease < 0)
+            {
+                isIncrease = false;
+            }
+
+            percentIncrease = Math.Abs(percentIncrease);
+            return (totalCheckedInToday, (int)percentIncrease, isIncrease);
         }
         
         public async Task<CheckIn> GetCheckedInPatient(int locationId, string patientId, int accountId)

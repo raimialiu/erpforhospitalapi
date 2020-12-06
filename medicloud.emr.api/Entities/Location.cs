@@ -17,6 +17,8 @@ namespace medicloud.emr.api.Entities
             SpecializationSchedule = new HashSet<SpecializationSchedule>();
             UserLocation = new HashSet<UserLocation>();
             CheckIn = new HashSet<CheckIn>();
+            PatientQueue = new HashSet<PatientQueue>();
+            PaRequest = new HashSet<PaRequest>();
         }
 
         public int Locationid { get; set; }
@@ -41,5 +43,7 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<Specialization> Specialization { get; set; }
         public virtual ICollection<SpecializationSchedule> SpecializationSchedule { get; set; }
         public virtual ICollection<UserLocation> UserLocation { get; set; }
+        public virtual ICollection<PatientQueue> PatientQueue { get; set; }
+        public virtual ICollection<PaRequest> PaRequest { get; set; }
     }
 }
