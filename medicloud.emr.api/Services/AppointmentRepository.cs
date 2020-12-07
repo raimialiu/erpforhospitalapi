@@ -27,6 +27,9 @@ namespace medicloud.emr.api.Services
         Task<bool> RemoveBlockSchedule(int blockid);
         Task AddAppointment(AppointmentCreate model);
         Task<bool> UpdateAppointment(AppointmentCreate model);
+        Task<List<UpcomingAppointmentList>> UpcomingAppointment(int locationId, int accountId, string searchWord);
+        Task<(int, int, bool)> GetTotalAppointmentTodayCount(int locationId, int accountId);
+        Task<(int, int, bool)> GetAppointmentNoShowTodayCount(int locationId, int accountId);
 
     }
 
@@ -422,6 +425,134 @@ namespace medicloud.emr.api.Services
             appointment.PatientNumber = model.PatientNo;
             
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<List<UpcomingAppointmentList>> UpcomingAppointment (int locationId, int accountId, string searchWord)
+        {
+            if (!string.IsNullOrEmpty(searchWord))
+            {
+                var _appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.Provid == accountId &&
+                                a.Starttime.Date == DateTime.Today.Date && a.Starttime >= DateTime.Now)
+                .Select(r => new UpcomingAppointmentList()
+                {
+                    Location = _context.Location.Where(l => l.Locationid == r.Locationid).Select(e => e.Locationname).FirstOrDefault(),
+                    Date = r.Starttime,
+                    Patient = _context.Patient.Where(p => p.Patientid == r.PatientNumber).FirstOrDefault(),
+                    Provider = _context.AccountManager.Where(p => p.ProviderId == r.Provid).Select(e => e.HospitalName).FirstOrDefault(),
+                    Id = r.Apptid,
+                    Status = (int)r.Statusid,
+                    Gender = _context.Patient.Where(p => p.Patientid == r.PatientNumber).Select(g => g.Gender.Gendername).FirstOrDefault(),
+
+                }).ToListAsync();
+
+                var appointmentSearch = _appointments.Where(r => r.Patient.Patientid.ToUpper().Contains(searchWord.ToUpper()) || r.Patient.Firstname.ToUpper().Contains(searchWord.ToUpper()) ||
+                                                    r.Patient.Lastname.ToUpper().Contains(searchWord.ToUpper()) /*|| r.EncounterId.ToString().ToUpper().Contains(searchWord.ToUpper())*/).ToList();
+                return appointmentSearch;
+            }
+
+            var appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.Provid == accountId &&
+                                a.Starttime.Date == DateTime.Today.Date && a.Starttime >= DateTime.Now)
+                .Select(r => new UpcomingAppointmentList()
+                {
+                    Location = _context.Location.Where(l => l.Locationid == r.Locationid).Select(e => e.Locationname).FirstOrDefault(),
+                    Date = r.Starttime,
+                    Patient = _context.Patient.Where(p => p.Patientid == r.PatientNumber).FirstOrDefault(),
+                    Provider = _context.AccountManager.Where(p => p.ProviderId == r.Provid).Select(e => e.HospitalName).FirstOrDefault(),
+                    Id = r.Apptid,
+                    Status = (int)r.Statusid,
+                    Gender = _context.Patient.Where(p => p.Patientid == r.PatientNumber).Select(g => g.Gender.Gendername).FirstOrDefault(),
+
+
+                }).ToListAsync();
+            return appointments;
+        }
+
+        public async Task<(int, int, bool)> GetTotalAppointmentTodayCount(int locationId, int accountId)
+        {
+            var totalAppointmentToday = await _context.AppointmentSchedule.Where(c => c.Locationid == locationId &&
+                         c.Provid == accountId && c.Starttime.Date == DateTime.Today.Date).CountAsync();
+
+            var totalAppointmentSixmonthsAgo = await _context.AppointmentSchedule.Where(c => c.Locationid == locationId &&
+                            c.Provid == accountId && c.Starttime.Date >= DateTime.Today.AddMonths(-6).Date).CountAsync();
+
+            var increase = totalAppointmentToday - totalAppointmentSixmonthsAgo;
+
+            decimal percentIncrease;
+            decimal div;
+            div = (decimal)(increase) / (decimal)totalAppointmentSixmonthsAgo;
+
+            percentIncrease = div * 100;
+
+            var isIncrease = false;
+
+            if (percentIncrease > 0)
+            {
+                isIncrease = true;
+            }
+            else if (percentIncrease < 0)
+            {
+                isIncrease = false;
+            }
+
+            percentIncrease = Math.Abs(percentIncrease);
+            return (totalAppointmentToday, (int)percentIncrease, isIncrease);
+        }
+
+        public async Task<(int, int, bool)> GetAppointmentNoShowTodayCount(int locationId, int accountId)
+        {
+            var totalPastAppointToday = await _context.AppointmentSchedule.Where(c => c.Locationid == locationId &&
+                         c.Provid == accountId && c.Starttime.Date == DateTime.Today.Date && c.Starttime < DateTime.Now).ToListAsync();
+
+            int totalNoShowToday = 0;
+            foreach (var item in totalPastAppointToday)
+            {
+                var isPatientCheckedIn = _context.CheckIn.Where(c => c.Locationid == locationId &&
+                         c.Accountid == accountId && c.Patientid == item.PatientNumber && c.CheckInDate.Date == DateTime.Today.Date).Any();
+
+                if (!isPatientCheckedIn)
+                {
+                    totalNoShowToday++;
+                }
+            }
+
+
+            var totalAppointmentSixmonthsAgo = await _context.AppointmentSchedule.Where(c => c.Locationid == locationId &&
+                            c.Provid == accountId && c.Starttime >= DateTime.Today.AddMonths(-6).Date).ToListAsync();
+            
+            int totalNoShowSixMonthsAgo = 0;
+            foreach (var item in totalAppointmentSixmonthsAgo)
+            {
+                var isPatientCheckedIn = _context.CheckIn.Where(c => c.Locationid == locationId &&
+                         c.Accountid == accountId && c.Patientid == item.PatientNumber && c.CheckInDate.Date == item.Starttime.Date).Any();
+
+                if (!isPatientCheckedIn)
+                {
+                    totalNoShowSixMonthsAgo++;
+                }
+            }
+
+
+            var increase = totalNoShowToday - totalNoShowSixMonthsAgo;
+
+            decimal percentIncrease;
+            decimal div;
+            div = (decimal)(increase) / (decimal)totalNoShowSixMonthsAgo;
+
+            percentIncrease = div * 100;
+
+            var isIncrease = false;
+
+            if (percentIncrease > 0)
+            {
+                isIncrease = true;
+            }
+            else if (percentIncrease < 0)
+            {
+                isIncrease = false;
+            }
+
+            percentIncrease = Math.Abs(percentIncrease);
+            return (totalNoShowToday, (int)percentIncrease, isIncrease);
         }
     }
 }

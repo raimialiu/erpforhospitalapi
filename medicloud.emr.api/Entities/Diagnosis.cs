@@ -8,6 +8,7 @@ namespace medicloud.emr.api.Entities
         public Diagnosis()
         {
             DiagnosisUtilization = new HashSet<DiagnosisUtilization>();
+            PaRequest = new HashSet<PaRequest>();
         }
 
         public int Id { get; set; }
@@ -21,5 +22,6 @@ namespace medicloud.emr.api.Entities
 
         public virtual AccountManager Provider { get; set; }
         public virtual ICollection<DiagnosisUtilization> DiagnosisUtilization { get; set; }
+        public virtual ICollection<PaRequest> PaRequest { get; set; }
     }
 }

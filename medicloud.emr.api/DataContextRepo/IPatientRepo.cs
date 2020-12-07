@@ -9,6 +9,7 @@ namespace medicloud.emr.api.DataContextRepo
     public interface IPatientRepo
     {
         Task<IQueryable<Patient>> SearchByValue(string searchValue);
+        Task<IQueryable<Patient>> GetPatientById(string patientId);
         void Close();
     }
 
@@ -28,6 +29,15 @@ namespace medicloud.emr.api.DataContextRepo
             string query = $"select * from [Patient] where firstname like {formattedQuery} or lastname like {formattedQuery}  or othername like {formattedQuery} or address like {formattedQuery} or mothername like {formattedQuery} or mobilephone like {formattedQuery} or email like {formattedQuery} or employername like {formattedQuery}";
             //string query = $"select * from [Patient] where firstname like %" + searchValue + "%";
             // $"select * from [Patient] where firstname like {formattedQuery}"
+            var result = _db.ExecuteRawSql(query);
+
+            return Task.FromResult(result);
+        }
+        
+        public Task<IQueryable<Patient>> GetPatientById(string patientId)
+        {
+            string query = $"select Top 1 * from [Patient] where patientid = {patientId}";
+            
             var result = _db.ExecuteRawSql(query);
 
             return Task.FromResult(result);

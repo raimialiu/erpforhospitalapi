@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 
 namespace medicloud.emr.api
@@ -33,19 +34,23 @@ namespace medicloud.emr.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connection = Configuration.GetConnectionString("lagoonDB");
+            services.AddDbContext<DataContext>(options =>
+                options.UseSqlServer(connection, x => x.MigrationsAssembly("medicloud.emr.api")));
+
             var jwtSettings = Configuration.GetSection(nameof(JwtSettings))
                                         .Get<JwtSettings>();
 
             services.AddControllers(setupActions =>
             {
                 setupActions.ReturnHttpNotAcceptable = true;
-            }).AddXmlDataContractSerializerFormatters()
-            
+            })//.AddXmlDataContractSerializerFormatters()
+            //.AddNewtonsoftJson();
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.IgnoreNullValues = true;
                 options.JsonSerializerOptions.WriteIndented = true;
-                
+
                 // .SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
                 //options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             });
@@ -61,15 +66,17 @@ namespace medicloud.emr.api
 
             Configuration.Bind(nameof(SwaggerSettings), swaggerSettings);
 
-            //services.AddSwaggerGen(c =>
-            //{
-            //    c.SwaggerDoc(swaggerSettings.Title, new Microsoft.OpenApi.Models.OpenApiInfo()
-            //    {
-            //        Version = swaggerSettings.Version,
-            //        Description = swaggerSettings.Description
-
-            //    });
-            //});
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "medicloud.emr.api",
+                    Description = "Medi-cloud EMR documented api ",
+                    //TermsOfService = "None",
+                    //Contact = new Contact() {  }
+                });
+            });
 
             services.AddAuthentication(options =>
             {
@@ -97,11 +104,16 @@ namespace medicloud.emr.api
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<ICheckInRepository, CheckInRepository>();
+            services.AddScoped<IPatientQueueRepository, PatientQueueRepository>();
+            services.AddScoped<IPaRequestRepository, PaRequestRepository>();
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
  
             const string connectionString = "lagoonDB";
             services.AddDbContext<DataContext>(options =>
                         options.UseSqlServer(Configuration.GetConnectionString(connectionString)));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -117,6 +129,8 @@ namespace medicloud.emr.api
 
             app.UseStaticFiles();
             //app.UseExceptionMiddleware();
+
+            
 
             app.UseRouting();
 
@@ -140,6 +154,13 @@ namespace medicloud.emr.api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Medi-Cloud EMR");
+                c.RoutePrefix = string.Empty;
             });
         }
     }
