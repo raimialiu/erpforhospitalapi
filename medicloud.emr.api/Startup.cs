@@ -44,13 +44,13 @@ namespace medicloud.emr.api
             services.AddControllers(setupActions =>
             {
                 setupActions.ReturnHttpNotAcceptable = true;
-            }).AddXmlDataContractSerializerFormatters()
-            
+            })//.AddXmlDataContractSerializerFormatters()
+            //.AddNewtonsoftJson();
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.IgnoreNullValues = true;
                 options.JsonSerializerOptions.WriteIndented = true;
-                
+
                 // .SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
                 //options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             });
@@ -106,6 +106,8 @@ namespace medicloud.emr.api
             services.AddScoped<ILocationRepository, LocationRepository>();
             services.AddScoped<ICheckInRepository, CheckInRepository>();
             services.AddScoped<IPatientQueueRepository, PatientQueueRepository>();
+            services.AddScoped<IPaRequestRepository, PaRequestRepository>();
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
  
             const string connectionString = "lagoonDB";

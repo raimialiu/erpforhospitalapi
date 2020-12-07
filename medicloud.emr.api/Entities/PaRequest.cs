@@ -16,6 +16,8 @@ namespace medicloud.emr.api.Entities
         public string PaNumber { get; set; }
         public int ProcedureId { get; set; }
         public Procedure Procedure { get; set; }
+        public int DiagnosisId { get; set; }
+        public Diagnosis Diagnosis { get; set; }
         public decimal UnitCharge { get; set; }
         public decimal Quantity { get; set; }
         public string IssuerComment { get; set; }

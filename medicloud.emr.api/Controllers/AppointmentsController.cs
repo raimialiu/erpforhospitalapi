@@ -150,7 +150,7 @@ namespace medicloud.emr.api.Controllers
             await _repository.AddAppointment(model);
             return NoContent();
         }
-
+        
         [HttpPut("update/{apptId}")]
         public async Task<IActionResult> UpdateAppointment(int apptId, AppointmentCreate model)
         {
