@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace medicloud.emr.api.Entities
 {
     public partial class BreakBlockSchedule
     {
+        [Key]
         public int Blockid { get; set; }
         public string Blockname { get; set; }
         public string Starttime { get; set; }
