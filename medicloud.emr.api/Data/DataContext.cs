@@ -650,6 +650,8 @@ namespace medicloud.emr.api.Data
                     .HasColumnName("comments")
                     .IsUnicode(false);
 
+                entity.HasKey(x => x.Appointmentid);
+
                 entity.Property(e => e.Dateadded)
                     .HasColumnName("dateadded")
                     .HasColumnType("date")

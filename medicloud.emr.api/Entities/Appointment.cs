@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace medicloud.emr.api.Entities
 {
     public partial class Appointment
     {
+        [Key]
         public int Appointmentid { get; set; }
         public string Patientid { get; set; }
         public int? Deptid { get; set; }

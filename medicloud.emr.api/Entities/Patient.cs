@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace medicloud.emr.api.Entities
 {
@@ -33,6 +35,8 @@ namespace medicloud.emr.api.Entities
             VerificationLog = new HashSet<VerificationLog>();
         }
 
+        //[Key]
+        //[DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string Patientid { get; set; }
         public string Title { get; set; }
         public string Firstname { get; set; }
@@ -83,6 +87,7 @@ namespace medicloud.emr.api.Entities
         public int? ProviderId { get; set; }
         public string AlternateId1 { get; set; }
         public string AlternateId2 { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Autoid { get; set; }
         public string Servicetype { get; set; }
         public string Plantype { get; set; }
