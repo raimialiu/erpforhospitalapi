@@ -38,6 +38,9 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<BenefitPackage> BenefitPackage { get; set; }
         public virtual DbSet<Bill> Bill { get; set; }
         public virtual DbSet<BillDetail> BillDetail { get; set; }
+        public virtual DbSet<HospitalUnit> HospitalUnit { get; set; }
+        public virtual DbSet<PatientQueue> PatientQueue { get; set; }
+        public virtual DbSet<AppointmentSchedule> AppointmentSchedule { get; set; }
         public virtual DbSet<BillPayable> BillPayable { get; set; }
         public virtual DbSet<Biometric> Biometric { get; set; }
         public virtual DbSet<BirthRegister> BirthRegister { get; set; }
@@ -46,6 +49,9 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<CentralStore> CentralStore { get; set; }
         public virtual DbSet<Claims> Claims { get; set; }
         public virtual DbSet<Clinic> Clinic { get; set; }
+        public virtual DbSet<CheckIn> CheckIn { get; set; }
+        public virtual DbSet<PaRequest> PaRequest { get; set; }
+        //public virtual DbSet<PatientQueue> PatientQueue { get; set; }
         public virtual DbSet<Consultation> Consultation { get; set; }
         public virtual DbSet<ConsultationCheck> ConsultationCheck { get; set; }
         public virtual DbSet<ConsultationChecks> ConsultationChecks { get; set; }
