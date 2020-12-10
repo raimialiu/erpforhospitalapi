@@ -32,7 +32,9 @@ namespace medicloud.emr.api.Controllers
         private IDataContextRepo<Provider> providerRepo;
         private IDataContextRepo<Country> countryRepo;
         private IDataContextRepo<Title> _titleRepo;
-       // private ITitleRepo titleRepo;
+        private IDataContextRepo<Plan> planRepo;
+        private IDataContextRepo<Payer> payerRepo;
+        // private ITitleRepo titleRepo;
         public SetupController(IBloodGroupRepo bloodGroupRepo,
                     ITitleRepo titleRepo)
         {
@@ -53,8 +55,281 @@ namespace medicloud.emr.api.Controllers
             stateRepo = new DataContextRepo<State>();
             sponsorRepo = new DataContextRepo<Sponsor>();
             providerRepo = new DataContextRepo<Provider>();
+            planRepo = new DataContextRepo<Plan>();
+            payerRepo = new DataContextRepo<Payer>();
         }
 
+
+        #region planType
+
+        [Route("addPlan")]
+        [HttpPost]
+        public async Task<IActionResult> addPlan([FromBody] Plan dto)
+        {
+            var provider = (Plan)dto;
+            provider.CreatedAt = DateTime.Now;
+            var addResult = planRepo.AddNew(provider);
+            if (addResult)
+            {
+                _reponse = BaseResponse.GetResponse(null, "success", "00");
+                return Ok(_reponse);
+            }
+
+            _reponse = BaseResponse.GetResponse(null, "failure", "99");
+            return BadRequest();
+        }
+
+        [Route("updatePlan/{id}")]
+        [HttpPut]
+        public async Task<IActionResult> updatePlan([FromRoute] long id, [FromBody] Plan dto)
+        {
+
+            var getResult = planRepo.GetSingle(x => x.Id == id);
+
+            if (getResult != null)
+            {
+                getResult = dto;
+                var updateResult = planRepo.Update(getResult);
+                if (updateResult)
+                {
+                    _reponse = BaseResponse.GetResponse(null, "success", "00");
+                    return Ok(_reponse);
+                }
+
+            }
+
+
+            _reponse = BaseResponse.GetResponse(null, "failure", "99");
+            return BadRequest();
+        }
+
+        [Route("deletePlan/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> deletePlan([FromRoute] long id)
+        {
+
+
+            var deleteResult = planRepo.Delete(x => x.Id == id);
+            if (deleteResult)
+            {
+                _reponse = BaseResponse.GetResponse(null, "success", "00");
+                return Ok(_reponse);
+            }
+
+            _reponse = BaseResponse.GetResponse(null, "failure", "99");
+            return BadRequest(_reponse);
+        }
+
+        [Route("getAllPlan")]
+        [HttpGet]
+        public async Task<IActionResult> getAllPlan()
+        {
+            var allResult = planRepo.GetAll();
+
+            _reponse = BaseResponse.GetResponse(allResult, "success", "00");
+            return Ok(_reponse);
+
+        }
+
+        [Route("getPlanById/{id}")]
+        [HttpGet]
+        public async Task<IActionResult> getPlanById([FromRoute] long id)
+        {
+
+            var getResult = providerRepo.GetSingle(x => x.Id == id);
+            if (getResult != null)
+            {
+                _reponse = BaseResponse.GetResponse(getResult, "success", "00");
+                return Ok(_reponse);
+            }
+
+            _reponse = BaseResponse.GetResponse(null, "failed", "99");
+            return BadRequest(_reponse);
+        }
+
+        #endregion planType
+
+
+        #region Payer
+
+        [Route("addPayer")]
+        [HttpPost]
+        public async Task<IActionResult> addPayer([FromBody] Payer dto)
+        {
+            var provider = (Payer)dto;
+            provider.dateadded = DateTime.Now;
+            var addResult = payerRepo.AddNew(provider);
+            if (addResult)
+            {
+                _reponse = BaseResponse.GetResponse(null, "success", "00");
+                return Ok(_reponse);
+            }
+
+            _reponse = BaseResponse.GetResponse(null, "failure", "99");
+            return BadRequest();
+        }
+
+        [Route("updatePayer/{id}")]
+        [HttpPut]
+        public async Task<IActionResult> updatePayer([FromRoute] long id, [FromBody] Payer dto)
+        {
+
+            var getResult = payerRepo.GetSingle(x => x.PayerId == id);
+
+            if (getResult != null)
+            {
+                getResult = dto;
+                var updateResult = payerRepo.Update(getResult);
+                if (updateResult)
+                {
+                    _reponse = BaseResponse.GetResponse(null, "success", "00");
+                    return Ok(_reponse);
+                }
+
+            }
+
+
+            _reponse = BaseResponse.GetResponse(null, "failure", "99");
+            return BadRequest();
+        }
+
+        [Route("deletePayer/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> deletePayer([FromRoute] long id)
+        {
+
+
+            var deleteResult = payerRepo.Delete(x => x.PayerId == id);
+            if (deleteResult)
+            {
+                _reponse = BaseResponse.GetResponse(null, "success", "00");
+                return Ok(_reponse);
+            }
+
+            _reponse = BaseResponse.GetResponse(null, "failure", "99");
+            return BadRequest(_reponse);
+        }
+
+        [Route("getAllPayer")]
+        [HttpGet]
+        public async Task<IActionResult> getAllPayer()
+        {
+            var allResult = payerRepo.GetAll();
+
+            _reponse = BaseResponse.GetResponse(allResult, "success", "00");
+            return Ok(_reponse);
+
+        }
+
+        [Route("getPayerById/{id}")]
+        [HttpGet]
+        public async Task<IActionResult> getPayerById([FromRoute] long id)
+        {
+
+            var getResult = payerRepo.GetSingle(x => x.PayerId == id);
+            if (getResult != null)
+            {
+                _reponse = BaseResponse.GetResponse(getResult, "success", "00");
+                return Ok(_reponse);
+            }
+
+            _reponse = BaseResponse.GetResponse(null, "failed", "99");
+            return BadRequest(_reponse);
+        }
+
+
+
+        #endregion
+
+        #region sponsor
+
+        [Route("addSponsor")]
+        [HttpPost]
+        public async Task<IActionResult> addSponsor([FromBody] Sponsor dto)
+        {
+            var provider = (Sponsor)dto;
+            provider.Dateadded = DateTime.Now;
+            var addResult = sponsorRepo.AddNew(provider);
+            if (addResult)
+            {
+                _reponse = BaseResponse.GetResponse(null, "success", "00");
+                return Ok(_reponse);
+            }
+
+            _reponse = BaseResponse.GetResponse(null, "failure", "99");
+            return BadRequest();
+        }
+
+        [Route("updateSponsor/{id}")]
+        [HttpPut]
+        public async Task<IActionResult> updateSponsor([FromRoute] long id, [FromBody] Sponsor dto)
+        {
+
+            var getResult = sponsorRepo.GetSingle(x => x.Sponsid == id);
+
+            if (getResult != null)
+            {
+                getResult = dto;
+                var updateResult = sponsorRepo.Update(getResult);
+                if (updateResult)
+                {
+                    _reponse = BaseResponse.GetResponse(null, "success", "00");
+                    return Ok(_reponse);
+                }
+
+            }
+
+
+            _reponse = BaseResponse.GetResponse(null, "failure", "99");
+            return BadRequest();
+        }
+
+        [Route("deleteSponsor/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> deleteSponsor([FromRoute] long id)
+        {
+
+
+            var deleteResult = sponsorRepo.Delete(x => x.Sponsid == id);
+            if (deleteResult)
+            {
+                _reponse = BaseResponse.GetResponse(null, "success", "00");
+                return Ok(_reponse);
+            }
+
+            _reponse = BaseResponse.GetResponse(null, "failure", "99");
+            return BadRequest(_reponse);
+        }
+
+        [Route("getAllSponsor")]
+        [HttpGet]
+        public async Task<IActionResult> getAllSponsor()
+        {
+            var allResult = sponsorRepo.GetAll();
+
+            _reponse = BaseResponse.GetResponse(allResult, "success", "00");
+            return Ok(_reponse);
+
+        }
+
+        [Route("getSponsorById/{id}")]
+        [HttpGet]
+        public async Task<IActionResult> getSponsorById([FromRoute] long id)
+        {
+
+            var getResult = providerRepo.GetSingle(x => x.Id == id);
+            if (getResult != null)
+            {
+                _reponse = BaseResponse.GetResponse(getResult, "success", "00");
+                return Ok(_reponse);
+            }
+
+            _reponse = BaseResponse.GetResponse(null, "failed", "99");
+            return BadRequest(_reponse);
+        }
+
+
+        #endregion
 
         #region provider
         [Route("addProvider")]

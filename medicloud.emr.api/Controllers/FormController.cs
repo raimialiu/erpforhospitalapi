@@ -42,7 +42,7 @@ namespace medicloud.emr.api.Controllers
 
         //[Authorize(Roles = "Admin, Nurse")]
         [HttpGet("{id}")]
-        public IActionResult GetSingleForm(string id)
+        public IActionResult GetSingleForm([FromRoute]string id)
         {
             int masterid = Convert.ToInt32(id);
             var data = _dataContext.TemplateMaster.Where(x => x.Masterid == masterid).FirstOrDefault();
@@ -52,7 +52,7 @@ namespace medicloud.emr.api.Controllers
 
         // [Authorize(Roles = "Admin, Nurse")]
         [HttpGet("{name}")]
-        public IActionResult GetFormByName(string name)
+        public IActionResult GetFormByName([FromRoute]string name)
         {
 
             var data = _dataContext.TemplateMaster.Where(x => x.Formname == name).FirstOrDefault();
