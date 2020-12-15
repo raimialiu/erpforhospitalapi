@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using medicloud.emr.api.DTOs;
-using medicloud.emr.api.Helpers;
-using medicloud.emr.api.Mocks;
-using Microsoft.AspNetCore.Http;
+using medicloud.emr.api.Services;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace medicloud.emr.api.Controllers
 {
@@ -20,51 +13,53 @@ namespace medicloud.emr.api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly MockAuthRepository _authRepository;
+        private readonly IWebHostEnvironment _environment;
+        private readonly IAuthRepository _authRepository;
 
-        public AuthController(MockAuthRepository authRepository,IConfiguration configuration)
+        public AuthController(IAuthRepository authRepository, IConfiguration configuration, IWebHostEnvironment environment)
         {
             _configuration = configuration;
+            _environment = environment;
             _authRepository = authRepository;
         }
 
         [HttpPost("login")]
-        public IActionResult LoginUser(Login model)
+        public async Task<IActionResult> LoginUser(LoginRequest model)
         {
-            var user = _authRepository.Login(model.Username, model.Password);
-            if (user == null) return BadRequest("Invalid Username/Password");
-
-
-            var claims = new[]
+            try
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.FirstName),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
+                var user = await _authRepository.LoginUser(model.Username.Trim(), model.Password.Trim());
+                if (user == null) return BadRequest(new ErrorResponse { ErrorMessage = "Invalid Username/Password" });
 
-            var jwtSettings = _configuration.GetSection("JWTSettings")
-                                        .Get<JwtSettings>();
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+                return Ok(new LoginResponse(user, _configuration));
+            }
+            catch (Exception ex)
             {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(20),
-                SigningCredentials = credentials,
-                Issuer = jwtSettings.Issuer,
-                Audience = jwtSettings.Audience
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return Ok(new 
-            {
-                Token = tokenHandler.WriteToken(token),
-            });
+                return BadRequest(ex.Message);
+            }
+            
         }
 
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterUser([FromForm] Register model) 
+        {
+            var isValidUsername = await _authRepository.UniqueUsername(model.Username.Trim());
+            if (!isValidUsername) return BadRequest(new ErrorResponse { ErrorMessage = "Username has been taken" });
+
+            if (model.Image != null)
+            {
+                bool isValidExtension = model.ValidateExtension();
+                if (!isValidExtension) return BadRequest(new ErrorResponse { ErrorMessage = "Invalid File Format" });
+
+                const int maxSize = 50000;
+                if (model.Image.Length > maxSize) return BadRequest(new ErrorResponse { ErrorMessage = "Image exceeds the max size" });
+
+                await model.UploadImage(_environment);
+            }
+
+            await _authRepository.RegisterUser(model);
+
+            return NoContent();
+        }  
     }
 }

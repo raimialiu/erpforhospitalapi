@@ -7,7 +7,7 @@ namespace medicloud.emr.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    // [Authorize]
     public class DataController : ControllerBase
     {
         private readonly MockDataRepository _mockRepo;
