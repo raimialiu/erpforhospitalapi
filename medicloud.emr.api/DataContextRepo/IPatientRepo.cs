@@ -283,7 +283,7 @@ namespace medicloud.emr.api.DataContextRepo
 
         public string registerPatientFromLink(string link, Patient patientToUpdate)
         {
-            ctx = null;
+            //ctx = null;
             string newLink = $"{link}_1";
 
             Patient getSingle = _db.GetSingle(x => x.Reglink == link+"_0");
@@ -299,18 +299,18 @@ namespace medicloud.emr.api.DataContextRepo
             // patientToUpdate.Autoid = getSingle.Autoid;
             //var result =  _db.Update(patientToUpdate);
 
-            //ctx.Entry<Patient>(patientToUpdate).State = EntityState.Modified;
-            //ctx.Entry<Patient>(patientToUpdate).Property(x => x.Autoid).IsModified = false;
-            bool result = false;
-            result = _db.AddNew(patientToUpdate);
-            
-          
-            if(!result)
+            ctx.Entry<Patient>(patientToUpdate).State = EntityState.Modified;
+            ctx.Entry<Patient>(patientToUpdate).Property(x => x.Autoid).IsModified = false;
+            bool result = ctx.SaveChanges() > 0;
+            //result = _db.AddNew(patientToUpdate);
+
+
+            if (!result)
             {
                 return null;
             }
             _db.CloseConnection();
-            var deleted = _db.Delete(x => x.Reglink == link + "_0" || x.Patientid == getSingle.Patientid);
+           // var deleted = _db.Delete(x => x.Reglink == link + "_0" || x.Patientid == getSingle.Patientid);
 
             return patientToUpdate.Patientid + ":" + patientToUpdate.FamilyNumber;
         }

@@ -58,7 +58,8 @@ namespace medicloud.emr.api
             services.AddCors(options =>
             {
                 options.AddPolicy(corsPolicy, 
-                                  builder => builder.WithOrigins(new[] { "http://localhost:4200", "http://test.medicloud.ng/lagoonhis", "http://localhost:58213" })
+                                  builder => builder.WithOrigins(new[] { "http://localhost:4200", "http://test.medicloud.ng/lagoonhis", "http://localhost:58213", 
+                                                                        "http://localhost", "http://test.medicloud.ng/lagoonhisdev" })
                                                     .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" }).AllowAnyHeader());
             });
 

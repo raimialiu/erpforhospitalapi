@@ -17,6 +17,9 @@ namespace medicloud.emr.api.Data
         }
 
         public virtual DbSet<AccessControl> AccessControl { get; set; }
+        public virtual DbSet<TemplateCategoryB> TemplateCategoryB { get; set; }
+        public virtual DbSet<TemplateCategoryC> TemplateCategoryC { get; set; }
+      //  public virtual DbSet<TemplateCategoryB> TemplateCategoryB { get; set; }
         public virtual DbSet<AccesscontrolUser> AccesscontrolUser { get; set; }
         public virtual DbSet<AccountCategory> AccountCategory { get; set; }
         public virtual DbSet<AccountManager> AccountManager { get; set; }
