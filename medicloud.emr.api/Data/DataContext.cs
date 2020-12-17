@@ -17,6 +17,9 @@ namespace medicloud.emr.api.Data
         }
 
         public virtual DbSet<AccessControl> AccessControl { get; set; }
+        public virtual DbSet<TemplateCategoryB> TemplateCategoryB { get; set; }
+        public virtual DbSet<TemplateCategoryC> TemplateCategoryC { get; set; }
+      //  public virtual DbSet<TemplateCategoryB> TemplateCategoryB { get; set; }
         public virtual DbSet<AccesscontrolUser> AccesscontrolUser { get; set; }
         public virtual DbSet<AccountCategory> AccountCategory { get; set; }
         public virtual DbSet<AccountManager> AccountManager { get; set; }
@@ -26,6 +29,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<AntenatalRecord> AntenatalRecord { get; set; }
         public virtual DbSet<AppSetting> AppSetting { get; set; }
         public virtual DbSet<AppUser> AppUser { get; set; }
+        public virtual DbSet<Payer> Payer { get; set; }
         public virtual DbSet<ApplicationUser> ApplicationUser { get; set; }
         public virtual DbSet<Appointment> Appointment { get; set; }
         public virtual DbSet<AppointmentStatus> AppointmentStatus { get; set; }
@@ -215,8 +219,8 @@ namespace medicloud.emr.api.Data
             if (!optionsBuilder.IsConfigured)
             {
                 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                //   optionsBuilder.UseSqlServer("Data Source=52.251.49.79;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=medismarts;Password=md2015@tech");
-                optionsBuilder.UseSqlServer("Data Source=FCMB-IT-L16582\\TUNDE;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=olatunde;Password=DVorak@23000;MultipleActiveResultSets=True");
+                optionsBuilder.UseSqlServer("Data Source=52.251.49.79;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=medismarts;Password=md2015@tech");
+              //  optionsBuilder.UseSqlServer("Data Source=FCMB-IT-L16582\\TUNDE;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=olatunde;Password=DVorak@23000;MultipleActiveResultSets=True");
                 // "Data Source=FCMB-IT-L16582\\TUNDE;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=olatunde;Password=DVorak@23000;MultipleActiveResultSets=True"
             }
         }
@@ -649,6 +653,8 @@ namespace medicloud.emr.api.Data
                 entity.Property(e => e.Comments)
                     .HasColumnName("comments")
                     .IsUnicode(false);
+
+                entity.HasKey(x => x.Appointmentid);
 
                 entity.Property(e => e.Dateadded)
                     .HasColumnName("dateadded")

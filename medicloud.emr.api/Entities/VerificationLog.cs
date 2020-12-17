@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace medicloud.emr.api.Entities
 {
     public partial class VerificationLog
     {
+        [Key]
         public int Id { get; set; }
         public string Patientid { get; set; }
         public int? Userid { get; set; }

@@ -17,4 +17,6 @@ namespace medicloud.emr.api.Entities
 
         public virtual ICollection<Enrollee> Enrollee { get; set; }
     }
+
+
 }

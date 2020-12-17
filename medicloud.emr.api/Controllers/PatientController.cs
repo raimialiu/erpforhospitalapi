@@ -227,17 +227,21 @@ namespace medicloud.emr.api.Controllers
                 //    listOfPayors.Add(current);
                 //}
 
-                if(patient.payors.Count > 0)
+                if(patient.payors != null)
                 {
-                    var listOfPayors = new List<PatientPayorTypes>();
-                    foreach(var k in patient.payors)
+                    if (patient.payors.Count > 0)
                     {
-                        var current = k;
-                        current.Patientid = resultOut.PatientRegNumber;
-                        listOfPayors.Add(current);
+                        var listOfPayors = new List<PatientPayorTypes>();
+                        foreach (var k in patient.payors)
+                        {
+                            var current = k;
+                            current.Patientid = resultOut.PatientRegNumber;
+                            listOfPayors.Add(current);
+                        }
+                        patientPayorTypes.AddMultiples(listOfPayors.ToArray());
                     }
-                    patientPayorTypes.AddMultiples(listOfPayors.ToArray());
                 }
+               
 
                 _reponse = BaseResponse.GetResponse(resultOut, "patient registered", "00");
                 return Ok(_reponse);
