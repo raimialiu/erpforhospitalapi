@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using medicloud.emr.api.Data;
 using medicloud.emr.api.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
+using RestSharp;
+using Newtonsoft.Json;
 
 namespace medicloud.emr.api.DataContextRepo
 {
@@ -36,11 +40,50 @@ namespace medicloud.emr.api.DataContextRepo
 
         private string generatePatientId()
         {
-            string _query = "[patient_reg_no_generate]";
-            _db.ExecutStoredProcedure(_query, out var patientId);
+            string respponseContent = "";
+            var client = new RestClient("http://154.113.100.196:86/api/medismartapi/nextregno");
+            client.Timeout = -1;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", "Bearer 3bNpWGNlcf6R8WWKy0DjXUUbM5YSILtticLywwwnD5ZtPT52_I3bA4h74Se-g352-UxMnl4zN7GCNLG-pbDZ4XjG9v4UmZKgbuBGZK5T2CiXISWNZxPuYX2xNQVM0m2y6Y4wR58XLa4OXb-QKt2dUU7eNOEsSJi-B2h82tlv96cKhIDYLXtfzXV3UdvYK0NBGavaFoalLVJBqGY-agRw7zWvoQZo8uhlW_SH5zfnreiSjQVDhsxT3YxW5y1a9NRQj7fOFEwqy-NIjZ73vcHoYcciaRmeW_o8AW650wDfp1hoBdLID1qbPIRg7j9sKyat3zO0h8dxBWQB2LCeOuINOQNncULIHYl83QlO5tmjWpINyv1CwC8joAfyVHybHGzpMiPsQULFy3s3J-8_qm8DcpUWU1Oz2yx9NsgU8C0LM6L9xjFKu36kuCCEntG2KWs9AWgNRYQwToTch6nSdcL7Me25bktEsg6t2gKksgFzsjg");
+            request.AddHeader("Cookie", "__RequestVerificationToken=qL7t-K9JnQWNchykH4mZz_IM5TEC8gRSBZHKDQ4tW7py_r3nv2N0hz2oLqJ7YEbUVpIf382wZfi9_p-C2IC4Hy2fNx-qYMj9Hk3j9m7QfnM1");
+            IRestResponse response = client.Execute(request);
+            //Console.WriteLine(response.Content);
 
-            return patientId;
-           
+            respponseContent = JsonConvert.DeserializeObject<string>(response.Content);
+            return respponseContent;
+            //// var rest = new RestClient()
+            // var client = new HttpClient();
+            // //var cs = new AuthenticationHeaderValue("Bearer");
+            // var requestMessage = new HttpRequestMessage()
+            // {
+            //     Method = HttpMethod.Get,
+            //     RequestUri = new Uri("http://154.113.100.196:86/api/medismartapi/nextregno"),
+            //     Headers =
+            //     {
+            //         { "Authorization", "Bearer 3bNpWGNlcf6R8WWKy0DjXUUbM5YSILtticLywwwnD5ZtPT52_I3bA4h74Se-g352-UxMnl4zN7GCNLG-pbDZ4XjG9v4UmZKgbuBGZK5T2CiXISWNZxPuYX2xNQVM0m2y6Y4wR58XLa4OXb-QKt2dUU7eNOEsSJi-B2h82tlv96cKhIDYLXtfzXV3UdvYK0NBGavaFoalLVJBqGY-agRw7zWvoQZo8uhlW_SH5zfnreiSjQVDhsxT3YxW5y1a9NRQj7fOFEwqy-NIjZ73vcHoYcciaRmeW_o8AW650wDfp1hoBdLID1qbPIRg7j9sKyat3zO0h8dxBWQB2LCeOuINOQNncULIHYl83QlO5tmjWpINyv1CwC8joAfyVHybHGzpMiPsQULFy3s3J-8_qm8DcpUWU1Oz2yx9NsgU8C0LM6L9xjFKu36kuCCEntG2KWs9AWgNRYQwToTch6nSdcL7Me25bktEsg6t2gKksgFzsjg"},
+            //         { "Conten-Type", "application/json" }
+            //     }
+            // };
+            // //client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer 3bNpWGNlcf6R8WWKy0DjXUUbM5YSILtticLywwwnD5ZtPT52_I3bA4h74Se-g352-UxMnl4zN7GCNLG-pbDZ4XjG9v4UmZKgbuBGZK5T2CiXISWNZxPuYX2xNQVM0m2y6Y4wR58XLa4OXb-QKt2dUU7eNOEsSJi-B2h82tlv96cKhIDYLXtfzXV3UdvYK0NBGavaFoalLVJBqGY-agRw7zWvoQZo8uhlW_SH5zfnreiSjQVDhsxT3YxW5y1a9NRQj7fOFEwqy-NIjZ73vcHoYcciaRmeW_o8AW650wDfp1hoBdLID1qbPIRg7j9sKyat3zO0h8dxBWQB2LCeOuINOQNncULIHYl83QlO5tmjWpINyv1CwC8joAfyVHybHGzpMiPsQULFy3s3J-8_qm8DcpUWU1Oz2yx9NsgU8C0LM6L9xjFKu36kuCCEntG2KWs9AWgNRYQwToTch6nSdcL7Me25bktEsg6t2gKksgFzsjg");
+            // //client.DefaultRequestHeaders.Add("Content-Type", "application/json");
+
+            // var result = client.SendAsync(requestMessage).Result;
+
+            // if(result.IsSuccessStatusCode)
+            // {
+            //     //string _query = "[patient_reg_no_generate]";
+            //     //_db.ExecutStoredProcedure(_query, out var patientId);
+            //     string query = result.Content.ReadAsStringAsync().Result;
+
+            //     return query;
+            // }
+
+            // return "";
+
+
+
+            //   return patientId;
+
 
         }
 
@@ -185,6 +228,10 @@ namespace medicloud.emr.api.DataContextRepo
             try
             {
                 string newPatientId =  generatePatientId();
+                if(newPatientId == "")
+                {
+                    throw new Exception("error generating patientId from Akhil endpoint");
+                }
                 string familyNumber = generateFamilyNumber();
                 patient.Patientid = newPatientId;
                 patient.FamilyNumber = familyNumber;

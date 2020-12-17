@@ -30,7 +30,7 @@ namespace medicloud.emr.api.Controllers
 
         //get all forms
         //[Authorize(Roles = "Admin, Nurse")]
-        [HttpGet]
+        //[HttpGet]
         //public IActionResult GetData() => Ok((from t in _dataContext.TemplateMaster
         //                                      join tc in _dataContext.TemplateCategory on t.Tempcatid equals tc.Tempcatid
         //                                      join l in _dataContext.Location on t.Locationid equals l.Locationid into location
@@ -39,6 +39,49 @@ namespace medicloud.emr.api.Controllers
         //                                      where (t.Iscurrent == true)
         //                                      select new { t.Masterid, t.Jsonform, t.Tempcatid, t.Formname, t.Formdescription, t.Formcomments, t.Adjusterid, t.Accountid, t.Iscurrent, t.Dateadded, tc.Categoryname, t.Locationid, locationname = subset.Locationname ?? "All Locations" }).ToList());
 
+        [Route("allforms")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllForms()
+        {
+            var data = (from t in _dataContext.TemplateMaster
+                        join tc in _dataContext.TemplateCategory on t.Tempcatid equals tc.Tempcatid
+                        join l in _dataContext.Location on t.Locationid equals l.Locationid into location
+                        // join tb in _dataContext.TemplateCategoryB on t.Tempcatid equals tb.templatecategoryid
+                        //join tcc in _dataContext.TemplateCategoryC on t.Tempcatid equals tcc.templatecategoryid
+                        from subset in location.DefaultIfEmpty()
+                        orderby t.Formname ascending
+                        where (t.Iscurrent == true)
+                        select new
+                        {
+                            t.Masterid,
+                            t.Jsonform,
+                            t.Tempcatid,
+                            t.Formname,
+                            t.Formdescription,
+                            t.Formcomments,
+                            t.Adjusterid,
+                            t.Accountid,
+                            t.Iscurrent,
+                            t.Dateadded,
+                            tc.Categoryname,
+                            t.Locationid,
+                            // tb.categoryname,
+                            //tempcname = tcc.categoryname,
+                            locationname = subset.Locationname ?? "All Locations"
+                        }).ToList();
+            var tempcatDb = _dataContext.TemplateCategoryB.ToList();
+            var tempcatC = _dataContext.TemplateCategoryC.ToList();
+
+            var newData = new
+            {
+                tempcatb = tempcatDb,
+                tempcatc = tempcatC,
+                data
+            };
+            return Ok(newData);
+        }
+
+        [HttpGet]
         public IActionResult GetData()
         {
             var data = (from t in _dataContext.TemplateMaster
