@@ -198,6 +198,7 @@ namespace medicloud.emr.api.DTOs
     public class PatientDTO
     {
         public string Patientid { get; set; }
+        public int hospitallocationid { get; set; }
         public string payor { get; set; }
         public string Title { get; set; }
         public int? identificationtypeid { get; set; }
