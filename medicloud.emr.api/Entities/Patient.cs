@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace medicloud.emr.api.Entities
 {
@@ -8,7 +10,6 @@ namespace medicloud.emr.api.Entities
         public Patient()
         {
             Admission = new HashSet<Admission>();
-            AppointmentSchedule = new HashSet<AppointmentSchedule>();
             Bill = new HashSet<Bill>();
             BillPayable = new HashSet<BillPayable>();
             Biometric = new HashSet<Biometric>();
@@ -32,11 +33,10 @@ namespace medicloud.emr.api.Entities
             QueueManager = new HashSet<QueueManager>();
             ReferenceMaterial = new HashSet<ReferenceMaterial>();
             VerificationLog = new HashSet<VerificationLog>();
-            CheckIn = new HashSet<CheckIn>();
-            PaRequest = new HashSet<PaRequest>();
-            PatientQueue = new HashSet<PatientQueue>();
         }
 
+        //[Key]
+        //[DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string Patientid { get; set; }
         public string Title { get; set; }
         public string Firstname { get; set; }
@@ -87,6 +87,7 @@ namespace medicloud.emr.api.Entities
         public int? ProviderId { get; set; }
         public string AlternateId1 { get; set; }
         public string AlternateId2 { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Autoid { get; set; }
         public string Servicetype { get; set; }
         public string Plantype { get; set; }
@@ -102,6 +103,17 @@ namespace medicloud.emr.api.Entities
         public int? Facilitatorid { get; set; }
         public int? Refid { get; set; }
         public int? Leadid { get; set; }
+        public bool? IsDependant { get; set; }
+        public string FamilyNumber { get; set; }
+        public int? Identificationtypeid { get; set; }
+        public string Identificationnumber { get; set; }
+        public string Payor { get; set; }
+        public string Enrolleeno { get; set; }
+        public string Employeenumber { get; set; }
+        public string Status { get; set; }
+        public long? Referalby { get; set; }
+        public string Dependantrelationship { get; set; }
+        public string Reglink { get; set; }
 
         public virtual BloodGroup Bloodgroup { get; set; }
         public virtual EnrolleeType Cardtype { get; set; }
@@ -115,10 +127,9 @@ namespace medicloud.emr.api.Entities
         public virtual Sponsor Spons { get; set; }
         public virtual State State { get; set; }
         public virtual ICollection<Admission> Admission { get; set; }
-        public virtual ICollection<CheckIn> CheckIn { get; set; }
-        public virtual ICollection<AppointmentSchedule> AppointmentSchedule { get; set; }
         public virtual ICollection<Bill> Bill { get; set; }
         public virtual ICollection<BillPayable> BillPayable { get; set; }
+        public virtual ICollection<PatientPayorTypes> PayorTypes { get; set; }
         public virtual ICollection<Biometric> Biometric { get; set; }
         public virtual ICollection<BirthRegister> BirthRegister { get; set; }
         public virtual ICollection<ConsultationCheck> ConsultationCheck { get; set; }
@@ -140,7 +151,5 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<QueueManager> QueueManager { get; set; }
         public virtual ICollection<ReferenceMaterial> ReferenceMaterial { get; set; }
         public virtual ICollection<VerificationLog> VerificationLog { get; set; }
-        public virtual ICollection<PaRequest> PaRequest { get; set; }
-        public virtual ICollection<PatientQueue> PatientQueue { get; set; }
     }
 }

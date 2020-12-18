@@ -15,7 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 
 namespace medicloud.emr.api
@@ -34,31 +33,33 @@ namespace medicloud.emr.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connection = Configuration.GetConnectionString("lagoonDB");
-            services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(connection, x => x.MigrationsAssembly("medicloud.emr.api")));
-
             var jwtSettings = Configuration.GetSection(nameof(JwtSettings))
                                         .Get<JwtSettings>();
 
             services.AddControllers(setupActions =>
             {
                 setupActions.ReturnHttpNotAcceptable = true;
+                //setupAction
             })//.AddXmlDataContractSerializerFormatters()
-            //.AddNewtonsoftJson();
+            
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.IgnoreNullValues = true;
                 options.JsonSerializerOptions.WriteIndented = true;
-
+               
+                
                 // .SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
                 //options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            }).AddNewtonsoftJson(c => {
+                c.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+
             });
 
             services.AddCors(options =>
             {
                 options.AddPolicy(corsPolicy, 
-                                  builder => builder.WithOrigins(new[] { "http://localhost:4200", "http://test.medicloud.ng/lagoonhis" })
+                                  builder => builder.WithOrigins(new[] { "http://localhost:4200", "http://test.medicloud.ng/lagoonhis", "http://localhost:58213", 
+                                                                        "http://localhost", "http://test.medicloud.ng/lagoonhisdev" })
                                                     .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" }).AllowAnyHeader());
             });
 
@@ -68,13 +69,13 @@ namespace medicloud.emr.api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                c.SwaggerDoc(swaggerSettings.Title, new Microsoft.OpenApi.Models.OpenApiInfo()
                 {
-                    Version = "v1",
-                    Title = "medicloud.emr.api",
-                    Description = "Medi-cloud EMR documented api ",
-                    //TermsOfService = "None",
-                    //Contact = new Contact() {  }
+                    Version = swaggerSettings.Version,
+                    Description = swaggerSettings.Description
+                    
+                    
+
                 });
             });
 
@@ -100,20 +101,18 @@ namespace medicloud.emr.api
             });
 
             services.AddScoped<MockDataRepository>();
-            services.AddSingleton<IPatientRepo, PatientRepo>();
+            services.AddTransient<IPatientRepo, PatientRepo>();
+            services.AddScoped<ITitleRepo, TitleRepo>();
+            services.AddTransient<IPatientServices, PatientService>();
+            services.AddScoped<IBloodGroupRepo, BloodGroupRepo>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
-            services.AddScoped<ICheckInRepository, CheckInRepository>();
-            services.AddScoped<IPatientQueueRepository, PatientQueueRepository>();
-            services.AddScoped<IPaRequestRepository, PaRequestRepository>();
-            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
  
             const string connectionString = "lagoonDB";
             services.AddDbContext<DataContext>(options =>
                         options.UseSqlServer(Configuration.GetConnectionString(connectionString)));
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -127,24 +126,22 @@ namespace medicloud.emr.api
             app.UseCors(corsPolicy);
             app.UseStatusCodePages("text/plain", "HTTP Error with {0} Status Code");
 
-            app.UseStaticFiles();
-            //app.UseExceptionMiddleware();
+            //app.UseStaticFiles(new StaticFileOptions()
+            //{
+            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
+            //    RequestPath = new PathString("/Uploads")
+            //});
+
 
             
+
+            app.UseExceptionMiddleware();
 
             app.UseRouting();
 
             
 
-            //app.UseSwagger(c =>
-            //{
-            //    c.RouteTemplate = swaggerSettings.RouteTemplate;
-            //});
-
-            //app.UseSwaggerUI(c =>
-            //{
-            //    c.SwaggerEndpoint(swaggerSettings.RouteEndpoint, swaggerSettings.Title);
-            //});
+           
             app.UseAuthentication();
             
             app.UseAuthorization();
@@ -155,12 +152,14 @@ namespace medicloud.emr.api
             {
                 endpoints.MapControllers();
             });
+            app.UseSwagger(c =>
+            {
+                // c.RouteTemplate = swaggerSettings.RouteTemplate;
+            });
 
-            app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Medi-Cloud EMR");
-                c.RoutePrefix = string.Empty;
+                c.SwaggerEndpoint(swaggerSettings.RouteEndpoint, swaggerSettings.Title);
             });
         }
     }
