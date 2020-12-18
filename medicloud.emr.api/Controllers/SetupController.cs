@@ -1566,6 +1566,8 @@ namespace medicloud.emr.api.Controllers
             return BadRequest(_reponse);
         }
 
+
+
         [Route("addBloodgroup")]
         [HttpPost]
         public async Task<IActionResult> AddBloodGroup([FromBody] BloodGroupDTO dt)

@@ -215,6 +215,7 @@ namespace medicloud.emr.api.DTOs
         public bool IsDependant { get; set; }
         public string FamilyNumber { get; set; }
         public string Postalcode { get; set; }
+        public string encodedby { get; set; }
         //[Required]
         public string Mothername { get; set; }
         public string Guardianname { get; set; }
@@ -279,6 +280,7 @@ namespace medicloud.emr.api.DTOs
         public string status { get; set; }
         public long? referalby { get; set; }
         public string dependantrelationship { get; set; }
+        public string locationid { get; set; }
         public List<PatientPayorTypes> payors { get; set; }
 
         public static explicit operator Patient(PatientDTO dt)
