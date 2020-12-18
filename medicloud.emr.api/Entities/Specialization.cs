@@ -7,7 +7,6 @@ namespace medicloud.emr.api.Entities
     {
         public Specialization()
         {
-            AppointmentSchedule = new HashSet<AppointmentSchedule>();
             ProviderSchedule = new HashSet<ProviderSchedule>();
             SpecializationSchedule = new HashSet<SpecializationSchedule>();
         }
@@ -18,7 +17,6 @@ namespace medicloud.emr.api.Entities
         public int? Locationid { get; set; }
 
         public virtual Location Location { get; set; }
-        public virtual ICollection<AppointmentSchedule> AppointmentSchedule { get; set; }
         public virtual ICollection<ProviderSchedule> ProviderSchedule { get; set; }
         public virtual ICollection<SpecializationSchedule> SpecializationSchedule { get; set; }
     }

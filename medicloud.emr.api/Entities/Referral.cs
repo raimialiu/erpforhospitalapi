@@ -7,7 +7,6 @@ namespace medicloud.emr.api.Entities
     {
         public Referral()
         {
-            AppointmentSchedule = new HashSet<AppointmentSchedule>();
             Patient = new HashSet<Patient>();
         }
 
@@ -15,7 +14,6 @@ namespace medicloud.emr.api.Entities
         public string Reftype { get; set; }
         public DateTime? Dateadded { get; set; }
 
-        public virtual ICollection<AppointmentSchedule> AppointmentSchedule { get; set; }
         public virtual ICollection<Patient> Patient { get; set; }
     }
 }
