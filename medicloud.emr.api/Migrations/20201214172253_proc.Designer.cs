@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using medicloud.emr.api.Data;
 
 namespace medicloud.emr.api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20201214172253_proc")]
+    partial class proc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5858,12 +5860,6 @@ namespace medicloud.emr.api.Migrations
                         .HasColumnName("othername")
                         .HasColumnType("varchar(50)")
                         .HasMaxLength(50)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Payor")
-                        .HasColumnName("payor")
-                        .HasColumnType("varchar(250)")
-                        .HasMaxLength(250)
                         .IsUnicode(false);
 
                     b.Property<string>("Photopath")

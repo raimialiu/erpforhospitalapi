@@ -278,10 +278,10 @@ namespace medicloud.emr.api.Data
             if (!optionsBuilder.IsConfigured)
             {
 
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code.
-#warning See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                //optionsBuilder.UseSqlServer("Data Source=52.251.49.79;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=medismarts;Password=md2015@tech;MultipleActiveResultSets=True");
-                optionsBuilder.UseSqlServer("Data Source=DESKTOP-RV56AB0;Database=medismartsemr_db;Trusted_Connection=True;MultipleActiveResultSets=true;");
+                #warning To protect potentially sensitive information in your connection string, you should move it out of source code.
+                #warning See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Data Source=52.251.49.79;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=medismarts;Password=md2015@tech;MultipleActiveResultSets=True");
+                //optionsBuilder.UseSqlServer("Data Source=DESKTOP-RV56AB0;Database=medismartsemr_db;Trusted_Connection=True;MultipleActiveResultSets=true;");
             }
         }
 
@@ -4755,6 +4755,11 @@ namespace medicloud.emr.api.Data
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Payor)
+                    .HasColumnName("payor")
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Servicetype).HasColumnName("servicetype");
 
                 entity.Property(e => e.Sponsid).HasColumnName("sponsid");
@@ -6232,16 +6237,6 @@ namespace medicloud.emr.api.Data
             modelBuilder.Entity<PaRequest>(entity =>
             {
                 entity.HasKey(e => e.PARequestId);
-
-                entity.HasOne(d => d.Procedure)
-                   .WithMany(p => p.PaRequest)
-                   .HasForeignKey(d => d.ProcedureId)
-                   .HasConstraintName("FK_PaRequest_Procedure");
-                
-                entity.HasOne(d => d.Diagnosis)
-                   .WithMany(p => p.PaRequest)
-                   .HasForeignKey(d => d.DiagnosisId)
-                   .HasConstraintName("FK_PaRequest_Diagnosis");
 
                 entity.HasOne(d => d.Patient)
                    .WithMany(p => p.PaRequest)

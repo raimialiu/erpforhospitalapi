@@ -102,6 +102,7 @@ namespace medicloud.emr.api.Entities
         public int? Facilitatorid { get; set; }
         public int? Refid { get; set; }
         public int? Leadid { get; set; }
+        public string Payor { get; set; }
 
         public virtual BloodGroup Bloodgroup { get; set; }
         public virtual EnrolleeType Cardtype { get; set; }

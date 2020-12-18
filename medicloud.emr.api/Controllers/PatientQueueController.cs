@@ -1,4 +1,5 @@
-﻿using medicloud.emr.api.Services;
+﻿using medicloud.emr.api.DTOs;
+using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,46 @@ namespace medicloud.emr.api.Controllers
             catch (Exception ex)
             {
                 return BadRequest();
+            }
+        }
+
+        [HttpGet, Route("DeleteFromQueue")]
+        public async Task<IActionResult> DeleteFromQueue (int locationId, int accountId, string patientId)
+        {
+            try
+            {
+                await _patientQueueRepository.RemoveFromQueue(patientId, locationId, accountId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet, Route("UpdatePatientQueueLocation")]
+        public async Task<IActionResult> UpdatePatientQueueLocation(string patientId, int locationId, int accountId, int hospitalUnitId, int newHospitalUnitId, int encounterId)
+        {
+            try
+            {
+                await _patientQueueRepository.UpdatePatientLocation(patientId, locationId, accountId, hospitalUnitId, newHospitalUnitId, encounterId);
+
+                MiniResponseBase response = new MiniResponseBase
+                {
+                    ErrorMessage = "Success",
+                    status = true
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                MiniResponseBase response = new MiniResponseBase
+                {
+                    ErrorMessage = "failed",
+                    status = false
+                };
+                return BadRequest(response);
             }
         }
     }
