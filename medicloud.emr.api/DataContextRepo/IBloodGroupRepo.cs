@@ -83,7 +83,7 @@ namespace medicloud.emr.api.DataContextRepo
 
         public bool AddNew(string name)
         {
-            return bpo.AddNew(new BloodGroup() { Bloodgroupname = name, Dateadded = DateTime.Now.ToString() });
+            return bpo.AddNew(new BloodGroup() { Bloodgroupname = name, Dateadded = DateTime.Now });
         }
 
         public bool Delete(long id)
