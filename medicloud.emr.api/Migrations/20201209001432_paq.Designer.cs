@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using medicloud.emr.api.Data;
 
 namespace medicloud.emr.api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20201209001432_paq")]
+    partial class paq
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5519,17 +5521,8 @@ namespace medicloud.emr.api.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<string>("DiagnosisCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DiagnosisDesc")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("DiagnosisId")
+                    b.Property<int>("DiagnosisId")
                         .HasColumnType("int");
-
-                    b.Property<string>("EnrolleeNumber")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IssuerComment")
                         .HasColumnType("nvarchar(max)");
@@ -5546,13 +5539,7 @@ namespace medicloud.emr.api.Migrations
                     b.Property<string>("PatientId")
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("ProcedureCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProcedureDesc")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ProcedureId")
+                    b.Property<int>("ProcedureId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
@@ -5858,12 +5845,6 @@ namespace medicloud.emr.api.Migrations
                         .HasColumnName("othername")
                         .HasColumnType("varchar(50)")
                         .HasMaxLength(50)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Payor")
-                        .HasColumnName("payor")
-                        .HasColumnType("varchar(250)")
-                        .HasMaxLength(250)
                         .IsUnicode(false);
 
                     b.Property<string>("Photopath")
@@ -14736,9 +14717,12 @@ namespace medicloud.emr.api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("medicloud.emr.api.Entities.Diagnosis", null)
+                    b.HasOne("medicloud.emr.api.Entities.Diagnosis", "Diagnosis")
                         .WithMany("PaRequest")
-                        .HasForeignKey("DiagnosisId");
+                        .HasForeignKey("DiagnosisId")
+                        .HasConstraintName("FK_PaRequest_Diagnosis")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("medicloud.emr.api.Entities.Location", "Location")
                         .WithMany("PaRequest")
@@ -14752,9 +14736,12 @@ namespace medicloud.emr.api.Migrations
                         .HasForeignKey("PatientId")
                         .HasConstraintName("FK_PaRequest_Patient");
 
-                    b.HasOne("medicloud.emr.api.Entities.Procedure", null)
+                    b.HasOne("medicloud.emr.api.Entities.Procedure", "Procedure")
                         .WithMany("PaRequest")
-                        .HasForeignKey("ProcedureId");
+                        .HasForeignKey("ProcedureId")
+                        .HasConstraintName("FK_PaRequest_Procedure")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.Patient", b =>

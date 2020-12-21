@@ -18,6 +18,7 @@ namespace medicloud.emr.api.DTOs
         public int HospitalUnitId { get; set; }
         public string HospitalUnitName { get; set; }
         public string Gender { get; set; }
+        public string PatientName { get; set; }
         public int EncounterId { get; set; }
         public DateTime? CheckInDate { get; set; }
         public DateTime? DateAdded { get; set; }

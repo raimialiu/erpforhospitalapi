@@ -33,6 +33,9 @@ namespace medicloud.emr.api.Entities
             QueueManager = new HashSet<QueueManager>();
             ReferenceMaterial = new HashSet<ReferenceMaterial>();
             VerificationLog = new HashSet<VerificationLog>();
+            CheckIn = new HashSet<CheckIn>();
+            PatientQueue = new HashSet<PatientQueue>();
+            PaRequest = new HashSet<PaRequest>();
         }
 
         //[Key]
@@ -114,7 +117,6 @@ namespace medicloud.emr.api.Entities
         public long? Referalby { get; set; }
         public string Dependantrelationship { get; set; }
         public string Reglink { get; set; }
-
         public virtual BloodGroup Bloodgroup { get; set; }
         public virtual EnrolleeType Cardtype { get; set; }
         public virtual HealthCareFacilitator Facilitator { get; set; }
@@ -151,5 +153,8 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<QueueManager> QueueManager { get; set; }
         public virtual ICollection<ReferenceMaterial> ReferenceMaterial { get; set; }
         public virtual ICollection<VerificationLog> VerificationLog { get; set; }
+        public virtual ICollection<CheckIn> CheckIn { get; set; }
+        public virtual ICollection<PatientQueue> PatientQueue { get; set; }
+        public virtual ICollection<PaRequest> PaRequest { get; set; }
     }
 }

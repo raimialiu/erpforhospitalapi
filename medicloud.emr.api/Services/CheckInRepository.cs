@@ -55,7 +55,9 @@ namespace medicloud.emr.api.Services
                     HospitalUnitId = _context.HospitalUnit.Where(h => h.HospitalUnitName.Contains("frontdesk")).Select(n => n.HospitalUnitId).FirstOrDefault(),
                     LocationId = checkIn.Locationid,
                     PatientId = checkIn.Patientid,
-                    DateAdded = DateTime.Now
+                    DateAdded = DateTime.Now,
+                    isCurrent = true
+                   
                 };
 
                 await _context.AddAsync(patientQueue);
@@ -115,7 +117,7 @@ namespace medicloud.emr.api.Services
         
         public async Task<(int, int, bool)> GetTotalCheckInTodayCount(int locationId, int accountId)
         {
-            var totalCheckedInToday = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false &&
+            var totalCheckedInToday = await _context.CheckIn.Where(c => c.Locationid == locationId &&
                          c.Accountid == accountId && c.CheckInDate.Date == DateTime.Today.Date).CountAsync();
 
             var totalCheckedInSixmonthsAgo = await _context.CheckIn.Where(c => c.Locationid == locationId &&
@@ -159,6 +161,24 @@ namespace medicloud.emr.api.Services
                 result.IsCheckedOut = true;
                 result.CheckOutDate = DateTime.Now;
                 _context.Update(result);
+                await _context.SaveChangesAsync();
+            }
+
+            var patientQueueList = await _context.PatientQueue.Where(q => q.PatientId == patientId && q.EncounterId == result.Encounterid && 
+                                    q.LocationId == locationId && q.AccountId == accountId).ToListAsync();
+            if (patientQueueList.Count > 0)
+            {
+                foreach (var patientQueue in patientQueueList)
+                {
+                    if (patientQueue.isCurrent)
+                    {
+                        patientQueue.ChangedLocationAt = DateTime.Now;
+                        patientQueue.isCurrent = false;
+                    }
+                    patientQueue.isCheckedOut = true;
+                    _context.Update(patientQueue);
+                }
+                
                 await _context.SaveChangesAsync();
             }
         }
