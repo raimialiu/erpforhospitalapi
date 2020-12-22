@@ -114,6 +114,7 @@ namespace medicloud.emr.api.DataContextRepo
             //var result = _db.ExecuteRawSql(query);
             var result = ctx.Patient.FromSqlRaw(query).Include(x => x.Gender);
 
+
             return Task.FromResult<IQueryable<Patient>>(result);
         }
 

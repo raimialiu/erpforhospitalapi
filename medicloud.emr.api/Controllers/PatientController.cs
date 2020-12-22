@@ -15,6 +15,7 @@ using System.Reflection;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using RestSharp;
+using medicloud.emr.api.Data;
 
 namespace medicloud.emr.api.Controllers
 {
@@ -28,7 +29,7 @@ namespace medicloud.emr.api.Controllers
         private IDataContextRepo<PatientPayorTypes> patientPayorTypes;
         private IDataContextRepo<Patient> patientDB;
         //private IBloodGroupRepo bloodGroupRepo;
-
+        private DataContext _ctx;
         public PatientController(IPatientRepo patientRepo, 
             //IBloodGroupRepo bloodGroupRepo,
             ITitleRepo titleRepo,
@@ -38,6 +39,7 @@ namespace medicloud.emr.api.Controllers
             this.ps = ps;
             patientPayorTypes = new DataContextRepo<PatientPayorTypes>();
             patientDB = new DataContextRepo<Patient>();
+            _ctx = new DataContext();
             //this.bloodGroupRepo = bloodGroupRepo;
 
 
@@ -338,7 +340,7 @@ namespace medicloud.emr.api.Controllers
         //    return Ok(result);
         //}
         
-        [Route(ApiRoutes.searchForPatient)]
+        [Route("searchForPatient/{searchValue}")]
         [HttpGet]
         public async Task<IActionResult> SearchForPatient([FromRoute] string searchValue)
         {
@@ -348,7 +350,20 @@ namespace medicloud.emr.api.Controllers
                 BaseResponse responseOut = null;
                 if(returnedDataFromSearch.Count() > 0)
                 {
-                    responseOut = BaseResponse.GetResponse(returnedDataFromSearch, $"searching for patient information with {searchValue}", "00");
+                    var sponsors = _ctx.Sponsor.ToList();
+                    var payors = _ctx.Payer.ToList();
+                    var plans = _ctx.Plan.ToList();
+                    var accounts = _ctx.AccountCategory.ToList();
+                    var result = new
+                    {
+                        patients = returnedDataFromSearch,
+                        payors = payors,
+                        sponsors = sponsors,
+                        plans = plans,
+                        accounts = accounts
+                    };
+
+                    responseOut = BaseResponse.GetResponse(result, $"searching for patient information with {searchValue}", "00");
 
                     //  patientRepo.Close();
                     return Ok(responseOut); 

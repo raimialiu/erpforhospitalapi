@@ -38,7 +38,7 @@ namespace medicloud.emr.api.Entities
         //[Key]
         //[DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string Patientid { get; set; }
-        public int hospitallocationid { get; set; }
+        public int? hospitallocationid { get; set; }
         public string Title { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }

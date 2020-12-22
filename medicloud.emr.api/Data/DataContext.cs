@@ -221,8 +221,8 @@ namespace medicloud.emr.api.Data
             if (!optionsBuilder.IsConfigured)
             {
                 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-               // optionsBuilder.UseSqlServer("Data Source=52.251.49.79;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=medismarts;Password=md2015@tech");
-               optionsBuilder.UseSqlServer("Data Source=FCMB-IT-L16582\\TUNDE;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=olatunde;Password=DVorak@23000;MultipleActiveResultSets=True");
+               optionsBuilder.UseSqlServer("Data Source=52.251.49.79;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=medismarts;Password=md2015@tech");
+             // optionsBuilder.UseSqlServer("Data Source=FCMB-IT-L16582\\TUNDE;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=olatunde;Password=DVorak@23000;MultipleActiveResultSets=True");
                 // "Data Source=FCMB-IT-L16582\\TUNDE;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=olatunde;Password=DVorak@23000;MultipleActiveResultSets=True"
             }
         }
