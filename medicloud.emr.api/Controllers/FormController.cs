@@ -81,6 +81,43 @@ namespace medicloud.emr.api.Controllers
             return Ok(newData);
         }
 
+
+        [Route("allstaff")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllStaff()
+        {
+            var staffs = _dataContext.ApplicationUser.ToList()
+                            .Select(x =>x.Lastname + " " + x.Firstname + $"({x.Appuserid})" ).ToArray();
+
+                           
+
+            return Ok(staffs);
+
+        }
+
+        [Route("payorinformation")]
+        [HttpGet]
+        public async Task<IActionResult> GetPayorInformation()
+        {
+            var accoountCategories = _dataContext.AccountCategory.ToList();
+            var sponsors = _dataContext.Sponsor.ToList();
+            var payors = _dataContext.Payer.ToList();
+            var plans = _dataContext.PlanType.ToList();
+
+            var data = new
+            {
+                aaccounts = accoountCategories,
+                sponsors = sponsors,
+                payors = payors,
+                plans = plans
+
+            };
+
+            return Ok(data);
+
+        }
+
+
         [HttpGet]
         public IActionResult GetData()
         {

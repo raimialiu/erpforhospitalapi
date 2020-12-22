@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using RestSharp;
 
 namespace medicloud.emr.api.Controllers
 {
@@ -90,6 +91,53 @@ namespace medicloud.emr.api.Controllers
             return BadRequest(BaseResponse.GetResponse(null, "request failed to update data try again", "99"));
 
         }
+
+
+        [Route("hmointegration/{hmo}")]
+        [HttpGet]
+        public async Task<IActionResult> HmoIntegration([FromRoute]string hmo, [FromQuery] string id)
+        {
+
+            string hygeia = "https://apps.hygeiahmo.com/hyintermediary/json_enrollee_services.aspx?op=familyinfo&authorization=aGdobW9hcGk6aGcqJDIwMTZAdGVjaA==&dep=0&iid={id}";
+            string redcare = "https://medicloud.redcarehmo.com/intermediary/json_enrollee_services.aspx?op=familyinfo&authorization=aGdobW9hcGk6aGcqJDIwMTZAdGVjaA==&iid={id}";
+            string metrohealth = "https://apps.metrohealthhmo.com/intermediary/json_enrollee_services.aspx?op=familyinfo&authorization=aGdobW9hcGk6aGcqJDIwMTZAdGVjaA==&iid={id}";
+            string prohealth = "https://prohealth.ngrok.io/intermediary/json_enrollee_services.aspx?op=familyinfo&authorization=aGdobW9hcGk6aGcqJDIwMTZAdGVjaA==&iid={id}";
+            string healthpartners = "https://apps.hpconnect.org/intermediary/json_enrollee_services.aspx?op=familyinfo&authorization=aGdobW9hcGk6aGcqJDIwMTZAdGVjaA==&iid={id}";
+            string philipshmo = "https://apps.phillipshmo.net/intermediary/json_enrollee_services.aspx?op=familyinfo&authorization=aGdobW9hcGk6aGcqJDIwMTZAdGVjaA==&iid={id}";
+
+            string urlToCall = "";
+            switch (hmo)
+            {
+                case "hygeia":
+                    string[] idSplit = id.Split("/");
+                    urlToCall = hygeia.Replace("{id}", idSplit[0]);
+                    break;
+                case "redcare":
+                    urlToCall = redcare.Replace("{id}", id);
+                    break;
+                case "metro health":
+                    urlToCall = metrohealth.Replace("{id}", id);
+                    break;
+                case "pro health":
+                    urlToCall = prohealth.Replace("{id}", id);
+                    break;
+                case "health partners":
+                    urlToCall = healthpartners.Replace("{id}", id);
+                    break;
+                case "philips hmo":
+                    urlToCall = philipshmo.Replace("{id}", id);
+                    break;
+            }
+
+            string respponseContent = "";
+            var client = new RestClient(urlToCall);
+            client.Timeout = -1;
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = client.Execute(request);
+            var resp = response.Content;
+            return Ok(resp);
+        }
+
 
         [Route(ApiRoutes.saveRegistrationLink)]
         [HttpPost]

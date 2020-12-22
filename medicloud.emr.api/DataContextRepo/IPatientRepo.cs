@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using RestSharp;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
+using medicloud.emr.api.DTOs;
 
 namespace medicloud.emr.api.DataContextRepo
 {
@@ -312,15 +313,14 @@ namespace medicloud.emr.api.DataContextRepo
             string regLink = $"{link}";
             string patientId = generatePatientId();
             string familyId = generateFamilyNumber();
-            var patient = new Patient()
-            {
-                Patientid = patientId,
-                FamilyNumber = familyId,
-                Reglink = regLink
-                
-            };
+            var patient = PatientDTO.GetDefault();
+            patient.Patientid = patientId;
+            patient.FamilyNumber = familyId;
+            patient.Reglink = regLink;
+            var patientObject = (Patient)patient;
+            //patientObject.Reglink = regLink;
 
-            return _db.AddNew(patient);
+            return _db.AddNew(patientObject);
         }
 
         public string registerPatientFromLink(string link, Patient patientToUpdate)
@@ -337,7 +337,7 @@ namespace medicloud.emr.api.DataContextRepo
            
             patientToUpdate.Reglink = newLink;
             patientToUpdate.FamilyNumber = getSingle.FamilyNumber;
-            patientToUpdate.Patientid = generatePatientId();
+           //zzz patientToUpdate.Patientid = generatePatientId();
             // patientToUpdate.Autoid = getSingle.Autoid;
             //var result =  _db.Update(patientToUpdate);
 

@@ -11,6 +11,7 @@ namespace medicloud.emr.api.Entities
         public string PayerType { get; set; }
         public bool IsinsuranceCompany { get; set; }
         public DateTime dateadded { get; set; }
+        public int accountcatid { get; set; }
     }
 
 }
