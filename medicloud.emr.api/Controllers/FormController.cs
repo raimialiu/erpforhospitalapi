@@ -104,7 +104,7 @@ namespace medicloud.emr.api.Controllers
             var accoountCategories = _dataContext.AccountCategory.ToList();
             var sponsors = _dataContext.Sponsor.ToList();
             var payors = _dataContext.Payer.ToList();
-            var plans = _dataContext.Plan.ToList();
+            var plans = _dataContext.PlanType.ToList();
             var nok = _dataContext.NextOfKinRelationship.ToList();
 
             var data = new
