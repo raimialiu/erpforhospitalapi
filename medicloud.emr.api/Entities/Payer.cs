@@ -12,6 +12,7 @@ namespace medicloud.emr.api.Entities
       //  public bool IsinsuranceCompany { get; set; }
         public DateTime? dateadded { get; set; }
         public int accountcatid { get; set; }
+        public bool? isactive { get; set; }
     }
 
 }
