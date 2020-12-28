@@ -306,7 +306,7 @@ namespace medicloud.emr.api.Controllers
                     return Ok(responseOut); 
                 }
                 responseOut = BaseResponse.GetResponse(null, "no match found", "99");
-                return BadRequest(responseOut);
+                return Ok(responseOut);
 
             }
             catch(Exception es)

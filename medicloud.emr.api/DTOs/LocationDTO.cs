@@ -17,4 +17,13 @@ namespace medicloud.emr.api.DTOs
 
     public class ProviderDTO : OptionsDTO { }
 
+    public class ReminderDTO : OptionsDTO { }
+
+    public class ReferralDTO : OptionsDTO { }
+
+    public class ReferringDTO : OptionsDTO { }
+
+    public class VisitTypeDTO : OptionsDTO { }
+
+
 }

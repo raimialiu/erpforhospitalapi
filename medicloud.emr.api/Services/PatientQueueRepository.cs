@@ -32,7 +32,7 @@ namespace medicloud.emr.api.Services
                     AccountId = r.AccountId,
                     EncounterId = r.EncounterId,
                     PatientQueueId = r.PatientQueueId,
-                    CheckInDate = _context.CheckIn.Where(c => c.Encounterid == r.EncounterId && c.Locationid == locationId && c.Accountid == accountId && c.Patientid == r.PatientId)
+                    CheckInDate = _context.CheckIn.Where(c => c.Encounterid == r.EncounterId && c.Locationid == locationId && c.ProviderId == accountId && c.Patientid == r.PatientId)
                                 .Select(d => d.CheckInDate).FirstOrDefault(),
                     LocationId = r.LocationId,
                     PatientId = r.PatientId,
@@ -51,7 +51,7 @@ namespace medicloud.emr.api.Services
 
         public async Task RemoveFromQueue(string patientId, int locationId, int accountId)
         {
-            var result = await _context.CheckIn.Where(c => c.IsCheckedOut == false && c.Patientid == patientId && c.Locationid == locationId && c.Accountid == accountId).FirstOrDefaultAsync();
+            var result = await _context.CheckIn.Where(c => c.IsCheckedOut == false && c.Patientid == patientId && c.Locationid == locationId && c.ProviderId == accountId).FirstOrDefaultAsync();
             if (result != null)
             {
                 _context.Remove(result);

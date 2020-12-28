@@ -611,85 +611,58 @@ namespace medicloud.emr.api.Migrations
                 {
                     b.Property<int>("Apptid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("apptid")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Adjuster")
-                        .IsRequired()
-                        .HasColumnName("adjuster")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Dateadded")
-                        .HasColumnName("dateadded")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Endtime")
-                        .HasColumnName("endtime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("Isrecurring")
-                        .HasColumnName("isrecurring")
                         .HasColumnType("bit");
 
                     b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
                         .HasColumnType("int");
 
                     b.Property<string>("PatientNumber")
-                        .HasColumnName("patientNumber")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("varchar(50)");
 
                     b.Property<int?>("Provid")
-                        .HasColumnName("provid")
                         .HasColumnType("int");
 
                     b.Property<string>("Reason")
-                        .HasColumnName("reason")
-                        .HasColumnType("varchar(255)")
-                        .HasMaxLength(255)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Recurrencerule")
-                        .HasColumnName("recurrencerule")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Referralid")
-                        .HasColumnName("referralid")
                         .HasColumnType("int");
 
                     b.Property<int?>("Referringid")
-                        .HasColumnName("referringid")
                         .HasColumnType("int");
 
                     b.Property<int?>("Reminderid")
-                        .HasColumnName("reminderid")
                         .HasColumnType("int");
 
                     b.Property<int?>("Specid")
-                        .HasColumnName("specid")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Starttime")
-                        .HasColumnName("starttime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("Statusid")
-                        .HasColumnName("statusid")
                         .HasColumnType("int");
 
                     b.Property<int?>("Visittypeid")
-                        .HasColumnName("visittypeid")
                         .HasColumnType("int");
 
-                    b.HasKey("Apptid")
-                        .HasName("PK__Appointm__6670983A2FEC3E03");
+                    b.HasKey("Apptid");
 
                     b.HasIndex("Locationid");
 
@@ -1477,63 +1450,37 @@ namespace medicloud.emr.api.Migrations
                 {
                     b.Property<int>("Blockid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("blockid")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Adjuster")
-                        .IsRequired()
-                        .HasColumnName("adjuster")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Blockname")
-                        .IsRequired()
-                        .HasColumnName("blockname")
-                        .HasColumnType("varchar(255)")
-                        .HasMaxLength(255)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Dateadded")
-                        .HasColumnName("dateadded")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Days")
-                        .IsRequired()
-                        .HasColumnName("days")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Endtime")
-                        .IsRequired()
-                        .HasColumnName("endtime")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Iscurrent")
-                        .HasColumnName("iscurrent")
                         .HasColumnType("bit");
 
                     b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
                         .HasColumnType("int");
 
                     b.Property<int?>("Provid")
-                        .HasColumnName("provid")
                         .HasColumnType("int");
 
                     b.Property<string>("Starttime")
-                        .IsRequired()
-                        .HasColumnName("starttime")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Blockid")
-                        .HasName("PK__BreakBlo__17B570224D59AC15");
+                    b.HasKey("Blockid");
 
                     b.HasIndex("Locationid");
 
@@ -1689,9 +1636,6 @@ namespace medicloud.emr.api.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Accountid")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CheckInDate")
                         .HasColumnName("checkindate")
                         .HasColumnType("datetime");
@@ -1714,14 +1658,17 @@ namespace medicloud.emr.api.Migrations
                     b.Property<string>("Patientid")
                         .HasColumnType("varchar(50)");
 
+                    b.Property<int>("ProviderId")
+                        .HasColumnType("int");
+
                     b.HasKey("Encounterid")
                         .HasName("PK__Checke__3A71E2D82A4295FC");
-
-                    b.HasIndex("Accountid");
 
                     b.HasIndex("Locationid");
 
                     b.HasIndex("Patientid");
+
+                    b.HasIndex("ProviderId");
 
                     b.ToTable("CheckIn");
                 });
@@ -5525,9 +5472,6 @@ namespace medicloud.emr.api.Migrations
                     b.Property<string>("DiagnosisDesc")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DiagnosisId")
-                        .HasColumnType("int");
-
                     b.Property<string>("EnrolleeNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -5552,9 +5496,6 @@ namespace medicloud.emr.api.Migrations
                     b.Property<string>("ProcedureDesc")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProcedureId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,2)");
 
@@ -5568,13 +5509,9 @@ namespace medicloud.emr.api.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("DiagnosisId");
-
                     b.HasIndex("LocationId");
 
                     b.HasIndex("PatientId");
-
-                    b.HasIndex("ProcedureId");
 
                     b.ToTable("PaRequest");
                 });
@@ -5612,7 +5549,6 @@ namespace medicloud.emr.api.Migrations
 
                     b.Property<int>("Autoid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("autoid")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -5655,6 +5591,9 @@ namespace medicloud.emr.api.Migrations
                         .HasColumnType("varchar(max)")
                         .IsUnicode(false);
 
+                    b.Property<string>("Dependantrelationship")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("Dob")
                         .HasColumnName("dob")
                         .HasColumnType("date");
@@ -5676,6 +5615,9 @@ namespace medicloud.emr.api.Migrations
                         .HasColumnType("varchar(50)")
                         .HasMaxLength(50)
                         .IsUnicode(false);
+
+                    b.Property<string>("Employeenumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Employeraddress")
                         .HasColumnName("employeraddress")
@@ -5704,9 +5646,15 @@ namespace medicloud.emr.api.Migrations
                         .HasColumnName("employerstateid")
                         .HasColumnType("int");
 
+                    b.Property<string>("Enrolleeno")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("Facilitatorid")
                         .HasColumnName("facilitatorid")
                         .HasColumnType("int");
+
+                    b.Property<string>("FamilyNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Firstname")
                         .HasColumnName("firstname")
@@ -5782,8 +5730,17 @@ namespace medicloud.emr.api.Migrations
                         .HasMaxLength(50)
                         .IsUnicode(false);
 
+                    b.Property<string>("Identificationnumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Identificationtypeid")
+                        .HasColumnType("int");
+
                     b.Property<bool?>("Inactive")
                         .HasColumnName("inactive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsDependant")
                         .HasColumnType("bit");
 
                     b.Property<string>("Lastname")
@@ -5892,9 +5849,15 @@ namespace medicloud.emr.api.Migrations
                         .HasColumnName("ProviderID")
                         .HasColumnType("int");
 
+                    b.Property<long?>("Referalby")
+                        .HasColumnType("bigint");
+
                     b.Property<int?>("Refid")
                         .HasColumnName("refid")
                         .HasColumnType("int");
+
+                    b.Property<string>("Reglink")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Relationship")
                         .HasColumnName("relationship")
@@ -5925,6 +5888,9 @@ namespace medicloud.emr.api.Migrations
                     b.Property<int?>("Stateid")
                         .HasColumnName("stateid")
                         .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .HasColumnName("title")
@@ -6206,6 +6172,35 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("Patient_Order_Details");
                 });
 
+            modelBuilder.Entity("medicloud.emr.api.Entities.PatientPayorTypes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Patientid")
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Payor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("accountcategory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("plantype")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("sponsor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Patientid");
+
+                    b.ToTable("PatientPayorTypes");
+                });
+
             modelBuilder.Entity("medicloud.emr.api.Entities.PatientQuestionnaire", b =>
                 {
                     b.Property<int>("Pqid")
@@ -6317,6 +6312,30 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("PatienttypeId");
 
                     b.ToTable("PatientType");
+                });
+
+            modelBuilder.Entity("medicloud.emr.api.Entities.Payer", b =>
+                {
+                    b.Property<int>("PayerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountCatId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsinsuranceCompany")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PayerType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("dateadded")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("PayerId");
+
+                    b.ToTable("Payer");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.Personnel", b =>
@@ -7115,23 +7134,16 @@ namespace medicloud.emr.api.Migrations
                 {
                     b.Property<int>("Refid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("refid")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("Dateadded")
-                        .HasColumnName("dateadded")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Physicianname")
-                        .IsRequired()
-                        .HasColumnName("physicianname")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Refid")
-                        .HasName("PK__Referrin__198472FDAD57E270");
+                    b.HasKey("Refid");
 
                     b.ToTable("ReferringPhysician");
                 });
@@ -7140,20 +7152,14 @@ namespace medicloud.emr.api.Migrations
                 {
                     b.Property<int>("Reminderid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("reminderid")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("Dateadded")
-                        .HasColumnName("dateadded")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("Reminder1")
-                        .IsRequired()
-                        .HasColumnName("reminder")
-                        .HasColumnType("varchar(255)")
-                        .HasMaxLength(255)
-                        .IsUnicode(false);
+                    b.Property<string>("reminder")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Reminderid");
 
@@ -7516,9 +7522,9 @@ namespace medicloud.emr.api.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Dateadded")
+                    b.Property<DateTime>("Dateadded")
                         .HasColumnName("dateadded")
-                        .HasColumnType("nchar(10)")
+                        .HasColumnType("datetime2")
                         .IsFixedLength(true)
                         .HasMaxLength(10);
 
@@ -7762,146 +7768,6 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("temp");
                 });
 
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateAbdomen", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Bowelsound")
-                        .HasColumnName("bowelsound")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Distended")
-                        .HasColumnName("distended")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Firm")
-                        .HasColumnName("firm")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Hepatomegaly")
-                        .HasColumnName("hepatomegaly")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Hyperemic")
-                        .HasColumnName("hyperemic")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Renomegaly")
-                        .HasColumnName("renomegaly")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Soft")
-                        .HasColumnName("soft")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Splenomegaly")
-                        .HasColumnName("splenomegaly")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Tender")
-                        .HasColumnName("tender")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_abdomen");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateActivity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Bedrest")
-                        .HasColumnName("bedrest")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Monitorpainscore")
-                        .HasColumnName("monitorpainscore")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Monitorvitalsigns")
-                        .HasColumnName("monitorvitalsigns")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Monitorwounddrainage")
-                        .HasColumnName("monitorwounddrainage")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_activity");
-                });
-
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateAllergies", b =>
                 {
                     b.Property<int>("Id")
@@ -7943,183 +7809,6 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("template_allergies");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateAllreadyfordischarge", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Allnursingmedicationxraycollectedreadyfordischarge")
-                        .HasColumnName("allnursingmedicationxraycollectedreadyfordischarge")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_allreadyfordischarge");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateAnthpropometry", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Aga")
-                        .HasColumnName("aga")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Headcircumferencecm")
-                        .HasColumnName("headcircumferencecm")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Lengthcm")
-                        .HasColumnName("lengthcm")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Lga")
-                        .HasColumnName("lga")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Sga")
-                        .HasColumnName("sga")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Weight")
-                        .HasColumnName("weight")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_anthpropometry");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateAntibiotics", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("A")
-                        .HasColumnName("a")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("B")
-                        .HasColumnName("b")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("C")
-                        .HasColumnName("c")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("D")
-                        .HasColumnName("d")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("E")
-                        .HasColumnName("e")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("F")
-                        .HasColumnName("f")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("G")
-                        .HasColumnName("g")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_antibiotics");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateArvdrugs", b =>
@@ -8169,110 +7858,6 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("template_arvdrugs");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateAssesment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Assement")
-                        .HasColumnName("assement")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_assesment");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateAttitude", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Extension")
-                        .HasColumnName("extension")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Flexion")
-                        .HasColumnName("flexion")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Grasp")
-                        .HasColumnName("grasp")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Mororeflex")
-                        .HasColumnName("mororeflex")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Partialflexion")
-                        .HasColumnName("partialflexion")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Suck")
-                        .HasColumnName("suck")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_attitude");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateBiodata", b =>
@@ -8618,59 +8203,43 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("TemplateCategory");
                 });
 
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateCathetercouldbepassedthrough", b =>
+            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateCategoryB", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
+                    b.Property<string>("categoryname")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("templatecategoryid")
                         .HasColumnType("int");
 
-                    b.Property<string>("Columns")
-                        .HasColumnName("columns")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
+                    b.HasKey("id");
 
-                    b.Property<string>("Columns1")
-                        .HasColumnName("columns1")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
+                    b.ToTable("TemplateCategoryB");
+                });
 
-                    b.Property<DateTime?>("Dateadded")
+            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateCategoryC", b =>
+                {
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("L")
-                        .HasColumnName("l")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
+                    b.Property<string>("categoryname")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
+                    b.Property<int>("templatecategorybid")
                         .HasColumnType("int");
 
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
+                    b.Property<int>("templatecategoryid")
+                        .HasColumnType("int");
 
-                    b.Property<string>("R")
-                        .HasColumnName("r")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
+                    b.HasKey("id");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("template_cathetercouldbepassedthrough");
+                    b.ToTable("TemplateCategoryC");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateChromeform", b =>
@@ -8757,249 +8326,6 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("template_chromiumform");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateClinicalnotes", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Clinicalnotes")
-                        .HasColumnName("clinicalnotes")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Date")
-                        .HasColumnName("date")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Painscore")
-                        .HasColumnName("painscore")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Time")
-                        .HasColumnName("time")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_clinicalnotes");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateColonoscopy", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Analcanalonretroflexion")
-                        .HasColumnName("analcanalonretroflexion")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Ascendingcolon")
-                        .HasColumnName("ascendingcolon")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Biopsies")
-                        .HasColumnName("biopsies")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Bowelpreparation")
-                        .HasColumnName("bowelpreparation")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Caecum")
-                        .HasColumnName("caecum")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Colonoscopenumber")
-                        .HasColumnName("colonoscopenumber")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Dateofprcedure")
-                        .HasColumnName("dateofprcedure")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Descendingcolon")
-                        .HasColumnName("descendingcolon")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Diagnosis")
-                        .HasColumnName("diagnosis")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Endoscopist")
-                        .HasColumnName("endoscopist")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Extentofintubation1")
-                        .HasColumnName("extentofintubation1")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Indication")
-                        .HasColumnName("indication")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Quantityofbowelpreparation")
-                        .HasColumnName("quantityofbowelpreparation")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Rectum")
-                        .HasColumnName("rectum")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Report")
-                        .HasColumnName("report")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Sedation")
-                        .HasColumnName("sedation")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Symoidcolon")
-                        .HasColumnName("symoidcolon")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Textarea")
-                        .HasColumnName("textarea")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Transversecolon")
-                        .HasColumnName("transversecolon")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Treatmentandoutcome")
-                        .HasColumnName("treatmentandoutcome")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_colonoscopy");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateComment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Postebtorders")
-                        .HasColumnName("postebtorders")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_comment");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateConsultantincharge", b =>
@@ -9196,171 +8522,6 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("template_cotrimoxazole");
                 });
 
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateDayodaysurgery", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Bedrest")
-                        .HasColumnName("bedrest")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Monitorpainscore")
-                        .HasColumnName("monitorpainscore")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Monitorvitalsigns")
-                        .HasColumnName("monitorvitalsigns")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_dayodaysurgery");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateDeliverydetails", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Lscs")
-                        .HasColumnName("lscs")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Maternalsedation")
-                        .HasColumnName("maternalsedation")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Modeofdelivery")
-                        .HasColumnName("modeofdelivery")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Onsetoflabor")
-                        .HasColumnName("onsetoflabor")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Presentation")
-                        .HasColumnName("presentation")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_deliverydetails");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateDetailsofresuscitation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Columns")
-                        .HasColumnName("columns")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nameofmedicalstaff")
-                        .HasColumnName("nameofmedicalstaff")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Signatureofmedicalstaff")
-                        .HasColumnName("signatureofmedicalstaff")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Textfield")
-                        .HasColumnName("textfield")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_detailsofresuscitation");
-                });
-
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateDiagnosisanddifferentials", b =>
                 {
                     b.Property<int>("Id")
@@ -9396,171 +8557,6 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("template_diagnosisanddifferentials");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateDialysisprescription", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Anticoagulation")
-                        .HasColumnName("anticoagulation")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Bloodflowrate")
-                        .HasColumnName("bloodflowrate")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Dialysisaccessused")
-                        .HasColumnName("dialysisaccessused")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Dialysisflowrate")
-                        .HasColumnName("dialysisflowrate")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Treatmentduration")
-                        .HasColumnName("treatmentduration")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Ultafiltration")
-                        .HasColumnName("ultafiltration")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_dialysisprescription");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateDialysisvitaltest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Indicationsfordialysis")
-                        .HasColumnName("indicationsfordialysis")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Posttreatmentdiagnoses")
-                        .HasColumnName("posttreatmentdiagnoses")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Pretreatmentdiagnoses")
-                        .HasColumnName("pretreatmentdiagnoses")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Pretreatmentlabtestresult")
-                        .HasColumnName("pretreatmentlabtestresult")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Pretreatmentweight")
-                        .HasColumnName("pretreatmentweight")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_dialysisvitaltest");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateDiet", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Diet")
-                        .HasColumnName("diet")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_diet");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateDietorder", b =>
@@ -9684,433 +8680,6 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("template_expectedoutcomesofcare");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateFirstexaminationatbirth", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Date")
-                        .HasColumnName("date")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Time")
-                        .HasColumnName("time")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_firstexaminationatbirth");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateFluidfeeds", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Feeds")
-                        .HasColumnName("feeds")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Fluids")
-                        .HasColumnName("fluids")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Types")
-                        .HasColumnName("types")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Typevia")
-                        .HasColumnName("typevia")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_fluidfeeds");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateGastroscopy", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Comorbidity")
-                        .HasColumnName("comorbidity")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Date")
-                        .HasColumnName("date")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Dateofbirth")
-                        .HasColumnName("dateofbirth")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Endoscopenumber")
-                        .HasColumnName("endoscopenumber")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Endoscopist")
-                        .HasColumnName("endoscopist")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Hospitalnumber")
-                        .HasColumnName("hospitalnumber")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Indication")
-                        .HasColumnName("indication")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Intubation")
-                        .HasColumnName("intubation")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnName("name")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Sedation")
-                        .HasColumnName("sedation")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_gastroscopy");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateGeneralapearances", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Addedsounds")
-                        .HasColumnName("addedsounds")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Ae")
-                        .HasColumnName("ae")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Blue")
-                        .HasColumnName("blue")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Conscious")
-                        .HasColumnName("conscious")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Hr")
-                        .HasColumnName("hr")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Hsiii")
-                        .HasColumnName("hsiii")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Jaundiced")
-                        .HasColumnName("jaundiced")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Mbp")
-                        .HasColumnName("mbp")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Murmur")
-                        .HasColumnName("murmur")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Pale")
-                        .HasColumnName("pale")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Pink")
-                        .HasColumnName("pink")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Rr")
-                        .HasColumnName("rr")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Sleeping")
-                        .HasColumnName("sleeping")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_generalapearances");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateHomesupport", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Arranged")
-                        .HasColumnName("arranged")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_homesupport");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateInformationgiventopatientandcaregiver", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Continuingcare")
-                        .HasColumnName("continuingcare")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Diet")
-                        .HasColumnName("diet")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Medication")
-                        .HasColumnName("medication")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Specialtreatmentandcareanduseofequipment")
-                        .HasColumnName("specialtreatmentandcareanduseofequipment")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_informationgiventopatientandcaregiver");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateInformedofdischarge", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientandrelativecaregiverinformedofdischarge")
-                        .HasColumnName("patientandrelativecaregiverinformedofdischarge")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_informedofdischarge");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateInn", b =>
@@ -10338,61 +8907,6 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("template_investigation");
                 });
 
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateJaundice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Conj")
-                        .HasColumnName("conj")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Jaundice")
-                        .HasColumnName("jaundice")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Lastsbtotal")
-                        .HasColumnName("lastsbtotal")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Phototherapy")
-                        .HasColumnName("phototherapy")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_jaundice");
-                });
-
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateLaboratory", b =>
                 {
                     b.Property<int>("Id")
@@ -10515,92 +9029,6 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("template_laboratory1");
                 });
 
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateLastsawadoctoron", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Lastsawadoctoron")
-                        .HasColumnName("lastsawadoctoron")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_lastsawadoctoron");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateManagementchangesinthelast24hrs", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Am")
-                        .HasColumnName("am")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Cxr")
-                        .HasColumnName("cxr")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Pm")
-                        .HasColumnName("pm")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_managementchangesinthelast24hrs");
-                });
-
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateMaster", b =>
                 {
                     b.Property<int>("Masterid")
@@ -10660,97 +9088,6 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("TemplateMaster");
                 });
 
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateMaternalrecords", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Antenatalscan")
-                        .HasColumnName("antenatalscan")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Dateofadmission")
-                        .HasColumnName("dateofadmission")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Dob")
-                        .HasColumnName("dob")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Eddbydate")
-                        .HasColumnName("eddbydate")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Maternalproblem")
-                        .HasColumnName("maternalproblem")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Mothersname")
-                        .HasColumnName("mothersname")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Nameofnurseormidwife")
-                        .HasColumnName("nameofnurseormidwife")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Registrationnumber")
-                        .HasColumnName("registrationnumber")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Relevantfamilyhistory")
-                        .HasColumnName("relevantfamilyhistory")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Relevantmaterialmedication")
-                        .HasColumnName("relevantmaterialmedication")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_maternalrecords");
-                });
-
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateMedicalofficerandcarecoordinator", b =>
                 {
                     b.Property<int>("Id")
@@ -10806,165 +9143,6 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("template_medicalofficerandcarecoordinator");
                 });
 
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateMedicationanddressings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Informationonwheretoobtainfurthersupply")
-                        .HasColumnName("informationonwheretoobtainfurthersupply")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Instructiongiven")
-                        .HasColumnName("instructiongiven")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Obtained")
-                        .HasColumnName("obtained")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_medicationanddressings");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateMedicationandothertreatmentalreadygiven", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Medicationothertreatmentalreadygiven")
-                        .HasColumnName("medicationothertreatmentalreadygiven")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_medicationandothertreatmentalreadygiven");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateMedications", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Antiemeticprophylaxisasperorder")
-                        .HasColumnName("antiemeticprophylaxisasperorder")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Applytedstockings")
-                        .HasColumnName("applytedstockings")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Asperanethesia")
-                        .HasColumnName("asperanethesia")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Columns")
-                        .HasColumnName("columns")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Columns1")
-                        .HasColumnName("columns1")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Injectionofclexaneat2000")
-                        .HasColumnName("injectionofclexaneat2000")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Prophylacticantibioticprescribed")
-                        .HasColumnName("prophylacticantibioticprescribed")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_medications");
-                });
-
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateMinivitals", b =>
                 {
                     b.Property<int>("Id")
@@ -11012,73 +9190,6 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("template_minivitals");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateMother", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Address")
-                        .HasColumnName("address")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Age")
-                        .HasColumnName("age")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Causeofdeath")
-                        .HasColumnName("causeofdeath")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Health")
-                        .HasColumnName("health")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnName("name")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Status")
-                        .HasColumnName("status")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_mother");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateNeuro", b =>
@@ -11155,98 +9266,6 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("template_neurologic");
                 });
 
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateNeurologicexam", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Abnormalmovement")
-                        .HasColumnName("abnormalmovement")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Fits")
-                        .HasColumnName("fits")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Jittery")
-                        .HasColumnName("jittery")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Lethargic")
-                        .HasColumnName("lethargic")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_neurologicexam");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateOtherconcern", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Otherconcern")
-                        .HasColumnName("otherconcern")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_otherconcern");
-                });
-
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateOtherdetails", b =>
                 {
                     b.Property<int>("Id")
@@ -11296,115 +9315,6 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("template_otherdetails");
                 });
 
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateOtherfluids", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Aspirate")
-                        .HasColumnName("aspirate")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Bloodsugarrange")
-                        .HasColumnName("bloodsugarrange")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Bo")
-                        .HasColumnName("bo")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Dobutamine")
-                        .HasColumnName("dobutamine")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Dopamine")
-                        .HasColumnName("dopamine")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Gainandlossof")
-                        .HasColumnName("gainandlossof")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Insulin")
-                        .HasColumnName("insulin")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Midazolam")
-                        .HasColumnName("midazolam")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Morphin")
-                        .HasColumnName("morphin")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Totalcalories")
-                        .HasColumnName("totalcalories")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Totalfluidsandfeeds")
-                        .HasColumnName("totalfluidsandfeeds")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Urineoutput")
-                        .HasColumnName("urineoutput")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Vomit")
-                        .HasColumnName("vomit")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_otherfluids");
-                });
-
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateOthermodification", b =>
                 {
                     b.Property<int>("Id")
@@ -11440,80 +9350,6 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("template_othermodification");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateOutpatientappointmentmade", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Outpatientappointmentmade")
-                        .HasColumnName("outpatientappointmentmade")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_outpatientappointmentmade");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePainassessmentscale", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Painassessmentscale")
-                        .HasColumnName("painassessmentscale")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_painassessmentscale");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePainassestmentscale", b =>
@@ -11606,147 +9442,6 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("template_pastobstericform");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePastobsterichistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Alive")
-                        .HasColumnName("alive")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Gravidity")
-                        .HasColumnName("gravidity")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Miscarriage")
-                        .HasColumnName("miscarriage")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Para")
-                        .HasColumnName("para")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_pastobsterichistory");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePatientandcaregiver", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientandcaregiverhasanamedcontactandtelephonenumberintheeventofdifficultiesfollowingdischarge")
-                        .HasColumnName("patientandcaregiverhasanamedcontactandtelephonenumberintheeventofdifficultiesfollowingdischarge")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_patientandcaregiver");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePatientdetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Babysbloodgroup")
-                        .HasColumnName("babysbloodgroup")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Indicationforebt")
-                        .HasColumnName("indicationforebt")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Mothersbloodgroup")
-                        .HasColumnName("mothersbloodgroup")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_patientdetail");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePatientdetails", b =>
@@ -11871,214 +9566,6 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("template_patientinformation");
                 });
 
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePhysicalexamination", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Linesdatedlines")
-                        .HasColumnName("linesdatedlines")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Longlines")
-                        .HasColumnName("longlines")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Others")
-                        .HasColumnName("others")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Textfield")
-                        .HasColumnName("textfield")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Uac")
-                        .HasColumnName("uac")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Uvc")
-                        .HasColumnName("uvc")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_physicalexamination");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePhysicianincharge", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Physicianname")
-                        .HasColumnName("physicianname")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_physicianincharge");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePlan", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Foodandideatoemphasize")
-                        .HasColumnName("foodandideatoemphasize")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Foodstoavoid")
-                        .HasColumnName("foodstoavoid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Foodstolimit")
-                        .HasColumnName("foodstolimit")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Handoutanddietsheetgive1")
-                        .HasColumnName("handoutanddietsheetgive1")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Othernotes")
-                        .HasColumnName("othernotes")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_plan");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePosttreatmentlabresult", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Dialysisdoseacheieved")
-                        .HasColumnName("dialysisdoseacheieved")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nextrecommendeddialysistreatment")
-                        .HasColumnName("nextrecommendeddialysistreatment")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_posttreatmentlabresult");
-                });
-
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePresentingcomplaintsandhistoryofpresentillness", b =>
                 {
                     b.Property<int>("Id")
@@ -12120,212 +9607,6 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("template_presentingcomplaintsandhistoryofpresentillness");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePresentobsterichistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Columns")
-                        .HasColumnName("columns")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Columns1")
-                        .HasColumnName("columns1")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Columns2")
-                        .HasColumnName("columns2")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Columns3")
-                        .HasColumnName("columns3")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Columns4")
-                        .HasColumnName("columns4")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Datebleeding")
-                        .HasColumnName("datebleeding")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Edd")
-                        .HasColumnName("edd")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Ega")
-                        .HasColumnName("ega")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Excessivevomiting")
-                        .HasColumnName("excessivevomiting")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Febrilicillness")
-                        .HasColumnName("febrilicillness")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Lmp")
-                        .HasColumnName("lmp")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Otherrelevantsymptoms")
-                        .HasColumnName("otherrelevantsymptoms")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Pelvicpain")
-                        .HasColumnName("pelvicpain")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Radio1")
-                        .HasColumnName("radio1")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Radio2")
-                        .HasColumnName("radio2")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Urinarysymptoms")
-                        .HasColumnName("urinarysymptoms")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_presentobsterichistory");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePrimaryexaminationdetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Abdomen")
-                        .HasColumnName("abdomen")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Breast")
-                        .HasColumnName("breast")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Chest")
-                        .HasColumnName("chest")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Cns")
-                        .HasColumnName("cns")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Cvs")
-                        .HasColumnName("cvs")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Generalcondition")
-                        .HasColumnName("generalcondition")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Otherrelevantabnormalities")
-                        .HasColumnName("otherrelevantabnormalities")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Pelvis")
-                        .HasColumnName("pelvis")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_primaryexaminationdetail");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplatePrimaryexaminationdetails", b =>
@@ -12492,122 +9773,6 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("template_psychological");
                 });
 
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateResult", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Ppr")
-                        .HasColumnName("ppr")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Pqrst")
-                        .HasColumnName("pqrst")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Qrs")
-                        .HasColumnName("qrs")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Qtqtc")
-                        .HasColumnName("qtqtc")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Result")
-                        .HasColumnName("result")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Rv6sv2")
-                        .HasColumnName("rv6sv2")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Rvssv1")
-                        .HasColumnName("rvssv1")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Rvssv2")
-                        .HasColumnName("rvssv2")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_result");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateResultinterpretation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Resultinterpretation")
-                        .HasColumnName("resultinterpretation")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_resultinterpretation");
-                });
-
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateResultsofpreviousinvestigationdone", b =>
                 {
                     b.Property<int>("Id")
@@ -12643,86 +9808,6 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("template_resultsofpreviousinvestigationdone");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateSepsis", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Sepsis")
-                        .HasColumnName("sepsis")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Source")
-                        .HasColumnName("source")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_sepsis");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateSpecimenrequired", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Specimenrequired")
-                        .HasColumnName("specimenrequired")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_specimenrequired");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateSurgeryform", b =>
@@ -12762,245 +9847,6 @@ namespace medicloud.emr.api.Migrations
                     b.ToTable("template_surgeryform");
                 });
 
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateTeaching", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Columns")
-                        .HasColumnName("columns")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Discusspainmanagementpainscaleandsideeffect")
-                        .HasColumnName("discusspainmanagementpainscaleandsideeffect")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Explaintreatment")
-                        .HasColumnName("explaintreatment")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Teachankleexercise")
-                        .HasColumnName("teachankleexercise")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_teaching");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateTestspecimen", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Eucrifindicatedclinically")
-                        .HasColumnName("eucrifindicatedclinically")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Fbc")
-                        .HasColumnName("fbc")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Ptnr12goalsinrifonwatarin")
-                        .HasColumnName("ptnr12goalsinrifonwatarin")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_testspecimen");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateTone", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Floppy")
-                        .HasColumnName("floppy")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Hypertonia")
-                        .HasColumnName("hypertonia")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Normal")
-                        .HasColumnName("normal")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_tone");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateTransportarrange", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Ambulance")
-                        .HasColumnName("ambulance")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Private")
-                        .HasColumnName("private")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_transportarrange");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateTreatmentgiven", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Posttreatmentconditionandrecommendation")
-                        .HasColumnName("posttreatmentconditionandrecommendation")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Treatmenttype")
-                        .HasColumnName("treatmenttype")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_treatmentgiven");
-                });
-
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateTreatmentmanagementplan", b =>
                 {
                     b.Property<int>("Id")
@@ -13036,73 +9882,6 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("template_treatmentmanagementplan");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateTypeofresuscitation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Bagmask")
-                        .HasColumnName("bagmask")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Drugs")
-                        .HasColumnName("drugs")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Intubation")
-                        .HasColumnName("intubation")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Suction")
-                        .HasColumnName("suction")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Tactilestimulation")
-                        .HasColumnName("tactilestimulation")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Umbilicalcatheterization")
-                        .HasColumnName("umbilicalcatheterization")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_typeofresuscitation");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateUrinalysis", b =>
@@ -13146,79 +9925,6 @@ namespace medicloud.emr.api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("template_urinalysis");
-                });
-
-            modelBuilder.Entity("medicloud.emr.api.Entities.TemplateVentilation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Accountid")
-                        .HasColumnName("accountid")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Dateadded")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("Fioz")
-                        .HasColumnName("fioz")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<int?>("Locationid")
-                        .HasColumnName("locationid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Map")
-                        .HasColumnName("map")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Mode")
-                        .HasColumnName("mode")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Patientid")
-                        .HasColumnName("patientid")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Pipandpeep")
-                        .HasColumnName("pipandpeep")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Ratedp")
-                        .HasColumnName("ratedp")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Spoz")
-                        .HasColumnName("spoz")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.Property<string>("Ti")
-                        .HasColumnName("ti")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("template_ventilation");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.TemplateVitals", b =>
@@ -13680,23 +10386,16 @@ namespace medicloud.emr.api.Migrations
                 {
                     b.Property<int>("Typeid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("typeid")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("Dateadded")
-                        .HasColumnName("dateadded")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Typename")
-                        .IsRequired()
-                        .HasColumnName("typename")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Typeid")
-                        .HasName("PK__VisitTyp__F0528D02702008C8");
+                    b.HasKey("Typeid");
 
                     b.ToTable("VisitType");
                 });
@@ -13843,49 +10542,41 @@ namespace medicloud.emr.api.Migrations
             modelBuilder.Entity("medicloud.emr.api.Entities.AppointmentSchedule", b =>
                 {
                     b.HasOne("medicloud.emr.api.Entities.Location", "Location")
-                        .WithMany("AppointmentSchedule")
-                        .HasForeignKey("Locationid")
-                        .HasConstraintName("FK__Appointme__locat__28E2F130");
+                        .WithMany()
+                        .HasForeignKey("Locationid");
 
                     b.HasOne("medicloud.emr.api.Entities.Patient", "PatientNumberNavigation")
                         .WithMany("AppointmentSchedule")
                         .HasForeignKey("PatientNumber")
-                        .HasConstraintName("FK__Appointme__patie__308412F8");
+                        .HasConstraintName("FK_Patient_AppointmentSchedule");
 
                     b.HasOne("medicloud.emr.api.Entities.ApplicationUser", "Prov")
-                        .WithMany("AppointmentSchedule")
-                        .HasForeignKey("Provid")
-                        .HasConstraintName("FK__Appointme__provi__2ACB39A2");
+                        .WithMany()
+                        .HasForeignKey("Provid");
 
                     b.HasOne("medicloud.emr.api.Entities.Referral", "Referral")
-                        .WithMany("AppointmentSchedule")
-                        .HasForeignKey("Referralid")
-                        .HasConstraintName("FK__Appointme__refer__2BBF5DDB");
+                        .WithMany()
+                        .HasForeignKey("Referralid");
 
                     b.HasOne("medicloud.emr.api.Entities.ReferringPhysician", "Referring")
-                        .WithMany("AppointmentSchedule")
-                        .HasForeignKey("Referringid")
-                        .HasConstraintName("FK__Appointme__refer__2CB38214");
+                        .WithMany()
+                        .HasForeignKey("Referringid");
 
                     b.HasOne("medicloud.emr.api.Entities.Reminder", "Reminder")
-                        .WithMany("AppointmentSchedule")
-                        .HasForeignKey("Reminderid")
-                        .HasConstraintName("FK__Appointme__remin__2F8FEEBF");
+                        .WithMany()
+                        .HasForeignKey("Reminderid");
 
                     b.HasOne("medicloud.emr.api.Entities.Specialization", "Spec")
-                        .WithMany("AppointmentSchedule")
-                        .HasForeignKey("Specid")
-                        .HasConstraintName("FK__Appointme__speci__29D71569");
+                        .WithMany()
+                        .HasForeignKey("Specid");
 
                     b.HasOne("medicloud.emr.api.Entities.AppointmentStatus", "Status")
-                        .WithMany("AppointmentSchedule")
-                        .HasForeignKey("Statusid")
-                        .HasConstraintName("FK__Appointme__statu__2DA7A64D");
+                        .WithMany()
+                        .HasForeignKey("Statusid");
 
                     b.HasOne("medicloud.emr.api.Entities.VisitType", "Visittype")
-                        .WithMany("AppointmentSchedule")
-                        .HasForeignKey("Visittypeid")
-                        .HasConstraintName("FK__Appointme__visit__2E9BCA86");
+                        .WithMany()
+                        .HasForeignKey("Visittypeid");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.Asset", b =>
@@ -14080,13 +10771,11 @@ namespace medicloud.emr.api.Migrations
                 {
                     b.HasOne("medicloud.emr.api.Entities.Location", "Location")
                         .WithMany("BreakBlockSchedule")
-                        .HasForeignKey("Locationid")
-                        .HasConstraintName("FK__BreakBloc__locat__70D3A237");
+                        .HasForeignKey("Locationid");
 
                     b.HasOne("medicloud.emr.api.Entities.ApplicationUser", "Prov")
                         .WithMany("BreakBlockSchedule")
-                        .HasForeignKey("Provid")
-                        .HasConstraintName("FK__BreakBloc__provi__71C7C670");
+                        .HasForeignKey("Provid");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.CaseNote", b =>
@@ -14117,13 +10806,6 @@ namespace medicloud.emr.api.Migrations
 
             modelBuilder.Entity("medicloud.emr.api.Entities.CheckIn", b =>
                 {
-                    b.HasOne("medicloud.emr.api.Entities.AccountManager", "AccountManager")
-                        .WithMany("CheckIn")
-                        .HasForeignKey("Accountid")
-                        .HasConstraintName("FK_CheckIn_Patient_Account")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("medicloud.emr.api.Entities.Location", "Location")
                         .WithMany("CheckIn")
                         .HasForeignKey("Locationid")
@@ -14135,6 +10817,13 @@ namespace medicloud.emr.api.Migrations
                         .WithMany("CheckIn")
                         .HasForeignKey("Patientid")
                         .HasConstraintName("FK_CheckIn_Patient");
+
+                    b.HasOne("medicloud.emr.api.Entities.AccountManager", "AccountManager")
+                        .WithMany("CheckIn")
+                        .HasForeignKey("ProviderId")
+                        .HasConstraintName("FK_CheckIn_Patient_Account")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.Claims", b =>
@@ -14736,10 +11425,6 @@ namespace medicloud.emr.api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("medicloud.emr.api.Entities.Diagnosis", null)
-                        .WithMany("PaRequest")
-                        .HasForeignKey("DiagnosisId");
-
                     b.HasOne("medicloud.emr.api.Entities.Location", "Location")
                         .WithMany("PaRequest")
                         .HasForeignKey("LocationId")
@@ -14751,10 +11436,6 @@ namespace medicloud.emr.api.Migrations
                         .WithMany("PaRequest")
                         .HasForeignKey("PatientId")
                         .HasConstraintName("FK_PaRequest_Patient");
-
-                    b.HasOne("medicloud.emr.api.Entities.Procedure", null)
-                        .WithMany("PaRequest")
-                        .HasForeignKey("ProcedureId");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.Patient", b =>
@@ -14882,6 +11563,13 @@ namespace medicloud.emr.api.Migrations
                         .WithMany("PatientOrderDetails")
                         .HasForeignKey("Patientorderid")
                         .HasConstraintName("FK_Patient_Order_Details_Patient_Order");
+                });
+
+            modelBuilder.Entity("medicloud.emr.api.Entities.PatientPayorTypes", b =>
+                {
+                    b.HasOne("medicloud.emr.api.Entities.Patient", null)
+                        .WithMany("PayorTypes")
+                        .HasForeignKey("Patientid");
                 });
 
             modelBuilder.Entity("medicloud.emr.api.Entities.PatientQuestionnaire", b =>

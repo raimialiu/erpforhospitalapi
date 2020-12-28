@@ -17,7 +17,55 @@ namespace medicloud.emr.api.Controllers
         private readonly IAppointmentRepository _repository;
 
         public AppointmentsController(IAppointmentRepository repository) => _repository = repository;
-      
+
+        [HttpGet, Route("GetUpcomingAppointments")]
+        public async Task<IActionResult> GetUpcomingAppointments(int locationId, int accountId, string searchWord)
+        {
+            var appointments = await _repository.UpcomingAppointment(locationId, accountId, searchWord);
+            return Ok(appointments);
+        }
+
+        [HttpGet, Route("TotalAppointmentToday")]
+        public async Task<IActionResult> TotalAppointmentToday(int locationId, int accountId)
+        {
+            try
+            {
+                var result = await _repository.GetTotalAppointmentTodayCount(locationId, accountId);
+
+                TotalsPercentDto response = new TotalsPercentDto
+                {
+                    isIncrease = result.Item3,
+                    TodayTotals = result.Item1,
+                    PercentIncrease = result.Item2
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet, Route("TotalAppointmentNoShowToday")]
+        public async Task<IActionResult> TotalAppointmentNoShowToday(int locationId, int accountId)
+        {
+            try
+            {
+                var result = await _repository.GetAppointmentNoShowTodayCount(locationId, accountId);
+
+                TotalsPercentDto response = new TotalsPercentDto
+                {
+                    isIncrease = result.Item3,
+                    TodayTotals = result.Item1,
+                    PercentIncrease = result.Item2
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
 
         [HttpGet("schedules/{locationid}")]
         public async Task<IActionResult> GetGenSchedules(int locationid) => Ok(await _repository.GetGeneralSchedules(locationid));
@@ -71,5 +119,57 @@ namespace medicloud.emr.api.Controllers
 
         [HttpGet("statuses")]
         public async Task<IActionResult> GetAppointmentStatuses() => Ok(await _repository.GetStatuses());
+
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateAppointment(AppointmentCreate model)
+        {
+            await _repository.AddAppointment(model);
+            return NoContent();
+        }
+
+        [HttpPut("update/{apptId}")]
+        public async Task<IActionResult> UpdateAppointment(int apptId, AppointmentCreate model)
+        {
+            if (apptId != model.Id)
+                return BadRequest(new ErrorResponse { ErrorMessage = "Id does not match" });
+
+            model.Date.AddHours(1);
+            bool updated = await _repository.UpdateAppointment(model);
+            if (!updated)
+                return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
+
+            return NoContent();
+        }
+
+        [HttpGet("retrieve/{apptId}")]
+        public async Task<IActionResult> GetSingleAppointment(int apptId)
+        {
+            var appt = await _repository.GetAppointmentForEdit(apptId);
+            return Ok(appt);
+        }
+
+        [HttpGet, Route("GetPatientAppointmentsToday")]
+        public async Task<IActionResult> GetPatientAppointmentsToday(string patientId, int locationId, int accountId)
+        {
+            try
+            {
+                var appt = await _repository.GetPatientAppointmentsToday(patientId, locationId, accountId);
+                return Ok(appt);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+            
+        }
+
+        [HttpGet("calendar")]
+        public async Task<IActionResult> GetAppointmentsForScheduler([FromQuery] int locationid, [FromQuery] int specid, [FromQuery] IEnumerable<int> provids, [FromQuery] int statusid)
+        {
+            return Ok(await _repository.GetScheduleAppointments(locationid, specid, provids, statusid));
+        }
+
+        [HttpGet("list")]
+        public async Task<IActionResult> GetAppointmentsForTable() => Ok(await _repository.GetListAppointments());
     }
 }
