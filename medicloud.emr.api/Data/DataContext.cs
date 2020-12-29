@@ -15,6 +15,8 @@ namespace medicloud.emr.api.Data
         {
         }
 
+        public virtual DbSet<PlanType> PlanType { get; set; }
+
         public virtual DbSet<AccessControl> AccessControl { get; set; }
         public virtual DbSet<TemplateCategoryB> TemplateCategoryB { get; set; }
         public virtual DbSet<TemplateCategoryC> TemplateCategoryC { get; set; }
@@ -221,8 +223,8 @@ namespace medicloud.emr.api.Data
             if (!optionsBuilder.IsConfigured)
             {
                 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=52.251.49.79;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=medismarts;Password=md2015@tech");
-              //  optionsBuilder.UseSqlServer("Data Source=FCMB-IT-L16582\\TUNDE;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=olatunde;Password=DVorak@23000;MultipleActiveResultSets=True");
+               optionsBuilder.UseSqlServer("Data Source=52.251.49.79;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=medismarts;Password=md2015@tech");
+             // optionsBuilder.UseSqlServer("Data Source=FCMB-IT-L16582\\TUNDE;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=olatunde;Password=DVorak@23000;MultipleActiveResultSets=True");
                 // "Data Source=FCMB-IT-L16582\\TUNDE;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=olatunde;Password=DVorak@23000;MultipleActiveResultSets=True"
                 //optionsBuilder.UseSqlServer("Data Source=DESKTOP-RV56AB0;Database=medismartsemr_db;Trusted_Connection=True;MultipleActiveResultSets=true;");
             }
@@ -482,6 +484,10 @@ namespace medicloud.emr.api.Data
                     .HasForeignKey(d => d.Consultationid)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Antenatal_Record_Patient");
+            });
+
+            modelBuilder.Entity<PlanType>(x => {
+                x.HasKey(x => x.planid);
             });
 
             modelBuilder.Entity<AppSetting>(entity =>
@@ -4293,6 +4299,10 @@ namespace medicloud.emr.api.Data
                     .HasColumnName("patientid")
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                //entity.Property(x => x.locationid).IsRequired(false);
+                //entity.Property(x => x.hospitallocationid).IsRequired(false);
+                //entity.Property(x => x.encodedby).IsRequired(false);
 
                 entity.Property(e => e.Accountcategory)
                     .HasColumnName("accountcategory")

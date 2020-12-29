@@ -14,6 +14,8 @@ using Newtonsoft.Json;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using RestSharp;
+using medicloud.emr.api.Data;
 
 namespace medicloud.emr.api.Controllers
 {
@@ -27,7 +29,7 @@ namespace medicloud.emr.api.Controllers
         private IDataContextRepo<PatientPayorTypes> patientPayorTypes;
         private IDataContextRepo<Patient> patientDB;
         //private IBloodGroupRepo bloodGroupRepo;
-
+        private DataContext _ctx;
         public PatientController(IPatientRepo patientRepo, 
             //IBloodGroupRepo bloodGroupRepo,
             ITitleRepo titleRepo,
@@ -37,6 +39,7 @@ namespace medicloud.emr.api.Controllers
             this.ps = ps;
             patientPayorTypes = new DataContextRepo<PatientPayorTypes>();
             patientDB = new DataContextRepo<Patient>();
+            _ctx = new DataContext();
             //this.bloodGroupRepo = bloodGroupRepo;
 
 
@@ -90,6 +93,53 @@ namespace medicloud.emr.api.Controllers
             return BadRequest(BaseResponse.GetResponse(null, "request failed to update data try again", "99"));
 
         }
+
+
+        [Route("hmointegration/{hmo}")]
+        [HttpGet]
+        public async Task<IActionResult> HmoIntegration([FromRoute]string hmo, [FromQuery] string id)
+        {
+
+            string hygeia = "https://apps.hygeiahmo.com/hyintermediary/json_enrollee_services.aspx?op=familyinfo&authorization=aGdobW9hcGk6aGcqJDIwMTZAdGVjaA==&dep=0&iid={id}";
+            string redcare = "https://medicloud.redcarehmo.com/intermediary/json_enrollee_services.aspx?op=familyinfo&authorization=aGdobW9hcGk6aGcqJDIwMTZAdGVjaA==&iid={id}";
+            string metrohealth = "https://apps.metrohealthhmo.com/intermediary/json_enrollee_services.aspx?op=familyinfo&authorization=aGdobW9hcGk6aGcqJDIwMTZAdGVjaA==&iid={id}";
+            string prohealth = "https://prohealth.ngrok.io/intermediary/json_enrollee_services.aspx?op=familyinfo&authorization=aGdobW9hcGk6aGcqJDIwMTZAdGVjaA==&iid={id}";
+            string healthpartners = "https://apps.hpconnect.org/intermediary/json_enrollee_services.aspx?op=familyinfo&authorization=aGdobW9hcGk6aGcqJDIwMTZAdGVjaA==&iid={id}";
+            string philipshmo = "https://apps.phillipshmo.net/intermediary/json_enrollee_services.aspx?op=familyinfo&authorization=aGdobW9hcGk6aGcqJDIwMTZAdGVjaA==&iid={id}";
+
+            string urlToCall = "";
+            switch (hmo)
+            {
+                case "hygeia":
+                    string[] idSplit = id.Split("/");
+                    urlToCall = hygeia.Replace("{id}", idSplit[0]);
+                    break;
+                case "redcare":
+                    urlToCall = redcare.Replace("{id}", id);
+                    break;
+                case "metro health":
+                    urlToCall = metrohealth.Replace("{id}", id);
+                    break;
+                case "pro health":
+                    urlToCall = prohealth.Replace("{id}", id);
+                    break;
+                case "health partners":
+                    urlToCall = healthpartners.Replace("{id}", id);
+                    break;
+                case "philips hmo":
+                    urlToCall = philipshmo.Replace("{id}", id);
+                    break;
+            }
+
+            string respponseContent = "";
+            var client = new RestClient(urlToCall);
+            client.Timeout = -1;
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = client.Execute(request);
+            var resp = response.Content;
+            return Ok(resp);
+        }
+
 
         [Route(ApiRoutes.saveRegistrationLink)]
         [HttpPost]
@@ -290,7 +340,7 @@ namespace medicloud.emr.api.Controllers
         //    return Ok(result);
         //}
         
-        [Route(ApiRoutes.searchForPatient)]
+        [Route("searchForPatient/{searchValue}")]
         [HttpGet]
         public async Task<IActionResult> SearchForPatient([FromRoute] string searchValue)
         {
@@ -300,7 +350,20 @@ namespace medicloud.emr.api.Controllers
                 BaseResponse responseOut = null;
                 if(returnedDataFromSearch.Count() > 0)
                 {
-                    responseOut = BaseResponse.GetResponse(returnedDataFromSearch, $"searching for patient information with {searchValue}", "00");
+                    var sponsors = _ctx.Sponsor.ToList();
+                    var payors = _ctx.Payer.ToList();
+                    var plans = _ctx.Plan.ToList();
+                    var accounts = _ctx.AccountCategory.ToList();
+                    var result = new
+                    {
+                        patients = returnedDataFromSearch,
+                        payors = payors,
+                        sponsors = sponsors,
+                        plans = plans,
+                        accounts = accounts
+                    };
+
+                    responseOut = BaseResponse.GetResponse(result, $"searching for patient information with {searchValue}", "00");
 
                     //  patientRepo.Close();
                     return Ok(responseOut); 

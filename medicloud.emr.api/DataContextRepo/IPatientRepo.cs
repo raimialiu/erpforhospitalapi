@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Net.Http.Headers;
 using RestSharp;
 using Newtonsoft.Json;
+using System.Data.SqlClient;
+using medicloud.emr.api.DTOs;
 
 namespace medicloud.emr.api.DataContextRepo
 {
@@ -41,51 +43,45 @@ namespace medicloud.emr.api.DataContextRepo
             _context = context;
         }
 
+        public string NextRegNo()
+        {
+            //try
+            //{
+            //  //  var connectionString = PortalDAO.getNewConnection();
+            //    SqlConnection conx = PortalDAO.getNewConnection();
+            //    conx.Open();
+            //    SqlCommand cmdzs = new SqlCommand("SELECT MAX (patientid) as max_patient_id FROM patient ", conx);
+            //    string AkhilRegNomaxValue = cmdzs.ExecuteScalar().ToString(); 
+            //    int AkhilRegNomaxValue = Int32.Parse(AkhilRegNomaxValue); 
+            //    int NextRegValue = AkhilRegNomaxValue + 1; conx.Close(); 
+            //    return NextRegValue.ToString();
+            //}
+            //catch (Exception ex)
+            //{
+            //    return ex.Message.ToString();
+            //}
+            return "";
+        }
+
         private string generatePatientId()
         {
-            string respponseContent = "";
-            var client = new RestClient("http://154.113.100.196:86/api/medismartapi/nextregno");
-            client.Timeout = -1;
-            var request = new RestRequest(Method.GET);
-            request.AddHeader("Authorization", "Bearer 3bNpWGNlcf6R8WWKy0DjXUUbM5YSILtticLywwwnD5ZtPT52_I3bA4h74Se-g352-UxMnl4zN7GCNLG-pbDZ4XjG9v4UmZKgbuBGZK5T2CiXISWNZxPuYX2xNQVM0m2y6Y4wR58XLa4OXb-QKt2dUU7eNOEsSJi-B2h82tlv96cKhIDYLXtfzXV3UdvYK0NBGavaFoalLVJBqGY-agRw7zWvoQZo8uhlW_SH5zfnreiSjQVDhsxT3YxW5y1a9NRQj7fOFEwqy-NIjZ73vcHoYcciaRmeW_o8AW650wDfp1hoBdLID1qbPIRg7j9sKyat3zO0h8dxBWQB2LCeOuINOQNncULIHYl83QlO5tmjWpINyv1CwC8joAfyVHybHGzpMiPsQULFy3s3J-8_qm8DcpUWU1Oz2yx9NsgU8C0LM6L9xjFKu36kuCCEntG2KWs9AWgNRYQwToTch6nSdcL7Me25bktEsg6t2gKksgFzsjg");
-            request.AddHeader("Cookie", "__RequestVerificationToken=qL7t-K9JnQWNchykH4mZz_IM5TEC8gRSBZHKDQ4tW7py_r3nv2N0hz2oLqJ7YEbUVpIf382wZfi9_p-C2IC4Hy2fNx-qYMj9Hk3j9m7QfnM1");
-            IRestResponse response = client.Execute(request);
-            //Console.WriteLine(response.Content);
+            //string respponseContent = "";
+            //var client = new RestClient("http://154.113.100.196:86/api/medismartapi/nextregno");
+            //client.Timeout = -1;
+            //var request = new RestRequest(Method.GET);
+            //request.AddHeader("Authorization", "Bearer 3bNpWGNlcf6R8WWKy0DjXUUbM5YSILtticLywwwnD5ZtPT52_I3bA4h74Se-g352-UxMnl4zN7GCNLG-pbDZ4XjG9v4UmZKgbuBGZK5T2CiXISWNZxPuYX2xNQVM0m2y6Y4wR58XLa4OXb-QKt2dUU7eNOEsSJi-B2h82tlv96cKhIDYLXtfzXV3UdvYK0NBGavaFoalLVJBqGY-agRw7zWvoQZo8uhlW_SH5zfnreiSjQVDhsxT3YxW5y1a9NRQj7fOFEwqy-NIjZ73vcHoYcciaRmeW_o8AW650wDfp1hoBdLID1qbPIRg7j9sKyat3zO0h8dxBWQB2LCeOuINOQNncULIHYl83QlO5tmjWpINyv1CwC8joAfyVHybHGzpMiPsQULFy3s3J-8_qm8DcpUWU1Oz2yx9NsgU8C0LM6L9xjFKu36kuCCEntG2KWs9AWgNRYQwToTch6nSdcL7Me25bktEsg6t2gKksgFzsjg");
+            //request.AddHeader("Cookie", "__RequestVerificationToken=qL7t-K9JnQWNchykH4mZz_IM5TEC8gRSBZHKDQ4tW7py_r3nv2N0hz2oLqJ7YEbUVpIf382wZfi9_p-C2IC4Hy2fNx-qYMj9Hk3j9m7QfnM1");
+            //IRestResponse response = client.Execute(request);
+            ////Console.WriteLine(response.Content);
 
-            respponseContent = JsonConvert.DeserializeObject<string>(response.Content);
-            return respponseContent;
-            //// var rest = new RestClient()
-            // var client = new HttpClient();
-            // //var cs = new AuthenticationHeaderValue("Bearer");
-            // var requestMessage = new HttpRequestMessage()
-            // {
-            //     Method = HttpMethod.Get,
-            //     RequestUri = new Uri("http://154.113.100.196:86/api/medismartapi/nextregno"),
-            //     Headers =
-            //     {
-            //         { "Authorization", "Bearer 3bNpWGNlcf6R8WWKy0DjXUUbM5YSILtticLywwwnD5ZtPT52_I3bA4h74Se-g352-UxMnl4zN7GCNLG-pbDZ4XjG9v4UmZKgbuBGZK5T2CiXISWNZxPuYX2xNQVM0m2y6Y4wR58XLa4OXb-QKt2dUU7eNOEsSJi-B2h82tlv96cKhIDYLXtfzXV3UdvYK0NBGavaFoalLVJBqGY-agRw7zWvoQZo8uhlW_SH5zfnreiSjQVDhsxT3YxW5y1a9NRQj7fOFEwqy-NIjZ73vcHoYcciaRmeW_o8AW650wDfp1hoBdLID1qbPIRg7j9sKyat3zO0h8dxBWQB2LCeOuINOQNncULIHYl83QlO5tmjWpINyv1CwC8joAfyVHybHGzpMiPsQULFy3s3J-8_qm8DcpUWU1Oz2yx9NsgU8C0LM6L9xjFKu36kuCCEntG2KWs9AWgNRYQwToTch6nSdcL7Me25bktEsg6t2gKksgFzsjg"},
-            //         { "Conten-Type", "application/json" }
-            //     }
-            // };
-            // //client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer 3bNpWGNlcf6R8WWKy0DjXUUbM5YSILtticLywwwnD5ZtPT52_I3bA4h74Se-g352-UxMnl4zN7GCNLG-pbDZ4XjG9v4UmZKgbuBGZK5T2CiXISWNZxPuYX2xNQVM0m2y6Y4wR58XLa4OXb-QKt2dUU7eNOEsSJi-B2h82tlv96cKhIDYLXtfzXV3UdvYK0NBGavaFoalLVJBqGY-agRw7zWvoQZo8uhlW_SH5zfnreiSjQVDhsxT3YxW5y1a9NRQj7fOFEwqy-NIjZ73vcHoYcciaRmeW_o8AW650wDfp1hoBdLID1qbPIRg7j9sKyat3zO0h8dxBWQB2LCeOuINOQNncULIHYl83QlO5tmjWpINyv1CwC8joAfyVHybHGzpMiPsQULFy3s3J-8_qm8DcpUWU1Oz2yx9NsgU8C0LM6L9xjFKu36kuCCEntG2KWs9AWgNRYQwToTch6nSdcL7Me25bktEsg6t2gKksgFzsjg");
-            // //client.DefaultRequestHeaders.Add("Content-Type", "application/json");
+            //respponseContent = JsonConvert.DeserializeObject<string>(response.Content);
+            //return respponseContent;
 
-            // var result = client.SendAsync(requestMessage).Result;
-
-            // if(result.IsSuccessStatusCode)
-            // {
-            //     //string _query = "[patient_reg_no_generate]";
-            //     //_db.ExecutStoredProcedure(_query, out var patientId);
-            //     string query = result.Content.ReadAsStringAsync().Result;
-
-            //     return query;
-            // }
-
-            // return "";
-
-
-
-            //   return patientId;
+            
+                 string _query = "[patient_reg_no_generate]";
+                 _db.ExecutStoredProcedure(_query, out var patientId);
+                return patientId;
+      
 
 
         }
@@ -122,9 +118,14 @@ namespace medicloud.emr.api.DataContextRepo
             var result = ctx.Patient.FromSqlRaw(query).Include(x => x.Gender);
             var _result = await _context.Patient.Where(p => p.Firstname.Contains(searchValue)).Include(g => g.Gender)/*.Take(10)*/.ToListAsync();
 
-            var queryable = result.AsQueryable();
 
-            return _result;
+          //  var queryable = result.AsQueryable();
+
+          //  return _result;
+
+
+            return Task.FromResult<IQueryable<Patient>>(result);
+
         }
 
         //public Task<IQueryable<Patient>> SearchByValue(string searchValue)
@@ -323,15 +324,14 @@ namespace medicloud.emr.api.DataContextRepo
             string regLink = $"{link}";
             string patientId = generatePatientId();
             string familyId = generateFamilyNumber();
-            var patient = new Patient()
-            {
-                Patientid = patientId,
-                FamilyNumber = familyId,
-                Reglink = regLink
-                
-            };
+            var patient = PatientDTO.GetDefault();
+            patient.Patientid = patientId;
+            patient.FamilyNumber = familyId;
+            patient.Reglink = regLink;
+            var patientObject = (Patient)patient;
+            //patientObject.Reglink = regLink;
 
-            return _db.AddNew(patient);
+            return _db.AddNew(patientObject);
         }
 
         public string registerPatientFromLink(string link, Patient patientToUpdate)
@@ -348,7 +348,7 @@ namespace medicloud.emr.api.DataContextRepo
            
             patientToUpdate.Reglink = newLink;
             patientToUpdate.FamilyNumber = getSingle.FamilyNumber;
-            patientToUpdate.Patientid = generatePatientId();
+           //zzz patientToUpdate.Patientid = generatePatientId();
             // patientToUpdate.Autoid = getSingle.Autoid;
             //var result =  _db.Update(patientToUpdate);
 

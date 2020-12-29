@@ -12,7 +12,10 @@ namespace medicloud.emr.api.Entities
 
         public int Sponsid { get; set; }
         public string Sponsortype { get; set; }
-        public DateTime Dateadded { get; set; }
+        public DateTime? Dateadded { get; set; }
+        public int? accountcatid { get; set; }
+        public int? payerid { get; set; }
+        public bool? isactive { get; set; }
 
         public virtual ICollection<Patient> Patient { get; set; }
     }

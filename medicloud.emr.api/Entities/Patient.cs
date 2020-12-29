@@ -42,6 +42,7 @@ namespace medicloud.emr.api.Entities
         //[Key]
         //[DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string Patientid { get; set; }
+        public int? hospitallocationid { get; set; }
         public string Title { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
@@ -55,6 +56,7 @@ namespace medicloud.emr.api.Entities
         public string Country { get; set; }
         public string Postalcode { get; set; }
         public string Mothername { get; set; }
+        public string encodedby { get; set; }
         public string Guardianname { get; set; }
         public string Emergencycontact { get; set; }
         public string Emergencyphone { get; set; }
@@ -88,6 +90,7 @@ namespace medicloud.emr.api.Entities
         public DateTime? Datedeactivated { get; set; }
         public string Hmonumber { get; set; }
         public string Genotype { get; set; }
+        public string locationid { get; set; }
         public int? ProviderId { get; set; }
         public string AlternateId1 { get; set; }
         public string AlternateId2 { get; set; }
