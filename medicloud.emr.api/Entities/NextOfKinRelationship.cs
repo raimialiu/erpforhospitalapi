@@ -7,6 +7,6 @@ namespace medicloud.emr.api.Entities
     {
         public int Nokid { get; set; }
         public string Noktype { get; set; }
-        public string Dateadded { get; set; }
+        public DateTime Dateadded { get; set; }
     }
 }

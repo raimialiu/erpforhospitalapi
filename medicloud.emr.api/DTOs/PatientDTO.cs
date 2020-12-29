@@ -198,6 +198,7 @@ namespace medicloud.emr.api.DTOs
     public class PatientDTO
     {
         public string Patientid { get; set; }
+        public int hospitallocationid { get; set; }
         public string payor { get; set; }
         public string Title { get; set; }
         public int? identificationtypeid { get; set; }
@@ -215,6 +216,7 @@ namespace medicloud.emr.api.DTOs
         public bool IsDependant { get; set; }
         public string FamilyNumber { get; set; }
         public string Postalcode { get; set; }
+        public string encodedby { get; set; }
         //[Required]
         public string Mothername { get; set; }
         public string Guardianname { get; set; }
@@ -279,7 +281,96 @@ namespace medicloud.emr.api.DTOs
         public string status { get; set; }
         public long? referalby { get; set; }
         public string dependantrelationship { get; set; }
+        public string locationid { get; set; }
+        public string Reglink { get; set; }
         public List<PatientPayorTypes> payors { get; set; }
+
+        public static PatientDTO GetDefault()
+        {
+            var pt = new PatientDTO()
+            {
+                 Patientid = "",
+                hospitallocationid = 1,
+               payor= "",
+                Title = "",
+                //identificationtypeid = 1,
+                //identificationnumber = "",
+                Firstname = "",
+                Lastname = "",
+                Othername = "",
+                Dob = DateTime.Now,
+                //Securityid =  "1",
+                Securitynumber = "",
+                Address ="",
+                Stateid = 0,
+                City = "",
+                Country = "Nigeria",
+                IsDependant = false,
+                FamilyNumber = "",
+                 Postalcode = "234010",
+                encodedby = "12",
+                Mothername = "",
+                Emergencycontact = "",
+                Emergencyphone  = "",
+                Nokrelationship = "",
+                Nokoccupation = "",
+                Nokworkaddress = "",
+                Homephone = "",
+                Workphone = "",
+                Mobilephone = "",
+                Email = "",
+                Occupation = "",
+                Photopath = "",
+                Employername = "",
+                Employeraddress = "",
+                Employercity = "",
+                Employerstateid  = 1,
+                Employercountry = "Nigeria",
+                Dateofdeath = DateTime.Now.AddYears(-10),
+                Deathcause = "",
+                Hmoclass1 = "",
+                Hmoname1 = "",
+                Hmoclass2 = "",
+                Hmoname2 = "",
+                Hmoclass3 = "",
+                Hmoname3 = "",
+                Principalcode = "",
+                Relationship = "",
+                Dateadded = DateTime.Now,
+                //Inactive = default(Boolean),
+                //Cardtypeid = default(int),
+                Datedeactivated = DateTime.Now.AddYears(-10),
+                Hmonumber  = "",
+                Genotype = "",
+                //ProviderId = 1,
+                AlternateId1 = "",
+                AlternateId2 = "",
+        // public int? Autoid { get; set; }
+                Servicetype = "",
+                Plantype = "",
+                Maritalstatusid = 1,
+                Nationality = "Nigeria",
+                Nokinname = "",
+                Nokphonenumber = "",
+                Accountcategory = "",
+                Genderid =1,
+                Genotypeid =  1,
+                Bloodgroupid = 1,
+                //Sponsid = 1,
+                Facilitatorid = 1,
+                Refid = 1,
+                Leadid = 1,
+                //enrolleeno = "",
+                employeenumber = "",
+                status = "1",
+                referalby = 1,
+                dependantrelationship  = "",
+                locationid = "1",
+        
+            };
+
+            return pt;
+        }
 
         public static explicit operator Patient(PatientDTO dt)
         {
