@@ -100,11 +100,15 @@ namespace medicloud.emr.api.Services
 
             var increase = outstandingPaRequestToday - totalOutstandingPaRequestSixmonthsAgo;
 
-            decimal percentIncrease;
-            decimal div;
-            div = (decimal)(increase) / (decimal)totalOutstandingPaRequestSixmonthsAgo;
+            decimal percentIncrease = 0;
+            decimal div = 0;
 
-            percentIncrease = div * 100;
+            if (increase > 0 && totalOutstandingPaRequestSixmonthsAgo > 0)
+            {
+                div = (decimal)(increase) / (decimal)totalOutstandingPaRequestSixmonthsAgo;
+
+                percentIncrease = div * 100;
+            }
 
             var isIncrease = false;
 

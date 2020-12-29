@@ -12,6 +12,10 @@ namespace medicloud.emr.api.Services
         Task<IEnumerable<LocationDTO>> GetLocations();
         Task<IEnumerable<SpecializationDTO>> GetSpecializations(int locationid);
         Task<IEnumerable<ProviderDTO>> GetProviders(int locationid, int specid);
+        Task<IEnumerable<ReferringDTO>> GetReferringPhysicians();
+        Task<IEnumerable<ReferralDTO>> GetReferralTypes();
+        Task<IEnumerable<ReminderDTO>> GetReminderOptions();
+        Task<IEnumerable<VisitTypeDTO>> GetVisitTypes();
     }
     public class LocationRepository : ILocationRepository
     {
@@ -31,9 +35,11 @@ namespace medicloud.emr.api.Services
 
         public async Task<IEnumerable<ProviderDTO>> GetProviders(int locationid, int specid)
         {
-            return await _context.ApplicationUser.Where(a => a.Locationid == locationid)
+            var prov = await _context.ApplicationUser.Where(a => a.Locationid == locationid)
                 .Select(u => new ProviderDTO { Id = u.Appuserid, Name = $"{u.Firstname} {u.Lastname}"})
                 .AsNoTracking().ToListAsync();
+
+            return prov;
         }
 
         public async Task<IEnumerable<SpecializationDTO>> GetSpecializations(int locationid)
@@ -43,5 +49,30 @@ namespace medicloud.emr.api.Services
                         .AsNoTracking().ToListAsync();
         }
 
+        public async Task<IEnumerable<ReferralDTO>> GetReferralTypes()
+        {
+            return await _context.Referral.Select(r => new ReferralDTO { Id = r.Refid, Name = r.Reftype })
+                                        .AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<ReferringDTO>> GetReferringPhysicians()
+        {
+            return await _context.ReferringPhysician.Select(r => new ReferringDTO { Id = r.Refid, Name = r.Physicianname })
+                                        .AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<ReminderDTO>> GetReminderOptions()
+        {
+            var reminder = await _context.Reminder.Select(r => new ReminderDTO { Id = r.Reminderid, Name = r.reminder })
+                                        .AsNoTracking().ToListAsync();
+
+            return reminder;
+        }
+
+        public async Task<IEnumerable<VisitTypeDTO>> GetVisitTypes()
+        {
+            return await _context.VisitType.Select(v => new VisitTypeDTO { Id = v.Typeid, Name = v.Typename })
+                                        .AsNoTracking().ToListAsync();
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using medicloud.emr.api.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace medicloud.emr.api.Data
 {
@@ -19,7 +18,6 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<AccessControl> AccessControl { get; set; }
         public virtual DbSet<TemplateCategoryB> TemplateCategoryB { get; set; }
         public virtual DbSet<TemplateCategoryC> TemplateCategoryC { get; set; }
-      //  public virtual DbSet<TemplateCategoryB> TemplateCategoryB { get; set; }
         public virtual DbSet<AccesscontrolUser> AccesscontrolUser { get; set; }
         public virtual DbSet<AccountCategory> AccountCategory { get; set; }
         public virtual DbSet<AccountManager> AccountManager { get; set; }
@@ -213,6 +211,10 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<Utilization> Utilization { get; set; }
         public virtual DbSet<VerificationLog> VerificationLog { get; set; }
         public virtual DbSet<Ward> Ward { get; set; }
+        public virtual DbSet<Reminder> Reminder { get; set; }
+        public virtual DbSet<VisitType> VisitType { get; set; }
+        public virtual DbSet<ReferringPhysician> ReferringPhysician { get; set; }
+        public virtual DbSet<BreakBlockSchedule> BreakBlockSchedule { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -702,6 +704,14 @@ namespace medicloud.emr.api.Data
                     .WithMany(p => p.Appointment)
                     .HasForeignKey(d => d.Staffid)
                     .HasConstraintName("FK_Department_Staff");
+            });
+
+            modelBuilder.Entity<AppointmentSchedule>(entity =>
+            {
+                entity.HasOne(d => d.PatientNumberNavigation)
+                    .WithMany(p => p.AppointmentSchedule)
+                    .HasForeignKey(d => d.PatientNumber)
+                    .HasConstraintName("FK_Patient_AppointmentSchedule");
             });
 
             modelBuilder.Entity<AppointmentStatus>(entity =>
@@ -5986,7 +5996,7 @@ namespace medicloud.emr.api.Data
 
                 entity.HasOne(d => d.AccountManager)
                    .WithMany(p => p.CheckIn)
-                   .HasForeignKey(d => d.Accountid)
+                   .HasForeignKey(d => d.ProviderId)
                    .HasConstraintName("FK_CheckIn_Patient_Account");
 
                 entity.Property(e => e.IsCheckedIn)

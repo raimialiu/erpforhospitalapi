@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using medicloud.emr.api.Data;
 using medicloud.emr.api.Services;
@@ -27,6 +28,28 @@ namespace medicloud.emr.api.Controllers
         [HttpGet("{locationid}/specializations/{specid}/providers")]
         public async Task<IActionResult> GetProviders(int locationid, int specid) => Ok(await _repository.GetProviders(locationid, specid));
 
+        [HttpGet("referraltypes")]
+        public async Task<IActionResult> GetReferralTypes() => Ok(await _repository.GetReferralTypes());
 
+        [HttpGet("referringphysicians")]
+        public async Task<IActionResult> GetReferringPhysicians() => Ok(await _repository.GetReferringPhysicians());
+
+        [HttpGet("reminderoptions")]
+        public async Task<IActionResult> GetReminderOptions()
+        {
+            try
+            {
+                var reminder = await _repository.GetReminderOptions();
+                return Ok(reminder);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("visittypes")]
+        public async Task<IActionResult> GetVisitTypes() => Ok(await _repository.GetVisitTypes());
     }
 }

@@ -1,4 +1,5 @@
-﻿using medicloud.emr.api.DataContextRepo;
+﻿using medicloud.emr.api.Data;
+using medicloud.emr.api.DataContextRepo;
 using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Entities;
 using System;
@@ -23,9 +24,10 @@ namespace medicloud.emr.api.Services
         // this is class is for logging and other purposes
 
         private IPatientRepo _repo;
+        private DataContext _context;
         public PatientService()
         {
-            _repo = new PatientRepo();
+            _repo = new PatientRepo(_context);
         }
         public string addNewPatient(PatientDTO patient)
         {
