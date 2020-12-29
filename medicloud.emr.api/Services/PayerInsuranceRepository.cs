@@ -44,8 +44,8 @@ namespace medicloud.emr.api.Services
             var result = await _context.Payer.Where(p => p.PayerId == _payerId)
                 .Select(c => new PayerDto()
                 {
-                    AccountCategory = _context.AccountCategory.Where(ca => ca.Accountcatid == c.AccountCatId).FirstOrDefault(),
-                    AccountCatId = c.AccountCatId,
+                    AccountCategory = _context.AccountCategory.Where(ca => ca.Accountcatid == c.accountcatid).FirstOrDefault(),
+                    AccountCatId = c.accountcatid,
                     dateadded = c.dateadded,
                     PayerId = c.PayerId,
                     PayerType = c.PayerType
