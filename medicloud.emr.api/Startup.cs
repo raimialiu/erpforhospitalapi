@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 
 namespace medicloud.emr.api
@@ -64,19 +65,18 @@ namespace medicloud.emr.api
                                                     .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" }).AllowAnyHeader());
             });
 
-            swaggerSettings = new SwaggerSettings();
+            //swaggerSettings = new SwaggerSettings();
 
-            Configuration.Bind(nameof(SwaggerSettings), swaggerSettings);
+            //Configuration.Bind(nameof(SwaggerSettings), swaggerSettings);
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc(swaggerSettings.Title, new Microsoft.OpenApi.Models.OpenApiInfo()
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Version = swaggerSettings.Version,
-                    Description = swaggerSettings.Description
+                    Version = "v1",
+                    Title = "Medisamrts Emr Api",
+                    Description = "API to serve data to the medismart emr UI",
                     
-                    
-
                 });
             });
 
@@ -109,6 +109,11 @@ namespace medicloud.emr.api
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<ICheckInRepository, CheckInRepository>();
+            services.AddScoped<IPatientQueueRepository, PatientQueueRepository>();
+            services.AddScoped<IPaRequestRepository, PaRequestRepository>();
+            services.AddScoped<IHospitalUnitRepository, HospitalUnitRepository>();
+            services.AddScoped<IPayerInsuranceRepository, PayerInsuranceRepository>();
 
  
             const string connectionString = "lagoonDB";
@@ -153,14 +158,11 @@ namespace medicloud.emr.api
             {
                 endpoints.MapControllers();
             });
-            app.UseSwagger(c =>
-            {
-                // c.RouteTemplate = swaggerSettings.RouteTemplate;
-            });
-
+            app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint(swaggerSettings.RouteEndpoint, swaggerSettings.Title);
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Medismarts Emr");
+                c.RoutePrefix = string.Empty;
             });
         }
     }
