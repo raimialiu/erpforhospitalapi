@@ -488,8 +488,8 @@ namespace medicloud.emr.api.Services
         public async Task<AppointmentCreate> GetPatientAppointmentsToday(string patientId, int locationId, int accountId)
         {
             var tomorrow = DateTime.Today.AddDays(1).Date;
-            var apptms =  await _context.AppointmentSchedule.Where(x => x.PatientNumber == patientId && x.Locationid == locationId && x.ProviderID == accountId && x.Starttime.Date >= DateTime.Now.Date && x.Starttime.Date <= tomorrow)
-                .OrderBy(o => o.Starttime)
+            var apptms =  await _context.AppointmentSchedule.Where(x => x.PatientNumber == patientId && x.Locationid == locationId && x.ProviderID == accountId && x.Starttime >= DateTime.Now && x.Starttime.Date <= tomorrow)
+                .OrderByDescending(o => o.Starttime)
                 .Select(a => new AppointmentCreate
                 {
                     Id = a.Apptid,
