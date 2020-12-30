@@ -16,8 +16,8 @@ namespace medicloud.emr.api.DataContextRepo
 {
     public interface IPatientRepo
     {
-        //Task<IQueryable<Patient>> SearchByValue(string searchValue);
-        Task<List<Patient>> SearchByValue(string searchValue);
+       Task<IQueryable<Patient>> SearchByValue(string searchValue);
+       // Task<List<Patient>> SearchByValue(string searchValue);
         void Close();
         string AddPatient(Patient patient);
         Task<IEnumerable<Patient>> IsPatientRecordExist(string firstname, string lastname, string dob, string mobilePhone, string email, string othername = "", string mothername = "");
@@ -108,7 +108,7 @@ namespace medicloud.emr.api.DataContextRepo
             return searchForRecord;
             
         }
-        public async Task<List<Patient>> SearchByValue(string searchValue)
+        public async Task<IQueryable<Patient>> SearchByValue(string searchValue)
         {
             string formattedQuery = $"'%{searchValue}%'";
             string query = $"select * from [Patient] where (firstname is not null and firstname like {formattedQuery} or patientid is not null and patientid like {formattedQuery} or lastname is not null and lastname like {formattedQuery} or othername is not null and othername like {formattedQuery} or address is not null and address like {formattedQuery} or mothername is not null and mothername like {formattedQuery} or mobilephone is not null and mobilephone like {formattedQuery} or email is not null and email like {formattedQuery} or employername is not null and employername like {formattedQuery})";
@@ -116,7 +116,7 @@ namespace medicloud.emr.api.DataContextRepo
             // $"select * from [Patient] where firstname like {formattedQuery}"
             //var result = _db.ExecuteRawSql(query);
             var result = ctx.Patient.FromSqlRaw(query).Include(x => x.Gender);
-            var _result = await _context.Patient.Where(p => p.Firstname.Contains(searchValue)).Include(g => g.Gender)/*.Take(10)*/.ToListAsync();
+            //var _result = await _context.Patient.Where(p => p.Firstname.Contains(searchValue)).Include(g => g.Gender)/*.Take(10)*/.ToListAsync();
 
 
           //  var queryable = result.AsQueryable();
@@ -124,7 +124,7 @@ namespace medicloud.emr.api.DataContextRepo
           //  return _result;
 
 
-            return Task.FromResult<IQueryable<Patient>>(result);
+            return result;
 
         }
 
