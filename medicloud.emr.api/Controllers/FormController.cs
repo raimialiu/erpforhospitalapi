@@ -238,13 +238,18 @@ namespace medicloud.emr.api.Controllers
 
                         if (catb != null || catb.categoryname != null)
                         {
+                            catb.id = request.Masterid;
+
+                            catb.templatecategoryid = request.Masterid;
                             _dataContext.TemplateCategoryB.Add(catb);
                             _dataContext.SaveChanges();
                         }
 
                         if (catc != null || catc.categoryname != null)
                         {
+                            catc.id = request.Masterid;
                             catc.templatecategorybid = catb.id;
+                            catc.templatecategoryid = request.Masterid;
                             _dataContext.TemplateCategoryC.Add(catc);
                             _dataContext.SaveChanges();
                         }
@@ -259,7 +264,36 @@ namespace medicloud.emr.api.Controllers
                 }
                 else
                 {
-                    return BadRequest("Form Exists");
+                    TemplateCategoryB catb = (TemplateCategoryB)master;
+                    if (catb != null || catb.categoryname != null)
+                    {
+                        catb.templatecategoryid = checkexisting.Masterid;
+
+                        var categorybExist = _dataContext.TemplateCategoryB.Where(x => x.categoryname == catb.categoryname && x.templatecategoryid == catb.templatecategoryid).FirstOrDefault();
+
+                        if (categorybExist == null)
+                        {
+                            string oldform = request.Formname;
+                            request.Formname = oldform + "_" + catb.categoryname;
+                            string createtable = CreateTable(request.Jsonform, request.Formname);
+                            if (createtable == "Success")
+                            {
+                                _dataContext.TemplateMaster.Add(request);
+                                _dataContext.SaveChanges();
+
+                                catb.id = request.Masterid;
+                                catb.templatecategoryid = request.Masterid;
+                                _dataContext.TemplateCategoryB.Add(catb);
+                                _dataContext.SaveChanges();
+                            }
+
+                            return Ok("Success");
+                        }
+
+                        return Ok("Form Exists before");
+
+                    }
+                    return Ok("Form Exists");
                 }
             }
             else
@@ -341,24 +375,31 @@ namespace medicloud.emr.api.Controllers
             //List<Component> request = new List<Component>();
             try
             {
-                Form myform = new Form();
-                myform = JsonConvert.DeserializeObject<Form>(formdata);
-
-                for (int i = 0; i < myform.components.Count; i++)
+                FormDirect myform = new FormDirect();
+                myform = JsonConvert.DeserializeObject<FormDirect>(formdata);
+                for (int k = 0; k < myform.components.Count; k++)
                 {
-                    Columns mycolumn = myform.components[i];
-                    for (int j = 0; j < mycolumn.columns.Count; j++)
-                    {
-                        Component mycomponent = mycolumn.columns[j];
-                        for (int k = 0; k < mycomponent.components.Count; k++)
-                        {
-                            //Detail mydetail = mycomponent.components[i].;
-                            query_create += "," + mycomponent.components[k].key.ToString().Replace(" ", "").ToLower() + " varchar(100)";
-                        }
-                    }
-                    //query_create += ","+myform.components[i].key.ToString().Replace(" ", "").ToLower() + " varchar(100)";
-
+                    //Detail mydetail = mycomponent.components[i].;
+                    query_create += "," + myform.components[k].key.ToString().Replace(" ", "").ToLower() + " varchar(100)";
                 }
+                //Form myform = new Form();
+                //myform = JsonConvert.DeserializeObject<Form>(formdata);
+
+                //for (int i = 0; i < myform.components.Count; i++)
+                //{
+                //    Columns mycolumn = myform.components[i];
+                //    for (int j = 0; j < mycolumn.columns.Count; j++)
+                //    {
+                //        Component mycomponent = mycolumn.columns[j];
+                //        for (int k = 0; k < mycomponent.components.Count; k++)
+                //        {
+                //            //Detail mydetail = mycomponent.components[i].;
+                //            query_create += "," + mycomponent.components[k].key.ToString().Replace(" ", "").ToLower() + " varchar(100)";
+                //        }
+                //    }
+                //    //query_create += ","+myform.components[i].key.ToString().Replace(" ", "").ToLower() + " varchar(100)";
+
+                //}
             }
             catch(Exception)
             {
