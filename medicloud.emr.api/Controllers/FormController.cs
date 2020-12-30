@@ -364,7 +364,7 @@ namespace medicloud.emr.api.Controllers
             return Ok(categories);
         }
 
-        public string CreateTable(string formdata, string formname)
+        private string CreateTable(string formdata, string formname)
         {
 
             SQLDataManager sql = new SQLDataManager(false);
