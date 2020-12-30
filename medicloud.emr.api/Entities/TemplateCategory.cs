@@ -41,7 +41,7 @@ namespace medicloud.emr.api.Entities
             return new TemplateCategoryB()
             {
                 categoryname = templateFormMaster.categorybname,
-                templatecategoryid = (int)templateFormMaster.Tempcatid
+                templatecategoryid = (int)templateFormMaster.Masterid
             };
         }
         public static explicit operator TemplateCategoryC(TemplateFormMaster templateFormMaster)
@@ -49,7 +49,7 @@ namespace medicloud.emr.api.Entities
             return new TemplateCategoryC()
             {
                 categoryname = templateFormMaster.categorybname,
-                templatecategoryid = (int)templateFormMaster.Tempcatid
+                templatecategoryid = (int)templateFormMaster.Masterid
             };
         }
     }
