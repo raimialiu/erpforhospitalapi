@@ -165,7 +165,8 @@ namespace medicloud.emr.api.Controllers
 
 
         //[Authorize(Roles = "Admin, Nurse")]
-        [HttpGet("{id}")]
+        [Route("getSingleForm/{id}")]
+        [HttpGet]
         public IActionResult GetSingleForm([FromRoute]string id)
         {
             int masterid = Convert.ToInt32(id);
