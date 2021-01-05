@@ -363,16 +363,16 @@ namespace medicloud.emr.api.Controllers
                         accounts = accounts
                     };
 
-                    responseOut = BaseResponse.GetResponse(result, $"searching for patient information with {searchValue}", "00");
+                   responseOut = BaseResponse.GetResponse(result, $"searching for patient information with {searchValue}", "00");
 
                     //  patientRepo.Close();
-                    return Ok(responseOut); 
-                }
+                    return Ok(responseOut);
+                 }
                 responseOut = BaseResponse.GetResponse(null, "no match found", "99");
                 return Ok(responseOut);
 
             }
-            catch(Exception es)
+            catch (Exception es)
             {
                 return Content(es.Message, "application/json");
 
