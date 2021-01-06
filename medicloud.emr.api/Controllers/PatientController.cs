@@ -353,11 +353,32 @@ namespace medicloud.emr.api.Controllers
 
         //    string newResult = Regex. .Replace(result, "[(\\w+:), (\\w+:-), (\\w+:N/A)]");
 
-          
+
 
         //    return Ok(result);
         //}
-        
+        [Route("getPayors")]
+        [HttpGet]
+        public async Task<IActionResult> GetPayors()
+        {
+            return Ok(_ctx.Payer.ToList());
+        }
+
+        [Route("getSponsors")]
+        [HttpGet]
+        public async Task<IActionResult> GetSponsors()
+        {
+            return Ok(_ctx.Sponsor.ToList());
+        }
+
+
+        [Route("getAccounts")]
+        [HttpGet]
+        public async Task<IActionResult> GetAccounts()
+        {
+            return Ok(_ctx.AccountCategory.ToList());
+        }
+
         [Route("searchForPatient/{searchValue}")]
         [HttpGet]
         public async Task<IActionResult> SearchForPatient([FromRoute] string searchValue)
@@ -365,32 +386,27 @@ namespace medicloud.emr.api.Controllers
             try
             {
                 var returnedDataFromSearch = await patientRepo.SearchByValue(searchValue);
-                BaseResponse responseOut = null;
-                if(returnedDataFromSearch.Count() > 0)
-                {
-                    var sponsors = _ctx.Sponsor.ToList();
-                    var payors = _ctx.Payer.ToList();
-                    var plans = _ctx.Plan.ToList();
-                    var accounts = _ctx.AccountCategory.ToList();
-                    var result = new
-                    {
-                        patients = returnedDataFromSearch,
-                        payors = payors,
-                        sponsors = sponsors,
-                        plans = plans,
-                        accounts = accounts
-                    };
+              
+               
+                    //var result = new
+                    //{
+                    //    patients = returnedDataFromSearch,
+                    //    //payors = payors,
+                    //    //sponsors = sponsors,
+                    //    //plans = plans,
+                    //    //accounts = accounts
+                    //};
 
-                    responseOut = BaseResponse.GetResponse(result, $"searching for patient information with {searchValue}", "00");
+                  // responseOut = BaseResponse.GetResponse(result, $"searching for patient information with {searchValue}", "00");
 
                     //  patientRepo.Close();
-                    return Ok(responseOut); 
-                }
-                responseOut = BaseResponse.GetResponse(null, "no match found", "99");
-                return Ok(responseOut);
+                    return Ok(returnedDataFromSearch);
+                // }
+                //responseOut = BaseResponse.GetResponse(null, "no match found", "99");
+                //return Ok(responseOut);
 
             }
-            catch(Exception es)
+            catch (Exception es)
             {
                 return Content(es.Message, "application/json");
 
