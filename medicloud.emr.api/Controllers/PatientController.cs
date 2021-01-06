@@ -282,6 +282,7 @@ namespace medicloud.emr.api.Controllers
                     PatientFamilyNumber = spliResult[1]
                 };
 
+                //
                 //var listOfPayors = new List<PatientPayorTypes>();
                 //foreach(string k in patient.payors)
                 //{
