@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using medicloud.emr.api.DataContextRepo;
 using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Helpers;
 using medicloud.emr.api.Services;
@@ -15,13 +16,26 @@ namespace medicloud.emr.api.Controllers
     public class AppointmentsController : ControllerBase
     {
         private readonly IAppointmentRepository _repository;
+        private readonly IPatientRepo _patientRepo;
 
-        public AppointmentsController(IAppointmentRepository repository) => _repository = repository;
+
+        public AppointmentsController(IAppointmentRepository repository, IPatientRepo patientRepo)
+        {
+            _repository = repository;
+            _patientRepo = patientRepo;
+        }
 
         [HttpGet, Route("GetUpcomingAppointments")]
         public async Task<IActionResult> GetUpcomingAppointments(int locationId, int accountId, string searchWord)
         {
             var appointments = await _repository.UpcomingAppointment(locationId, accountId, searchWord);
+            return Ok(appointments);
+        }
+
+        [HttpGet, Route("GetTodaysAppointments")]
+        public async Task<IActionResult> GetTodaysAppointments(int accountId)
+        {
+            var appointments = await _repository.TodaysAppointment(accountId);
             return Ok(appointments);
         }
 
@@ -71,12 +85,12 @@ namespace medicloud.emr.api.Controllers
         public async Task<IActionResult> GetGenSchedules(int locationid) => Ok(await _repository.GetGeneralSchedules(locationid));
 
         [HttpGet("schedules/multipleproviders/({provids})")]
-        public async Task<IActionResult> GetActiveGenSchedule([FromRoute] 
-        [ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<int> provids) 
+        public async Task<IActionResult> GetActiveGenSchedule([FromRoute]
+        [ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<int> provids)
         {
             if (provids is null || provids.Count() < 1)
                 return BadRequest(new ErrorResponse { ErrorMessage = "Invalid Ids Passed" });
-            
+
             return Ok(await _repository.GetMultipleProviderSchedules(provids));
         }
 
@@ -97,7 +111,7 @@ namespace medicloud.emr.api.Controllers
         public async Task<IActionResult> AddSpecSchedules(int locationid, SpecSchCreate model)
         {
             if (locationid != model.LocationId) return BadRequest(new ErrorResponse { ErrorMessage = "LocationId does not match" });
-            
+
             await _repository.AddSpecializationSchedule(model);
             return NoContent();
         }
@@ -110,7 +124,7 @@ namespace medicloud.emr.api.Controllers
         [HttpPost("schedules/{locationid}/specialization/{specid}/provider")]
         public async Task<IActionResult> AddProvSchedules(int locationid, int specid, ProvSchCreate model)
         {
-            if (locationid != model.LocationId || specid != model.SpecId) 
+            if (locationid != model.LocationId || specid != model.SpecId)
                 return BadRequest(new ErrorResponse { ErrorMessage = "LocationId/SpecializationId does not match" });
 
             await _repository.AddProviderSchedule(model);
@@ -160,7 +174,7 @@ namespace medicloud.emr.api.Controllers
             {
                 return BadRequest();
             }
-            
+
         }
 
         [HttpGet("calendar")]

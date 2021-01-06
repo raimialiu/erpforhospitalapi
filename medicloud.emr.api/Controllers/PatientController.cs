@@ -156,6 +156,23 @@ namespace medicloud.emr.api.Controllers
             _reponse = BaseResponse.GetResponse(false, "self registration link created failed to create", "00");
             return Ok(_reponse);
         }
+        
+        [Route("minmalPatientReg")]
+        [HttpPost]
+        public async Task<IActionResult> minmalPatientReg(MinimalPatientRegistration patient)
+        {
+            try
+            {
+                var patientId = patientRepo.MinimalPatientReg(patient);
+                return Ok("");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+            
+            
+        }
 
 
         [Route("api/Patient/searchForPatientToUpdate")]
@@ -257,7 +274,7 @@ namespace medicloud.emr.api.Controllers
             patient.IsDependant = false;
             var result = ps.addNewPatient(patient);
             if(result != null)
-            {
+            {   
                 string[] spliResult = result.Split(":");
                 var resultOut = new
                 {
