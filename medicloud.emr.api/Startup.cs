@@ -118,7 +118,10 @@ namespace medicloud.emr.api
  
             const string connectionString = "lagoonDB";
             services.AddDbContext<DataContext>(options =>
-                        options.UseSqlServer(Configuration.GetConnectionString(connectionString)));
+                        options.UseSqlServer(Configuration.GetConnectionString(connectionString), sqlServerOptionsAction: action=>
+                        {
+                            action.EnableRetryOnFailure();
+                        }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
