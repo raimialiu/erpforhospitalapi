@@ -17,8 +17,10 @@ namespace medicloud.emr.api.DataContextRepo
 {
     public interface IPatientRepo
     {
+
        Task<IEnumerable<Patient>> SearchByValue(string searchValue);
        // Task<List<Patient>> SearchByValue(string searchValue);
+
         void Close();
         string AddPatient(Patient patient);
         Task<IEnumerable<Patient>> IsPatientRecordExist(string firstname, string lastname, string dob, string mobilePhone, string email, string othername = "", string mothername = "");
@@ -29,6 +31,8 @@ namespace medicloud.emr.api.DataContextRepo
         string registerPatientFromLink(string link, Patient patientToUpdate);
         bool UpdatePatient(Patient patient);
         Task<IEnumerable<Patient>> searchForPatientToUpdate(string filter, string filterValue);
+        string MinimalPatientReg(MinimalPatientRegistration _patient);
+        Task<(List<Sponsor>, List<Payer>, List<Plan>, List<AccountCategory>)> patientDetails();
     }
 
     public class PatientRepo : IPatientRepo
@@ -64,6 +68,15 @@ namespace medicloud.emr.api.DataContextRepo
             //    return ex.Message.ToString();
             //}
             return "";
+        }
+        
+        public async Task<(List<Sponsor>, List<Payer>, List<Plan>, List<AccountCategory>)> patientDetails()
+        {
+            var sponsors = await ctx.Sponsor.ToListAsync();
+            var payors = await ctx.Payer.ToListAsync();
+            var plans = await ctx.Plan.ToListAsync();
+            var accounts = await ctx.AccountCategory.ToListAsync();
+            return (sponsors, payors, plans, accounts);
         }
 
         private string generatePatientId()
@@ -120,8 +133,12 @@ namespace medicloud.emr.api.DataContextRepo
             //string query = $"select * from [Patient] where firstname like %" + searchValue + "%";
             // $"select * from [Patient] where firstname like {formattedQuery}"
             //var result = _db.ExecuteRawSql(query);
+
+          //  var result = ctx.Patient.FromSqlRaw(query).Include(x => x.Gender); 
+
             //var result = ctx.Patient.FromSqlRaw(query).Include(x => x.Gender);
             var result = await _conn.QueryAsync<Patient>(query);
+
             //var _result = await _context.Patient.Where(p => p.Firstname.Contains(searchValue)).Include(g => g.Gender)/*.Take(10)*/.ToListAsync();
 
 
@@ -338,6 +355,27 @@ namespace medicloud.emr.api.DataContextRepo
             //patientObject.Reglink = regLink;
 
             return _db.AddNew(patientObject);
+        }
+        
+        public string MinimalPatientReg(MinimalPatientRegistration _patient)
+        {
+            string patientId = generatePatientId();
+            string familyId = generateFamilyNumber();
+            var patient = PatientDTO.GetDefault();
+            patient.Patientid = patientId;
+            patient.FamilyNumber = familyId;
+            patient.Firstname = _patient.Firstname;
+            patient.Lastname = _patient.Lastname;
+            patient.Genderid = _patient.Genderid;
+            patient.Mobilephone = _patient.Phone;
+            patient.Dob = _patient.Dob;
+            patient.Email = _patient.Email;
+            patient.RegistrationType = _patient.RegistrationType;
+            patient.Accountcategory = _patient.Address;
+            var patientObject = (Patient)patient;
+
+            _db.AddNew(patientObject);
+            return patientId;
         }
 
         public string registerPatientFromLink(string link, Patient patientToUpdate)

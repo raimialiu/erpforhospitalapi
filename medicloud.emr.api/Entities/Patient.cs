@@ -110,6 +110,7 @@ namespace medicloud.emr.api.Entities
         public int? Facilitatorid { get; set; }
         public int? Refid { get; set; }
         public int? Leadid { get; set; }
+        public int? registrationType { get; set; }
         public bool? IsDependant { get; set; }
         public string FamilyNumber { get; set; }
         public int? Identificationtypeid { get; set; }
