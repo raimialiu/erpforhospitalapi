@@ -12,6 +12,7 @@ namespace medicloud.emr.api.Services
     public interface IAppointmentRepository
     {
         Task<IEnumerable<GenSchedule>> GetGeneralSchedules(int locationId);
+        Task<IEnumerable<GenSchedule>> GetGeneralSchedules2(int locationId);
         Task<IEnumerable<SpecSchedule>> GetSpecializationSchedules(int locationId, int specId);
         Task<IEnumerable<ProvSchedule>> GetProviderSchedules(int locationId, int specId, int provId);
         Task<IEnumerable<ProvSchedule>> GetMultipleProviderSchedules(IEnumerable<int> provids);
@@ -29,6 +30,7 @@ namespace medicloud.emr.api.Services
         Task<AppointmentCreate> GetAppointmentForEdit(int apptId);
         Task<IEnumerable<AppointmentView>> GetScheduleAppointments(int locationId, int specId, IEnumerable<int> provIds, int statusId);
         Task<AppointmentCreate> GetPatientAppointmentsToday(string patientId, int locationId, int accountId);
+        Task<List<AppointmentView>> TodaysAppointment(int accountId);
 
     }
 
@@ -132,6 +134,53 @@ namespace medicloud.emr.api.Services
                     Locationname = g.Location.Locationname
                 })
                 .AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<GenSchedule>> GetGeneralSchedules2(int locationId)
+        {
+            List<GenSchedule> genSchedules = new List<GenSchedule>();
+            if (locationId > 0)
+            {
+                var gensh = await _context.GeneralSchedule.Where(g => g.Locationid == locationId)
+                .Include(l => l.Location)
+                .OrderByDescending(w => w.Iscurrent)
+                .Select(g => new GenSchedule
+                {
+                    Starttime = g.Starttime,
+                    Endtime = g.Endtime,
+                    Adjuster = g.Adjuster,
+                    Dateadded = g.Dateadded,
+                    Duration = g.Timeinterval,
+                    Genschid = g.Genschid,
+                    Iscurrent = g.Iscurrent,
+                    Locationname = g.Location.Locationname
+                })
+                .AsNoTracking().ToListAsync();
+
+                return gensh;
+            }
+            else
+            {
+                var genSh = await _context.GeneralSchedule.Where(g => g.Iscurrent == true)
+                .Include(l => l.Location)
+                .OrderByDescending(w => w.Iscurrent)
+                .Select(g => new GenSchedule
+                {
+                    Starttime = g.Starttime,
+                    Endtime = g.Endtime,
+                    Adjuster = g.Adjuster,
+                    Dateadded = g.Dateadded,
+                    Duration = g.Timeinterval,
+                    Genschid = g.Genschid,
+                    Iscurrent = g.Iscurrent,
+                    Locationname = g.Location.Locationname
+                })
+                .AsNoTracking().FirstOrDefaultAsync();
+
+                genSchedules.Add(genSh);
+                return genSchedules;
+            }
+
         }
 
         public async Task<IEnumerable<ProvSchedule>> GetMultipleProviderSchedules(IEnumerable<int> provids)
@@ -304,6 +353,26 @@ namespace medicloud.emr.api.Services
                     Gender = _context.Patient.Where(p => p.Patientid == r.PatientNumber).Select(g => g.Gender.Gendername).FirstOrDefault(),
 
 
+                }).ToListAsync();
+            return appointments;
+        }
+        
+        public async Task<List<AppointmentView>> TodaysAppointment(int accountId)
+        {
+            var appointments = await _context.AppointmentSchedule.Where(a => a.ProviderID == accountId && a.Starttime.Date == DateTime.Today.Date)
+                .Include(p => p.PatientNumberNavigation)
+                .Include(p => p.Spec)
+                .Include(p => p.Status)
+                .Select(s => new AppointmentView
+                {
+                    Id = s.Apptid,
+                    Start = s.Starttime,
+                    End = s.Endtime,
+                    StatusColor = s.Status.Statuscolor,
+                    ProviderId = s.Provid.Value,
+                    Specialization = s.Spec.Specname,
+                    RecurrenceRule = s.Recurrencerule,
+                    PatientName = $"{s.PatientNumberNavigation.Firstname} {s.PatientNumberNavigation.Lastname}"
                 }).ToListAsync();
             return appointments;
         }

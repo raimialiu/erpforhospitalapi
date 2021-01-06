@@ -171,6 +171,20 @@ namespace medicloud.emr.api.DTOs
         public string mothername { get; set; }
         public string email { get; set; }
     }
+
+    public class MinimalPatientRegistration
+    {
+        public string Firstname { get; set; }
+        public string Lastname { get; set; }
+        public int Genderid { get; set; }
+        public DateTime Dob { get; set; }
+        public string Phone { get; set; }
+        public int RegistrationType { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
+
+    }
+
     public class HealthCareFacilitatorDTO
     {
         public int Facilitatorid { get; set; }
@@ -276,6 +290,7 @@ namespace medicloud.emr.api.DTOs
         public int? Facilitatorid { get; set; }
         public int? Refid { get; set; }
         public int? Leadid { get; set; }
+        public int? RegistrationType { get; set; }
         public string enrolleeno { get; set; }
         public string employeenumber { get; set; }
         public string status { get; set; }
@@ -366,6 +381,7 @@ namespace medicloud.emr.api.DTOs
                 referalby = 1,
                 dependantrelationship  = "",
                 locationid = "1",
+                RegistrationType = null
         
             };
 
