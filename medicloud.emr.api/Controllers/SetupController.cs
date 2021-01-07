@@ -34,6 +34,7 @@ namespace medicloud.emr.api.Controllers
         private IDataContextRepo<Title> _titleRepo;
         private IDataContextRepo<Plan> planRepo;
         private IDataContextRepo<Payer> payerRepo;
+        private IDataContextRepo<RegistrationType> _registrationTypeRepo;
         // private ITitleRepo titleRepo;
         public SetupController(IBloodGroupRepo bloodGroupRepo,
                     ITitleRepo titleRepo)
@@ -57,6 +58,7 @@ namespace medicloud.emr.api.Controllers
             providerRepo = new DataContextRepo<Provider>();
             planRepo = new DataContextRepo<Plan>();
             payerRepo = new DataContextRepo<Payer>();
+            _registrationTypeRepo = new DataContextRepo<RegistrationType>();
         }
 
 
@@ -1186,6 +1188,103 @@ namespace medicloud.emr.api.Controllers
             _reponse = BaseResponse.GetResponse(null, "failed", "99");
             return BadRequest();
         }
+
+        #endregion
+
+        #region registrationType Setup
+
+        //[Route("addGender")]
+        //[HttpPost]
+        //public async Task<IActionResult> addGender([FromBody] GenderDTO dto)
+        //{
+
+        //    var addResult = genderRepo.AddNew(new Gender() { Gendername = dto.Gendername, Dateadded = DateTime.Now });
+        //    if (addResult)
+        //    {
+        //        _reponse = BaseResponse.GetResponse(null, "success", "00");
+        //        return Ok(_reponse);
+        //    }
+
+        //    _reponse = BaseResponse.GetResponse(null, "failure", "99");
+        //    return BadRequest(_reponse);
+        //}
+
+        //[Route("updateGender/{id}")]
+        //[HttpPut]
+        //public async Task<IActionResult> updateGender([FromRoute] long id, [FromBody] GenderDTO dto)
+        //{
+
+        //    var getResult = genderRepo.GetSingle(x => x.Genderid == id);
+
+        //    if (getResult != null)
+        //    {
+        //        getResult.Gendername = dto.Gendername;
+        //        var updateResult = genderRepo.Update(getResult);
+        //        if (updateResult)
+        //        {
+        //            _reponse = BaseResponse.GetResponse(null, "success", "00");
+        //            return Ok(_reponse);
+        //        }
+
+        //    }
+
+
+        //    _reponse = BaseResponse.GetResponse(null, "failure", "99");
+        //    return BadRequest(_reponse);
+        //}
+
+        //[Route("deleteGender/{id}")]
+        //[HttpDelete]
+        //public async Task<IActionResult> deleteGender([FromRoute] long id)
+        //{
+
+
+        //    var deleteResult = genderRepo.Delete(x => x.Genderid == id);
+        //    if (deleteResult)
+        //    {
+        //        _reponse = BaseResponse.GetResponse(null, "success", "00");
+        //        return Ok(_reponse);
+        //    }
+
+        //    _reponse = BaseResponse.GetResponse(null, "failure", "99");
+        //    return BadRequest(_reponse);
+        //}
+
+        [Route("getAllRegistrationType")]
+        [HttpGet]
+        public async Task<IActionResult> getAllRegistrationType()
+        {
+            try
+            {
+                var allResult = _registrationTypeRepo.GetAll();
+
+                _reponse = BaseResponse.GetResponse(allResult, "success", "00");
+                return Ok(_reponse);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+
+            
+
+        }
+
+        //[Route("getGenderById/{id}")]
+        //[HttpGet]
+        //public async Task<IActionResult> getGenderById([FromRoute] long id)
+        //{
+
+        //    var getResult = genderRepo.GetSingle(x => x.Genderid == id);
+        //    if (getResult != null)
+        //    {
+        //        _reponse = BaseResponse.GetResponse(getResult, "success", "00");
+        //        return Ok(_reponse);
+        //    }
+
+        //    _reponse = BaseResponse.GetResponse(null, "failed", "99");
+        //    return BadRequest();
+        //}
 
 
         #endregion
