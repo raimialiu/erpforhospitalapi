@@ -217,6 +217,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<VisitType> VisitType { get; set; }
         public virtual DbSet<ReferringPhysician> ReferringPhysician { get; set; }
         public virtual DbSet<BreakBlockSchedule> BreakBlockSchedule { get; set; }
+        public virtual DbSet<ApplicationUserLocation> ApplicationUserLocation { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -252,6 +253,30 @@ namespace medicloud.emr.api.Data
                 entity.Property(e => e.Modules).HasColumnName("modules");
 
                 entity.Property(e => e.Roles).HasColumnName("roles");
+            });
+            
+            modelBuilder.Entity<ApplicationUserLocation>(entity =>
+            {
+                entity.ToTable("ApplicationUser_Location");
+
+                entity.HasKey(e => e.appuserlocationid);
+
+                entity.Property(e => e.appuserlocationid).HasColumnName("appuserlocationid");
+
+                entity.Property(e => e.appuserid).HasColumnName("appuserid");
+                entity.Property(e => e.locationid).HasColumnName("locationid");
+                entity.Property(e => e.specid).HasColumnName("specid");
+            });
+            
+            modelBuilder.Entity<RegistrationType>(entity =>
+            {
+                entity.ToTable("RegistrationType");
+
+                entity.HasKey(e => e.regtypeId);
+
+                entity.Property(e => e.regtypeId).HasColumnName("regtypeId");
+
+                entity.Property(e => e.regtypeName).HasColumnName("regtypeName");
             });
 
             modelBuilder.Entity<AccesscontrolUser>(entity =>
@@ -5772,6 +5797,7 @@ namespace medicloud.emr.api.Data
                     .HasName("PK__Speciali__72C1C97BF664F5C7");
 
                 entity.Property(e => e.Specid).HasColumnName("specid");
+                entity.Property(e => e.alternatecode).HasColumnName("alternatecode");
 
                 entity.Property(e => e.Dateadded)
                     .HasColumnName("dateadded")

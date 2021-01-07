@@ -321,7 +321,7 @@ namespace medicloud.emr.api.Services
         {
             if (!string.IsNullOrEmpty(searchWord))
             {
-                var _appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.Provid == accountId &&
+                var _appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.ProviderID == accountId &&
                                 a.Starttime.Date == DateTime.Today.Date && a.Starttime >= DateTime.Now)
                 .Select(r => new UpcomingAppointmentList()
                 {
@@ -340,7 +340,7 @@ namespace medicloud.emr.api.Services
                 return appointmentSearch;
             }
 
-            var appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.Provid == accountId &&
+            var appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.ProviderID == accountId &&
                                 a.Starttime.Date == DateTime.Today.Date && a.Starttime >= DateTime.Now)
                 .Select(r => new UpcomingAppointmentList()
                 {
