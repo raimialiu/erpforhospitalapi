@@ -35,17 +35,22 @@ namespace medicloud.emr.api.Services
 
         public async Task<IEnumerable<ProviderDTO>> GetProviders(int locationid, int specid)
         {
-            var prov = await _context.ApplicationUser.Where(a => a.Locationid == locationid)
-                .Select(u => new ProviderDTO { Id = u.Appuserid, Name = $"{u.Firstname} {u.Lastname}"})
-                .AsNoTracking().ToListAsync();
+            var prov = await _context.ApplicationUserLocation.Where(a => a.locationid == locationid && a.specid == specid)
+                .Select(u => new ProviderDTO 
+                { 
+                    Id = u.appuserid,
+                    Name = _context.ApplicationUser.Where(au => au.Appuserid == u.appuserid).Select(r => r.Firstname + " " + r.Lastname).AsNoTracking().FirstOrDefault()
+
+                }).AsNoTracking().ToListAsync();
 
             return prov;
+
         }
 
         public async Task<IEnumerable<SpecializationDTO>> GetSpecializations(int locationid)
         {
             return await _context.Specialization.Where(s => s.Locationid == locationid)
-                        .Select(sp => new SpecializationDTO { Id = sp.Specid, Name = sp.Specname})
+                        .Select(sp => new SpecializationDTO { Id = (int)sp.alternatecode, Name = sp.Specname})
                         .AsNoTracking().ToListAsync();
         }
 
