@@ -265,6 +265,7 @@ namespace medicloud.emr.api.DataContextRepo
                 string familyNumber = generateFamilyNumber();
                 patient.Patientid = newPatientId;
                 patient.FamilyNumber = familyNumber;
+                patient.ProviderId = 2;
                 if(_db.AddNew(patient))
                 {
                     return newPatientId+":"+ familyNumber;
@@ -294,17 +295,17 @@ namespace medicloud.emr.api.DataContextRepo
             switch (filter)
             {
                 case "patientId":
-                    query = $"select * from [Patient] where patientid is not null and patientid = {formattedQuery}";
+                    query = $"select * from [Patient] where patientid is not null and patientid = '{filterValue}'";
                     // result = _db.ExecuteRawSql(query);
                     result = ctx.Patient.FromSqlRaw(query).Include(x => x.Gender).Include(x=>x.PayorTypes);
                     break;
                 case "phoneNumber":
-                    query = $"select * from [Patient] where mobilephone is not null and mobilephone = {formattedQuery} or workphone is not null and workphone = {formattedQuery} or homephone is not null and homephone = {formattedQuery}";
+                    query = $"select * from [Patient] where mobilephone is not null and mobilephone = '{filterValue}' or workphone is not null and workphone = '{filterValue}' or homephone is not null and homephone = '{filterValue}'";
                     //result = _db.ExecuteRawSql(query);
                     result = ctx.Patient.FromSqlRaw(query).Include(x => x.Gender).Include(x => x.PayorTypes);
                     break;
                 case "lastName":
-                    query = $"select * from [Patient] where lastname is not null and lastname = {formattedQuery}";
+                    query = $"select * from [Patient] where lastname is not null and lastname = '{filterValue}'";
                     // result = _db.ExecuteRawSql(query);
                     result = ctx.Patient.FromSqlRaw(query).Include(x => x.Gender).Include(x => x.PayorTypes);
                     break;
