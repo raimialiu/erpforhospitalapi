@@ -33,9 +33,9 @@ namespace medicloud.emr.api.Controllers
         }
 
         [HttpGet, Route("GetTodaysAppointments")]
-        public async Task<IActionResult> GetTodaysAppointments(int accountId)
+        public async Task<IActionResult> GetTodaysAppointments(int accountId, int locationId)
         {
-            var appointments = await _repository.TodaysAppointment(accountId);
+            var appointments = await _repository.TodaysAppointment(accountId, locationId);
             return Ok(appointments);
         }
 
@@ -148,11 +148,24 @@ namespace medicloud.emr.api.Controllers
                 return BadRequest(new ErrorResponse { ErrorMessage = "Id does not match" });
 
             model.Date.AddHours(1);
-            bool updated = await _repository.UpdateAppointment(model);
+
+            //(string, bool, bool) updated = await _repository.UpdateAppointment(model);
+           bool updated = await _repository.UpdateAppointment(model);
+
+            //updateAppointmentResponse updateAppointmentResponse = new updateAppointmentResponse
+            //{
+            //    CheckinMessage = updated.Item1,
+            //    IsCheckedIn = updated.Item2,
+            //    IsUpdated = updated.Item3
+            //};
+
+            //if (!updated.Item3)
+            //    return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
+            
             if (!updated)
                 return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
 
-            return NoContent();
+            return Ok(updated);
         }
 
         [HttpGet("retrieve/{apptId}")]
