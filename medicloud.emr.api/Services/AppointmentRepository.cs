@@ -25,12 +25,13 @@ namespace medicloud.emr.api.Services
         Task<(int, int, bool)> GetAppointmentNoShowTodayCount(int locationId, int accountId);
         Task<bool> RemoveBlockSchedule(int blockid);
         Task<bool> UpdateAppointment(AppointmentCreate model);
+        //Task<(string, bool, bool)> UpdateAppointment(AppointmentCreate model);
         Task AddAppointment(AppointmentCreate model);
         Task<IEnumerable<AppointmentList>> GetListAppointments();
         Task<AppointmentCreate> GetAppointmentForEdit(int apptId);
         Task<IEnumerable<AppointmentView>> GetScheduleAppointments(int locationId, int specId, IEnumerable<int> provIds, int statusId);
         Task<AppointmentCreate> GetPatientAppointmentsToday(string patientId, int locationId, int accountId);
-        Task<List<AppointmentView>> TodaysAppointment(int accountId);
+        Task<List<AppointmentView>> TodaysAppointment(int accountId, int locationId);
 
     }
 
@@ -38,10 +39,12 @@ namespace medicloud.emr.api.Services
     public class AppointmentRepository : IAppointmentRepository
     {
         private readonly DataContext _context;
+        private readonly ICheckInRepository _checkInRepository;
 
-        public AppointmentRepository(DataContext context)
+        public AppointmentRepository(DataContext context, ICheckInRepository checkInRepository)
         {
             _context = context;
+            _checkInRepository = checkInRepository;
         }
 
         public async Task AddGeneralSchedule(GenSchCreate model)
@@ -288,11 +291,13 @@ namespace medicloud.emr.api.Services
             return true;
         }
 
+        //public async Task<(string, bool, bool)> UpdateAppointment(AppointmentCreate model)
         public async Task<bool> UpdateAppointment(AppointmentCreate model)
         {
             var appointment = await _context.AppointmentSchedule.FindAsync(model.Id);
             if (appointment is null)
                 return false;
+                //return ("", false, false);
 
             var generalSchedule = await _context.GeneralSchedule.FirstOrDefaultAsync(s => s.Locationid == model.LocationId);
             int duration = generalSchedule?.Timeinterval ?? 30;
@@ -313,8 +318,19 @@ namespace medicloud.emr.api.Services
             appointment.Reminderid = model.ReminderId;
             appointment.Statusid = model.StatusId;
             appointment.PatientNumber = model.PatientNo;
+            appointment.ProviderID = model.AccountId;
 
-            return await _context.SaveChangesAsync() > 0;
+            var checkin = ("", false);
+
+            if (appointment.Statusid == 3)
+            {
+                checkin = await _checkInRepository.CreaateCheckIn(appointment.PatientNumber, (int)appointment.ProviderID, (int)appointment.Locationid);
+            }
+
+            var update = await _context.SaveChangesAsync() > 0;
+
+            //return (checkin.Item1, checkin.Item2, update);
+            return update = true;
         }
 
         public async Task<List<UpcomingAppointmentList>> UpcomingAppointment(int locationId, int accountId, string searchWord)
@@ -357,25 +373,7 @@ namespace medicloud.emr.api.Services
             return appointments;
         }
         
-        public async Task<List<AppointmentView>> TodaysAppointment(int accountId)
-        {
-            var appointments = await _context.AppointmentSchedule.Where(a => a.ProviderID == accountId && a.Starttime.Date == DateTime.Today.Date)
-                .Include(p => p.PatientNumberNavigation)
-                .Include(p => p.Spec)
-                .Include(p => p.Status)
-                .Select(s => new AppointmentView
-                {
-                    Id = s.Apptid,
-                    Start = s.Starttime,
-                    End = s.Endtime,
-                    StatusColor = s.Status.Statuscolor,
-                    ProviderId = s.Provid.Value,
-                    Specialization = s.Spec.Specname,
-                    RecurrenceRule = s.Recurrencerule,
-                    PatientName = $"{s.PatientNumberNavigation.Firstname} {s.PatientNumberNavigation.Lastname}"
-                }).ToListAsync();
-            return appointments;
-        }
+        
 
         public async Task<(int, int, bool)> GetTotalAppointmentTodayCount(int locationId, int accountId)
         {
@@ -612,6 +610,38 @@ namespace medicloud.emr.api.Services
                 PatientName = $"{s.PatientNumberNavigation.Firstname} {s.PatientNumberNavigation.Lastname}"
             }).ToListAsync();
             return appointments;
+        }
+
+        public async Task<List<AppointmentView>> TodaysAppointment(int accountId, int locationId)
+        {
+            var appointmentsQuery = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.ProviderID == accountId)
+                .Include(p => p.PatientNumberNavigation)
+                .Include(p => p.Spec)
+                .Include(p => p.Status)
+            //    .ToListAsync();
+
+            //if (specId > 0)
+            //    appointmentsQuery = appointmentsQuery.Where(a => a.Specid == specId).ToList();
+
+            //if (provIds.Count() > 0)
+            //    appointmentsQuery = appointmentsQuery.Where(a => provIds.Contains(a.Provid.Value)).ToList();
+
+            //if (statusId > 0)
+            //    appointmentsQuery = appointmentsQuery.Where(a => a.Statusid == statusId).ToList();
+
+            //var appointments = appointmentsQuery
+                .Select(s => new AppointmentView
+                {
+                    Id = s.Apptid,
+                    Start = s.Starttime,
+                    End = s.Endtime,
+                    StatusColor = s.Status.Statuscolor,
+                    ProviderId = s.Provid.Value,
+                    Specialization = s.Spec.Specname,
+                    RecurrenceRule = s.Recurrencerule,
+                    PatientName = $"{s.PatientNumberNavigation.Firstname} {s.PatientNumberNavigation.Lastname}"
+                }).ToListAsync();
+            return appointmentsQuery;
         }
     }
 }
