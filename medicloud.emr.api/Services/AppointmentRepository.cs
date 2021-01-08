@@ -298,8 +298,8 @@ namespace medicloud.emr.api.Services
             int duration = generalSchedule?.Timeinterval ?? 30;
 
 
-            appointment.Starttime = model.Date;
-            appointment.Endtime = model.Date.AddMinutes(duration);
+            appointment.Starttime = model.Date.AddHours(1);
+            appointment.Endtime = model.Date.AddHours(1).AddMinutes(duration);
             appointment.Reason = model.Reason;
             appointment.Isrecurring = model.IsRecurring;
             appointment.Recurrencerule = model.RecurrenceRule;
