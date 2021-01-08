@@ -2,6 +2,7 @@ using System.IO;
 using System.Text;
 using medicloud.emr.api.Data;
 using medicloud.emr.api.DataContextRepo;
+using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Helpers;
 using medicloud.emr.api.Mocks;
 using medicloud.emr.api.Services;
@@ -36,6 +37,9 @@ namespace medicloud.emr.api
         {
             var jwtSettings = Configuration.GetSection(nameof(JwtSettings))
                                         .Get<JwtSettings>();
+
+            var emailSettings = Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+            services.AddSingleton(emailSettings);
 
             services.AddControllers(setupActions =>
             {
