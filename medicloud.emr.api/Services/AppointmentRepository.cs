@@ -27,7 +27,7 @@ namespace medicloud.emr.api.Services
         Task<bool> UpdateAppointment(AppointmentCreate model);
         //Task<(string, bool, bool)> UpdateAppointment(AppointmentCreate model);
         Task AddAppointment(AppointmentCreate model);
-        Task<IEnumerable<AppointmentList>> GetListAppointments();
+        Task<IEnumerable<AppointmentList>> GetListAppointments(int locationId, int accountId);
         Task<AppointmentCreate> GetAppointmentForEdit(int apptId);
         Task<IEnumerable<AppointmentView>> GetScheduleAppointments(int locationId, int specId, IEnumerable<int> provIds, int statusId);
         Task<AppointmentCreate> GetPatientAppointmentsToday(string patientId, int locationId, int accountId);
@@ -502,9 +502,9 @@ namespace medicloud.emr.api.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<AppointmentList>> GetListAppointments()
+        public async Task<IEnumerable<AppointmentList>> GetListAppointments(int locationId, int accountId)
         {
-            return await _context.AppointmentSchedule
+            var appointmentList = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.ProviderID == accountId)
             .Include(s => s.PatientNumberNavigation)
             .ThenInclude(p => p.Gender)
             .Include(s => s.Location)
@@ -514,7 +514,7 @@ namespace medicloud.emr.api.Services
             { 
                Id = s.Apptid,
                PatientNo = s.PatientNumberNavigation.Patientid,
-               Name = $"{s.PatientNumberNavigation.Firstname} {s.PatientNumberNavigation.Lastname}",
+               Name = s.PatientNumberNavigation.Firstname +" "+ s.PatientNumberNavigation.Lastname,
                Age = DateTime.Now.Year - s.PatientNumberNavigation.Dob.Value.Year,
                Gender = s.PatientNumberNavigation.Gender.Gendername,
                Date = s.Starttime,
@@ -522,8 +522,10 @@ namespace medicloud.emr.api.Services
                Color = s.Status.Statuscolor,
                Location = s.Location.Locationname,
                Phone = s.PatientNumberNavigation.Mobilephone,
-               Provider = $"Dr. {s.Prov.Firstname} {s.Prov.Lastname}"
-            }).ToListAsync();
+               Provider = "Dr. " + s.Prov.Firstname != null ? s.Prov.Firstname : "" + " " + s.Prov.Lastname != null ? s.Prov.Lastname : ""
+            }).OrderBy(p => p.Name).ToListAsync();
+
+            return appointmentList;
 
         }
 
