@@ -29,7 +29,7 @@ namespace medicloud.emr.api.Services
 
         public async Task<(string, bool)> CreaateCheckIn(string patientId, int providerId, int locationId)
         {
-            var check = await _context.CheckIn.Where(e => e.Patientid == patientId && e.Locationid == locationId && e.ProviderId == providerId && e.CheckInDate.Date == DateTime.Today.Date && e.IsCheckedOut == false).ToListAsync();
+            var check = await _context.CheckIn.Where(e => e.Patientid == patientId && e.Locationid == locationId && e.ProviderId == providerId && e.CheckInDate.Date == DateTime.Today.Date /*&& e.IsCheckedOut == false*/).ToListAsync();
 
             if (check.Count == 0)
             {
