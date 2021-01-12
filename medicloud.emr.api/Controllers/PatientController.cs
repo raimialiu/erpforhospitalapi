@@ -142,6 +142,8 @@ namespace medicloud.emr.api.Controllers
             var resp = response.Content;
             return Ok(resp);
         }
+        
+        
 
 
         [Route(ApiRoutes.saveRegistrationLink)]
