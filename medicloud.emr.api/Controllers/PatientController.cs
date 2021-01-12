@@ -30,16 +30,19 @@ namespace medicloud.emr.api.Controllers
         private IDataContextRepo<Patient> patientDB;
         //private IBloodGroupRepo bloodGroupRepo;
         private DataContext _ctx;
+        private EmailConfiguration emailConfig;
+        private EmailMessageHelper _emailHelper;
         public PatientController(IPatientRepo patientRepo, 
             //IBloodGroupRepo bloodGroupRepo,
             ITitleRepo titleRepo,
-            IPatientServices ps)
+            IPatientServices ps, EmailConfiguration _config)
         {
             this.patientRepo = patientRepo;
             this.ps = ps;
             patientPayorTypes = new DataContextRepo<PatientPayorTypes>();
             patientDB = new DataContextRepo<Patient>();
             _ctx = new DataContext();
+            _emailHelper = EmailMessageHelper.instance(_config);
             //this.bloodGroupRepo = bloodGroupRepo;
 
 
@@ -143,13 +146,27 @@ namespace medicloud.emr.api.Controllers
 
         [Route(ApiRoutes.saveRegistrationLink)]
         [HttpPost]
-        public async Task<IActionResult> SaveRegistrationLink([FromRoute] string link)
+        public async Task<IActionResult> SaveRegistrationLink([FromRoute] string link, [FromRoute] string email, [FromQuery]string url)
         {
             // string[] split_input = link.Split("_");
             var isFound = patientRepo.SaveRegistrationLink(link);
+            string content = $"Dear <strong>{email}</strong>, please find below your self registration link.Click the link below to navigate to the page or copy and paste thr url on your browser." +
+                $"\r\n  <h1><a href = {url}> Click Here </a><h1/>.\r\n<h1> or</ h1 > \r\n {url}";
+            string emailMessage = $"Dear {email},Please find below the link to register yourself on our hospital management platform." +
+            $"\r\n <h1><a href={url}> Click Here </a></h1>.\r\n<h1> or</h1> \r\n <h1>{url}\r\n</h1>" +
+            $"Please copy and paste the URL in a browser if you are unable to click on the link directly." +
+            $"\r\nThank you.\r\n" +
+            $"Note: This is an auto generated e-mail.Do not reply.";
             if (isFound)
             {
                 _reponse = BaseResponse.GetResponse(isFound, $"self registration link created", "00");
+                await _emailHelper.sendMailMailMessageAsync(new MailBodyDTO()
+                {
+                    to = new List<string>() { email},
+                    subject = "Registration Link",
+                    messageBody = content
+                    
+                });
                 return Ok(_reponse);
             }
 
