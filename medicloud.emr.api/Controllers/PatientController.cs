@@ -166,7 +166,7 @@ namespace medicloud.emr.api.Controllers
                 {
                     to = new List<string>() { email},
                     subject = "Registration Link",
-                    messageBody = content
+                    messageBody = emailMessage
                     
                 });
                 return Ok(_reponse);
