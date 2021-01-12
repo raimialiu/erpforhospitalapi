@@ -196,7 +196,25 @@ namespace medicloud.emr.api.Controllers
             return Ok(await _repository.GetScheduleAppointments(locationid, specid, provids, statusid));
         }
 
-        [HttpGet("list")]
-        public async Task<IActionResult> GetAppointmentsForTable() => Ok(await _repository.GetListAppointments());
+        //[HttpGet("list")]
+        //public async Task<IActionResult> GetAppointmentsForTable() 
+        //{
+        //    var appointments = await _repository.GetListAppointments();
+        //    return Ok(appointments);
+        //}
+
+        [HttpGet, Route("list")]
+        public async Task<IActionResult> GetAppointmentsForTable(int locationId, int accountId)
+        {
+            try
+            {
+                var appointments = await _repository.GetListAppointments(locationId, accountId);
+                return Ok(appointments);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
     }
 }
