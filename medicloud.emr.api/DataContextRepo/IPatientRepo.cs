@@ -315,8 +315,9 @@ namespace medicloud.emr.api.DataContextRepo
         }
         public Task<IEnumerable<Patient>> SearchForDependeant(string filter, string filterValue)
         {
-            string formattedQuery = $"'%{filterValue}%'";
-            string query = $"select * from [Patient] where (firstname is not null and firstname like {formattedQuery} or patientid is not null and patientid like {formattedQuery} or lastname is not null and lastname like {formattedQuery} or othername is not null and othername like {formattedQuery} or address is not null and address like {formattedQuery} or mothername is not null and mothername like {formattedQuery} or mobilephone is not null and mobilephone like {formattedQuery} or email is not null and email like {formattedQuery} or employername is not null and employername like {formattedQuery})";
+            string formattedQuery = $"'{filterValue}'";
+            string query = "";
+            //string query = $"select * from [Patient] where (firstname is not null and firstname like {formattedQuery} or patientid is not null and patientid like {formattedQuery} or lastname is not null and lastname like {formattedQuery} or othername is not null and othername like {formattedQuery} or address is not null and address like {formattedQuery} or mothername is not null and mothername like {formattedQuery} or mobilephone is not null and mobilephone like {formattedQuery} or email is not null and email like {formattedQuery} or employername is not null and employername like {formattedQuery})";
             //string query = $"select * from [Patient] where firstname like %" + searchValue + "%";
             // $"select * from [Patient] where firstname like {formattedQuery}"
             //var result = _db.ExecuteRawSql(query);
@@ -326,17 +327,17 @@ namespace medicloud.emr.api.DataContextRepo
             switch(filter)
             {
                 case "patientId":
-                    query = $"select * from [Patient] where patientid is not null and patientid like {formattedQuery}";
+                    query = $"select * from [Patient] where patientid is not null and patientid = {formattedQuery}";
                     // result = _db.ExecuteRawSql(query);
                     result = ctx.Patient.FromSqlRaw(query).Include(x => x.Gender);
                     break;
                 case "phoneNumber":
-                    query = $"select * from [Patient] where mobilephone is not null and mobilephone like {formattedQuery} or workphone is not null and workphone like {formattedQuery} or homephone is not null and homephone like {formattedQuery}";
+                    query = $"select * from [Patient] where mobilephone is not null and mobilephone = {formattedQuery} or workphone is not null and workphone = {formattedQuery} or homephone is not null and homephone = {formattedQuery}";
                     //result = _db.ExecuteRawSql(query);
                     result = ctx.Patient.FromSqlRaw(query).Include(x => x.Gender);
                     break;
                 case "lastName":
-                    query = $"select * from [Patient] where lastname is not null and lastname like {formattedQuery}";
+                    query = $"select * from [Patient] where lastname is not null and lastname = {formattedQuery}";
                     // result = _db.ExecuteRawSql(query);
                     result = ctx.Patient.FromSqlRaw(query).Include(x => x.Gender);
                     break;

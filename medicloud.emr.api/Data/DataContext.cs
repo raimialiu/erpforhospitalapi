@@ -32,6 +32,8 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<Payer> Payer { get; set; }
         public virtual DbSet<ApplicationUser> ApplicationUser { get; set; }
         public virtual DbSet<Appointment> Appointment { get; set; }
+
+        public virtual DbSet<ChiefComplain> ChiefComplain { get; set; }
         public virtual DbSet<AppointmentStatus> AppointmentStatus { get; set; }
         public virtual DbSet<Asset> Asset { get; set; }
         public virtual DbSet<AssetType> AssetType { get; set; }
