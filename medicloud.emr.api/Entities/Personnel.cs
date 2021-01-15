@@ -25,7 +25,6 @@ namespace medicloud.emr.api.Entities
             QueueManagerFromPersonnel = new HashSet<QueueManager>();
             QueueManagerRemovedByNavigation = new HashSet<QueueManager>();
             QueueManagerToPersonnel = new HashSet<QueueManager>();
-            VitalSigns = new HashSet<VitalSigns>();
         }
 
         public int Staffid { get; set; }
@@ -46,9 +45,11 @@ namespace medicloud.emr.api.Entities
         public string Username { get; set; }
         public string Password { get; set; }
         public int? ProviderId { get; set; }
+        public int? IdentificationModeid { get; set; }
 
         public virtual Department Dept { get; set; }
         public virtual Designation Designation { get; set; }
+        public virtual IdentificationMode IdentificationMode { get; set; }
         public virtual AccountManager Provider { get; set; }
         public virtual Title Title { get; set; }
         public virtual ICollection<Admission> AdmissionDischargedByNavigation { get; set; }
@@ -69,6 +70,5 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<QueueManager> QueueManagerFromPersonnel { get; set; }
         public virtual ICollection<QueueManager> QueueManagerRemovedByNavigation { get; set; }
         public virtual ICollection<QueueManager> QueueManagerToPersonnel { get; set; }
-        public virtual ICollection<VitalSigns> VitalSigns { get; set; }
     }
 }

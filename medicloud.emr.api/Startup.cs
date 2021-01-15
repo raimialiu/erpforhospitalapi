@@ -1,57 +1,91 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using medicloud.emr.api.Data;
+using medicloud.emr.api.DataContextRepo;
+using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Helpers;
 using medicloud.emr.api.Mocks;
+using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 
 namespace medicloud.emr.api
 {
     public class Startup
     {
+        readonly string corsPolicy = "CorsPolicy";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
+        private SwaggerSettings swaggerSettings;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var jwtSettings = Configuration.GetSection("JWTSettings")
+            var jwtSettings = Configuration.GetSection(nameof(JwtSettings))
                                         .Get<JwtSettings>();
+
+            var emailSettings = Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+            services.AddSingleton(emailSettings);
 
             services.AddControllers(setupActions =>
             {
                 setupActions.ReturnHttpNotAcceptable = true;
-            }).AddXmlDataContractSerializerFormatters();
+                //setupAction
+            })//.AddXmlDataContractSerializerFormatters()
+            
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.IgnoreNullValues = true;
+                options.JsonSerializerOptions.WriteIndented = true;
+               
+                
+                // .SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
+                //options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            }).AddNewtonsoftJson(c => {
+                c.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+
+            });
 
             services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy",
-                builder => builder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                            .AllowAnyHeader());
+                options.AddPolicy(corsPolicy,
+                                  builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
-            //builder => builder.WithOrigins(new[] { "http://localhost:4200" })
-            //            .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
-            //            .AllowAnyHeader());
+                                                    //.WithOrigins(new[] { "http://localhost:4200", "http://test.medicloud.ng/lagoonhis", "http://localhost:58213",
+                                                    //                                      "https://hnlhisdev.azurewebsites.net",
+                                                    //                                      "http://localhost", "http://test.medicloud.ng/lagoonhisdev" })
+                                                    //.AllowAnyMethod().AllowAnyHeader()) ; ;
+                // new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" }
+            });
 
-        });
+            //swaggerSettings = new SwaggerSettings();
+
+            //Configuration.Bind(nameof(SwaggerSettings), swaggerSettings);
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Medisamrts Emr Api",
+                    Description = "API to serve data to the medismart emr UI",
+                    
+                });
+            });
 
             services.AddAuthentication(options =>
             {
@@ -74,11 +108,27 @@ namespace medicloud.emr.api
                 };
             });
 
-            services.AddScoped<MockAuthRepository>();
             services.AddScoped<MockDataRepository>();
-            //inject data context
+            services.AddTransient<IPatientRepo, PatientRepo>();
+            services.AddScoped<ITitleRepo, TitleRepo>();
+            services.AddTransient<IPatientServices, PatientService>();
+            services.AddScoped<IBloodGroupRepo, BloodGroupRepo>();
+            services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<ICheckInRepository, CheckInRepository>();
+            services.AddScoped<IPatientQueueRepository, PatientQueueRepository>();
+            services.AddScoped<IPaRequestRepository, PaRequestRepository>();
+            services.AddScoped<IHospitalUnitRepository, HospitalUnitRepository>();
+            services.AddScoped<IPayerInsuranceRepository, PayerInsuranceRepository>();
+
+ 
+            const string connectionString = "lagoonDB";
             services.AddDbContext<DataContext>(options =>
-        options.UseSqlServer(Configuration.GetConnectionString("lagoonDB")));
+                        options.UseSqlServer(Configuration.GetConnectionString(connectionString), sqlServerOptionsAction: action=>
+                        {
+                            action.EnableRetryOnFailure();
+                        }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,18 +139,40 @@ namespace medicloud.emr.api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(corsPolicy);
             app.UseStatusCodePages("text/plain", "HTTP Error with {0} Status Code");
-            app.UseCors("CorsPolicy");
-            app.UseHttpsRedirection();
+
+            //app.UseStaticFiles(new StaticFileOptions()
+            //{
+            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
+            //    RequestPath = new PathString("/Uploads")
+            //});
+
+
+            
+
+            app.UseExceptionMiddleware();
 
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+
             
+
+           
+            app.UseAuthentication();
+            
+            app.UseAuthorization();
+
+           
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Medismarts Emr");
+                c.RoutePrefix = string.Empty;
             });
         }
     }

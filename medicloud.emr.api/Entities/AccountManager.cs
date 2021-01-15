@@ -61,7 +61,9 @@ namespace medicloud.emr.api.Entities
             Supplier = new HashSet<Supplier>();
             Tariff = new HashSet<Tariff>();
             VerificationLog = new HashSet<VerificationLog>();
-            VitalSigns = new HashSet<VitalSigns>();
+            PatientQueue = new HashSet<PatientQueue>();
+            CheckIn = new HashSet<CheckIn>();
+            PaRequest = new HashSet<PaRequest>();
         }
 
         public int ProviderId { get; set; }
@@ -132,6 +134,8 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<Supplier> Supplier { get; set; }
         public virtual ICollection<Tariff> Tariff { get; set; }
         public virtual ICollection<VerificationLog> VerificationLog { get; set; }
-        public virtual ICollection<VitalSigns> VitalSigns { get; set; }
+        public virtual ICollection<PatientQueue> PatientQueue { get; set; }
+        public virtual ICollection<CheckIn> CheckIn { get; set; }
+        public virtual ICollection<PaRequest> PaRequest { get; set; }
     }
 }
