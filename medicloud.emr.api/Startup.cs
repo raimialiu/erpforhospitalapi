@@ -114,6 +114,10 @@ namespace medicloud.emr.api
             services.AddScoped<IPaRequestRepository, PaRequestRepository>();
             services.AddScoped<IHospitalUnitRepository, HospitalUnitRepository>();
             services.AddScoped<IPayerInsuranceRepository, PayerInsuranceRepository>();
+            services.AddScoped<IServiceRepository, ServiceRepository>();
+            services.AddScoped<ISetupRepository, SetupRepository>();
+            services.AddScoped<IOrderListingRepository, OrderListingRepository>();
+            services.AddScoped<IConsultationDiagnosisRepository, ConsultationDiagnosisRepository>();
 
  
             const string connectionString = "lagoonDB";

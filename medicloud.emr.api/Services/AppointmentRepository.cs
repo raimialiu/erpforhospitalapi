@@ -338,13 +338,13 @@ namespace medicloud.emr.api.Services
             if (!string.IsNullOrEmpty(searchWord))
             {
                 var _appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.ProviderID == accountId &&
-                                a.Starttime.Date == DateTime.Today.Date && a.Starttime >= DateTime.Now)
+                                a.Starttime >= DateTime.Now)
                 .Select(r => new UpcomingAppointmentList()
                 {
                     Location = _context.Location.Where(l => l.Locationid == r.Locationid).Select(e => e.Locationname).FirstOrDefault(),
                     Date = r.Starttime,
                     Patient = _context.Patient.Where(p => p.Patientid == r.PatientNumber).FirstOrDefault(),
-                    Provider = _context.AccountManager.Where(p => p.ProviderId == r.Provid).Select(e => e.HospitalName).FirstOrDefault(),
+                    Provider = _context.AccountManager.Where(p => p.ProviderId == r.ProviderID).Select(e => e.HospitalName).FirstOrDefault(),
                     Id = r.Apptid,
                     Status = (int)r.Statusid,
                     Gender = _context.Patient.Where(p => p.Patientid == r.PatientNumber).Select(g => g.Gender.Gendername).FirstOrDefault(),
@@ -356,14 +356,14 @@ namespace medicloud.emr.api.Services
                 return appointmentSearch;
             }
 
-            var appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.ProviderID == accountId &&
-                                a.Starttime.Date == DateTime.Today.Date && a.Starttime >= DateTime.Now)
+            var appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.ProviderID == accountId
+                                && a.Starttime >= DateTime.Now.AddHours(1))
                 .Select(r => new UpcomingAppointmentList()
                 {
                     Location = _context.Location.Where(l => l.Locationid == r.Locationid).Select(e => e.Locationname).FirstOrDefault(),
                     Date = r.Starttime,
                     Patient = _context.Patient.Where(p => p.Patientid == r.PatientNumber).FirstOrDefault(),
-                    Provider = _context.AccountManager.Where(p => p.ProviderId == r.Provid).Select(e => e.HospitalName).FirstOrDefault(),
+                    Provider = _context.AccountManager.Where(p => p.ProviderId == r.ProviderID).Select(e => e.HospitalName).FirstOrDefault(),
                     Id = r.Apptid,
                     Status = (int)r.Statusid,
                     Gender = _context.Patient.Where(p => p.Patientid == r.PatientNumber).Select(g => g.Gender.Gendername).FirstOrDefault(),
