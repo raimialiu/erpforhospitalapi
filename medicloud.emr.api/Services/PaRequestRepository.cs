@@ -31,7 +31,7 @@ namespace medicloud.emr.api.Services
 
         public async Task<Diagnosis> GetDiagnosisByCode(int accountId, string diagnosisCode)
         {
-            var diagnosis = await _context.Diagnosis.Where(d => d.ProviderId == accountId && d.Code == diagnosisCode).FirstOrDefaultAsync();
+            var diagnosis = await _context.Diagnosis.Where(d => d.ProviderID == accountId && d.Code == diagnosisCode).FirstOrDefaultAsync();
             return diagnosis;
         }
 

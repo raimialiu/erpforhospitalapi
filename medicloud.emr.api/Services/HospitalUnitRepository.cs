@@ -23,7 +23,7 @@ namespace medicloud.emr.api.Services
 
         public async Task<List<HospitalUnit>> getHospitalUnitList(int locationId, int accountId)
         {
-            var units = await _context.HospitalUnit.ToListAsync();
+            var units = await _context.HospitalUnit.OrderBy(p => p.HospitalUnitName).ToListAsync();
             return units;
         }
     }

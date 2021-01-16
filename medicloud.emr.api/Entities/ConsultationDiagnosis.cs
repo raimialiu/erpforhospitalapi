@@ -11,6 +11,7 @@ namespace medicloud.emr.api.Entities
         public string Diagnosiscode { get; set; }
         public DateTime? Dateadded { get; set; }
         public int? ProviderId { get; set; }
+        public int? LocationId { get; set; }
         public string Status { get; set; }
 
         public virtual Consultation Consultation { get; set; }
