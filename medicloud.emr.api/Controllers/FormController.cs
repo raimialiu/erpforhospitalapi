@@ -96,7 +96,7 @@ namespace medicloud.emr.api.Controllers
         }
 
         //[Route]
-
+        // payorinformations
         [Route("payorinformation")]
         [HttpGet]
         public async Task<IActionResult> GetPayorInformation()
