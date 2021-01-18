@@ -57,35 +57,35 @@ namespace medicloud.emr.api.Controllers
 
         ////get drug
 
-        //[HttpGet, Route("GetOrderPriority")]
-        //public async Task<IActionResult> GetOrderPriority(int locationid)
-        //{
-        //    try
-        //    {
-        //        var getorder = await _prescriptionRepository.GetOrderPriority(locationid);
-        //        return Ok(getorder);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
+        [HttpGet, Route("GetOrderPriority")]
+        public async Task<IActionResult> GetOrderPriority(int locationid)
+        {
+            try
+            {
+                var getorder = await _prescriptionRepository.GetOrderPriority(locationid);
+                return Ok(getorder);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
 
 
-        ////get drug formulary
-        //[HttpGet, Route("GetDrugFormulary")]
-        //public async Task<IActionResult> GetDrugFormulary(int locationid)
-        //{
-        //    try
-        //    {
-        //        var getresult = await _prescriptionRepository.GetDrugFormulary(locationid);
-        //        return Ok(getresult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
+        //get drug formulary
+        [HttpGet, Route("GetDrugFormulary")]
+        public async Task<IActionResult> GetDrugFormulary(int locationid)
+        {
+            try
+            {
+                var getresult = await _prescriptionRepository.GetDrugFormulary(locationid);
+                return Ok(getresult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
 
         ////get drug generic
         //[HttpGet, Route("GetDrugGeneric")]
