@@ -247,6 +247,10 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<EmrproblemsSeverity> EmrproblemsSeverity { get; set; }
         public virtual DbSet<EmrproblemsCondition> EmrproblemsConditions { get; set; }
 
+        public virtual DbSet<OrderPriority> OrderPriority { get; set; }
+
+        public virtual DbSet<DrugFormulary> DrugFormulary { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -8310,6 +8314,74 @@ namespace medicloud.emr.api.Data
                     .HasMaxLength(50)
                     .IsUnicode(false);
             });
+
+
+
+            modelBuilder.Entity<OrderPriority>(entity =>
+            {
+                entity.Property(e => e.Encodedby).HasColumnName("encodedby");
+
+                entity.Property(e => e.Encodeddate)
+                    .HasColumnName("encodeddate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Indentcode)
+                    .HasColumnName("indentcode")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Indenttype)
+                    .HasColumnName("indenttype")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Isactive).HasColumnName("isactive");
+
+                entity.Property(e => e.Lastchangedate)
+                    .HasColumnName("lastchangedate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Locationid).HasColumnName("locationid");
+
+                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
+
+                entity.HasOne(d => d.Location)
+                    .WithMany(p => p.OrderPriority)
+                    .HasForeignKey(d => d.Locationid)
+                    .HasConstraintName("FK_IndentTypeMaster_Location");
+
+                entity.HasOne(d => d.Provider)
+                    .WithMany(p => p.OrderPriority)
+                    .HasForeignKey(d => d.ProviderId)
+                    .HasConstraintName("FK_OrderPriority_AccountManager");
+            });
+
+            modelBuilder.Entity<DrugFormulary>(entity =>
+            {
+                entity.HasKey(e => e.FormulationId);
+
+                entity.ToTable("Drug_Formulary");
+
+                entity.Property(e => e.EncodedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.FormulationName)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FormulationShortName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LastChangeDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
+
+                entity.HasOne(d => d.Provider)
+                    .WithMany(p => p.DrugFormulary)
+                    .HasForeignKey(d => d.ProviderId)
+                    .HasConstraintName("FK_Drug_FormularyAccountManager");
+            });
+
 
             OnModelCreatingPartial(modelBuilder);
         }
