@@ -121,8 +121,12 @@ namespace medicloud.emr.api
             services.AddScoped<IPaRequestRepository, PaRequestRepository>();
             services.AddScoped<IHospitalUnitRepository, HospitalUnitRepository>();
             services.AddScoped<IPayerInsuranceRepository, PayerInsuranceRepository>();
+            services.AddScoped<IServiceRepository, ServiceRepository>();
+            services.AddScoped<ISetupRepository, SetupRepository>();
+            services.AddScoped<IOrderListingRepository, OrderListingRepository>();
+            services.AddScoped<IConsultationDiagnosisRepository, ConsultationDiagnosisRepository>();
+            services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
 
- 
             const string connectionString = "lagoonDB";
             services.AddDbContext<DataContext>(options =>
                         options.UseSqlServer(Configuration.GetConnectionString(connectionString), sqlServerOptionsAction: action=>

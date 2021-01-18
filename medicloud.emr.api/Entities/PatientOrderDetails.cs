@@ -19,7 +19,7 @@ namespace medicloud.emr.api.Entities
         public byte[] Docimage { get; set; }
         public DateTime? Orderdate { get; set; }
         public int? Ordercategoryid { get; set; }
-        public int? ProviderId { get; set; }
+        public int? ProviderID { get; set; }
 
         public virtual PatientOrder Patientorder { get; set; }
     }
