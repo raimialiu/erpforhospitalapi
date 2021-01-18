@@ -176,6 +176,7 @@ namespace medicloud.emr.api.Controllers
             
         }
 
+        //[Rout]
 
         [Route("api/Patient/searchForPatientToUpdate")]
         [HttpGet]
