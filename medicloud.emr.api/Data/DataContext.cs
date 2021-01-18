@@ -237,6 +237,17 @@ namespace medicloud.emr.api.Data
 
         public virtual DbSet<DrugFormulary> DrugFormulary { get; set; }
 
+        public virtual DbSet<DrugGeneric> DrugGeneric { get; set; }
+
+        public virtual DbSet<DrugUnit> DrugUnit { get; set; }
+
+        public virtual DbSet<DrugDoseForm> DrugDoseForm { get; set; }
+        public virtual DbSet<DrugFoodrelation> DrugFoodrelation { get; set; }
+
+        public virtual DbSet<DrugRoute> DrugRoute { get; set; }
+
+        public virtual DbSet<DrugFrequency> DrugFrequency { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -8363,6 +8374,167 @@ namespace medicloud.emr.api.Data
                     .HasForeignKey(d => d.ProviderId)
                     .HasConstraintName("FK_Drug_FormularyAccountManager");
             });
+
+            modelBuilder.Entity<DrugGeneric>(entity =>
+            {
+                entity.HasKey(e => e.Genericid)
+                    .HasName("PK_PhrGenericMaster");
+
+                entity.ToTable("Drug_Generic");
+
+                entity.Property(e => e.Genericid).HasColumnName("genericid");
+
+                entity.Property(e => e.CimscategoryId).HasColumnName("CIMSCategoryId");
+
+                entity.Property(e => e.CimssubcategoryId).HasColumnName("CIMSSubcategoryId");
+
+                entity.Property(e => e.Encodeddate)
+                    .HasColumnName("encodeddate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Genericname)
+                    .HasColumnName("genericname")
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Isactive).HasColumnName("isactive");
+
+                entity.Property(e => e.Lastchangeby).HasColumnName("lastchangeby");
+
+                entity.Property(e => e.Lastchangedate)
+                    .HasColumnName("lastchangedate")
+                    .HasColumnType("datetime");
+            });
+
+
+            modelBuilder.Entity<DrugUnit>(entity =>
+            {
+                entity.HasKey(e => e.UnitId);
+
+                entity.ToTable("Drug_unit");
+
+                entity.Property(e => e.UnitId).HasColumnName("unitId");
+
+                entity.Property(e => e.Code)
+                    .HasColumnName("code")
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Description)
+                    .HasColumnName("description")
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Isactive).HasColumnName("isactive");
+
+                entity.Property(e => e.Isvolumeunit).HasColumnName("isvolumeunit");
+            });
+
+            modelBuilder.Entity<DrugDoseForm>(entity =>
+            {
+                entity.HasKey(e => e.DoseFormid);
+
+                entity.ToTable("Drug_doseForm");
+
+                entity.Property(e => e.EncodedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.FormulationName)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FormulationShortName)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Isactive).HasColumnName("isactive");
+
+                entity.Property(e => e.Iscalculated).HasColumnName("iscalculated");
+
+                entity.Property(e => e.LastchangedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ProviderId).HasColumnName("providerId");
+            });
+
+            modelBuilder.Entity<DrugFoodrelation>(entity =>
+            {
+                entity.HasKey(e => e.Foodid);
+
+                entity.ToTable("Drug_foodrelation");
+
+                entity.Property(e => e.EncodedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.FoodName)
+                    .HasColumnName("foodName")
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.LastChangedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ProviderId).HasColumnName("providerID");
+
+                entity.HasOne(d => d.Location)
+                    .WithMany(p => p.DrugFoodrelation)
+                    .HasForeignKey(d => d.LocationId)
+                    .HasConstraintName("FK_Drug_FoodrelationLocation");
+
+                entity.HasOne(d => d.Provider)
+                    .WithMany(p => p.DrugFoodrelation)
+                    .HasForeignKey(d => d.ProviderId)
+                    .HasConstraintName("FK_Drug_FoodrelationAccountManager");
+            });
+
+
+
+            modelBuilder.Entity<DrugRoute>(entity =>
+            {
+                entity.HasKey(e => e.RouteId);
+
+                entity.ToTable("Drug_Route");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Encodeddate).HasColumnType("datetime");
+
+                entity.Property(e => e.RouteName)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SequenceNo).HasColumnName("sequenceNo");
+            });
+
+
+
+            modelBuilder.Entity<DrugFrequency>(entity =>
+            {
+                entity.HasKey(e => e.FrequencyId);
+
+                entity.ToTable("Drug_frequency");
+
+                entity.Property(e => e.FrequencyId).HasColumnName("frequencyId");
+
+                entity.Property(e => e.Abbreviation)
+                    .HasMaxLength(300)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Frequency).HasColumnType("numeric(10, 5)");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.IsTimingRequired).HasColumnName("isTimingRequired");
+
+                entity.Property(e => e.Sequence).HasColumnName("sequence");
+            });
+
 
 
             OnModelCreatingPartial(modelBuilder);

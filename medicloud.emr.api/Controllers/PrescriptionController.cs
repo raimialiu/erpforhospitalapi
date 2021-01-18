@@ -24,11 +24,11 @@ namespace medicloud.emr.api.Controllers
         //get orderpriority
 
         [HttpGet, Route("GetDrugList")]
-        public async Task<IActionResult> GetDrugList()
+        public async Task<IActionResult> GetDrugList(int formularyid, int genericid)
         {
             try
             {
-                var queueList = await _prescriptionRepository.GetDrugs();
+                var queueList = await _prescriptionRepository.GetDrugs(formularyid, genericid);
                 return Ok(queueList);
             }
             catch (Exception ex)
@@ -52,9 +52,6 @@ namespace medicloud.emr.api.Controllers
             }
         }
 
-
-
-
         ////get drug
 
         [HttpGet, Route("GetOrderPriority")]
@@ -72,7 +69,7 @@ namespace medicloud.emr.api.Controllers
         }
 
 
-        //get drug formulary
+        ////get drug formulary
         [HttpGet, Route("GetDrugFormulary")]
         public async Task<IActionResult> GetDrugFormulary(int locationid)
         {
@@ -87,99 +84,99 @@ namespace medicloud.emr.api.Controllers
             }
         }
 
-        ////get drug generic
-        //[HttpGet, Route("GetDrugGeneric")]
-        //public async Task<IActionResult> GetDrugGeneric()
-        //{
-        //    try
-        //    {
-        //        var getresult = await _prescriptionRepository.GetDrugGeneric();
-        //        return Ok(getresult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
+        //////get drug generic
+        [HttpGet, Route("GetDrugGeneric")]
+        public async Task<IActionResult> GetDrugGeneric()
+        {
+            try
+            {
+                var getresult = await _prescriptionRepository.GetDrugGeneric();
+                return Ok(getresult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
 
-        ////get drug unit
-        //[HttpGet, Route("GetDrugGeneric")]
-        //public async Task<IActionResult> GetDrugUnit()
-        //{
-        //    try
-        //    {
-        //        var getresult = await _prescriptionRepository.GetDrugUnit();
-        //        return Ok(getresult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
-
-
-        ////get drug dose form
-        //[HttpGet, Route("GetDrugDoseForm")]
-        //public async Task<IActionResult> GetDrugDoseForm()
-        //{
-        //    try
-        //    {
-        //        var getresult = await _prescriptionRepository.GetDrugDoseForms();
-        //        return Ok(getresult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
+        //////get drug unit
+        [HttpGet, Route("GetDrugUnit")]
+        public async Task<IActionResult> GetDrugUnit()
+        {
+            try
+            {
+                var getresult = await _prescriptionRepository.GetDrugUnit();
+                return Ok(getresult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
 
 
-        ////get drug route
-        //[HttpGet, Route("GetDrugRoute")]
-        //public async Task<IActionResult> GetDrugRoute()
-        //{
-        //    try
-        //    {
-        //        var getresult = await _prescriptionRepository.GetDrugRoute();
-        //        return Ok(getresult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
+        //////get drug dose form
+        [HttpGet, Route("GetDrugDoseForm")]
+        public async Task<IActionResult> GetDrugDoseForm()
+        {
+            try
+            {
+                var getresult = await _prescriptionRepository.GetDrugDoseForms();
+                return Ok(getresult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
 
 
-        ////get drug frequency
-        //[HttpGet, Route("GetDrugFrequency")]
-        //public async Task<IActionResult> GetDrugFrequency()
-        //{
-        //    try
-        //    {
-        //        var getresult = await _prescriptionRepository.GetDrugFrequency();
-        //        return Ok(getresult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
+        //////get drug route
+        [HttpGet, Route("GetDrugRoute")]
+        public async Task<IActionResult> GetDrugRoute()
+        {
+            try
+            {
+                var getresult = await _prescriptionRepository.GetDrugRoute();
+                return Ok(getresult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+
+        //////get drug frequency
+        [HttpGet, Route("GetDrugFrequency")]
+        public async Task<IActionResult> GetDrugFrequency()
+        {
+            try
+            {
+                var getresult = await _prescriptionRepository.GetDrugFrequency();
+                return Ok(getresult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
 
 
         ////get drug food relation
-        //[HttpGet, Route("GetDrugFoodRelation")]
-        //public async Task<IActionResult> GetDrugFoodRelation(int locationid)
-        //{
-        //    try
-        //    {
-        //        var getresult = await _prescriptionRepository.GetDrugFoodRelation(locationid);
-        //        return Ok(getresult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
+        [HttpGet, Route("GetDrugFoodRelation")]
+        public async Task<IActionResult> GetDrugFoodRelation(int locationid)
+        {
+            try
+            {
+                var getresult = await _prescriptionRepository.GetDrugFoodRelation(locationid);
+                return Ok(getresult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
 
 
 
