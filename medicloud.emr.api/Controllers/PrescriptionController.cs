@@ -100,19 +100,19 @@ namespace medicloud.emr.api.Controllers
         }
 
         //////get drug unit
-        //[HttpGet, Route("GetDrugGeneric")]
-        //public async Task<IActionResult> GetDrugUnit()
-        //{
-        //    try
-        //    {
-        //        var getresult = await _prescriptionRepository.GetDrugUnit();
-        //        return Ok(getresult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
+        [HttpGet, Route("GetDrugUnit")]
+        public async Task<IActionResult> GetDrugUnit()
+        {
+            try
+            {
+                var getresult = await _prescriptionRepository.GetDrugUnit();
+                return Ok(getresult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
 
 
         //////get drug dose form

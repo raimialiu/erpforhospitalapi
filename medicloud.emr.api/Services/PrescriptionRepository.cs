@@ -21,7 +21,7 @@ namespace medicloud.emr.api.Services
 
         Task<List<DrugGeneric>> GetDrugGeneric();
 
-        //Task<List<DrugUnit>> GetDrugUnit();
+        Task<List<DrugUnit>> GetDrugUnit();
 
         Task<List<DrugDoseForm>> GetDrugDoseForms();
 
