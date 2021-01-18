@@ -162,6 +162,8 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<SpecializationSchedule> SpecializationSchedule { get; set; }
         public virtual DbSet<Sponsor> Sponsor { get; set; }
         public virtual DbSet<State> State { get; set; }
+
+        public virtual DbSet<Store> Store { get; set; }
         public virtual DbSet<Supplier> Supplier { get; set; }
         public virtual DbSet<SupplierType> SupplierType { get; set; }
         public virtual DbSet<Tariff> Tariff { get; set; }
@@ -224,6 +226,12 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<DiagnosisType> DiagnosisType { get; set; }
         public virtual DbSet<DiagnosisProblems> DiagnosisProblems { get; set; }
         public virtual DbSet<ConsultationDiagnosisFavourites> ConsultationDiagnosisFavourites { get; set; }
+
+        public virtual DbSet<DepartmentSub> DepartmentSub { get; set; }
+
+        public virtual DbSet<DiagSampleOplabMain> DiagSampleOplabMain { get; set; }
+
+        public virtual DbSet<HospitalLocation> HospitalLocation { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -8102,6 +8110,185 @@ namespace medicloud.emr.api.Data
 
                 entity.Property(e => e.Wardname)
                     .HasColumnName("wardname")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Store>(entity =>
+            {
+                entity.HasKey(e => e.DepartmentId)
+                    .HasName("PK_DepartmentMain");
+
+                entity.Property(e => e.DepartmentId).HasColumnName("departmentId");
+
+                entity.Property(e => e.Departmentname)
+                    .HasColumnName("departmentname")
+                    .HasMaxLength(1000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Encodedby).HasColumnName("encodedby");
+
+                entity.Property(e => e.Encodeddate)
+                    .HasColumnName("encodeddate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Isactive).HasColumnName("isactive");
+
+                entity.Property(e => e.Isallowdisplayinotherstore).HasColumnName("isallowdisplayinotherstore");
+
+                entity.Property(e => e.Isconsumablestore).HasColumnName("isconsumablestore");
+
+                entity.Property(e => e.Locationid).HasColumnName("locationid");
+
+                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
+
+                entity.HasOne(d => d.Location)
+                    .WithMany(p => p.Store)
+                    .HasForeignKey(d => d.Locationid)
+                    .HasConstraintName("FK_DepartmentMain_Location");
+
+                entity.HasOne(d => d.Provider)
+                    .WithMany(p => p.Store)
+                    .HasForeignKey(d => d.ProviderId)
+                    .HasConstraintName("FK_DepartmentMain_AccountManager");
+            });
+
+            modelBuilder.Entity<DepartmentSub>(entity =>
+            {
+                entity.HasKey(e => e.SubDeptId);
+
+                entity.Property(e => e.Departmentid).HasColumnName("departmentid");
+
+                entity.Property(e => e.Departmenttypeid).HasColumnName("departmenttypeid");
+
+                entity.Property(e => e.Encodedby).HasColumnName("encodedby");
+
+                entity.Property(e => e.Encodeddate)
+                    .HasColumnName("encodeddate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Excludeservicedoctorinreport).HasColumnName("excludeservicedoctorinreport");
+
+                entity.Property(e => e.Isactive).HasColumnName("isactive");
+
+                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
+
+                entity.Property(e => e.Subname)
+                    .HasColumnName("subname")
+                    .HasMaxLength(1000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Type)
+                    .HasColumnName("type")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Department)
+                    .WithMany(p => p.DepartmentSub)
+                    .HasForeignKey(d => d.Departmentid)
+                    .HasConstraintName("FK_DepartmentSub_DepartmentMain");
+
+                entity.HasOne(d => d.Provider)
+                    .WithMany(p => p.DepartmentSub)
+                    .HasForeignKey(d => d.ProviderId)
+                    .HasConstraintName("FK_DepartmentSub_AccountManager");
+            });
+
+            modelBuilder.Entity<DiagSampleOplabMain>(entity =>
+            {
+                entity.HasKey(e => e.Diagsampleid);
+
+                entity.ToTable("DiagSampleOPLabMain");
+
+                entity.Property(e => e.Billid).HasColumnName("billid");
+
+                entity.Property(e => e.Companyid).HasColumnName("companyid");
+
+                entity.Property(e => e.Departmentid).HasColumnName("departmentid");
+
+                entity.Property(e => e.Encodedby).HasColumnName("encodedby");
+
+                entity.Property(e => e.Encodeddate)
+                    .HasColumnName("encodeddate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Encounterid).HasColumnName("encounterid");
+
+                entity.Property(e => e.Errequest).HasColumnName("ERRequest");
+
+                entity.Property(e => e.Hospitallocationid).HasColumnName("hospitallocationid");
+
+                entity.Property(e => e.Isactive).HasColumnName("isactive");
+
+                entity.Property(e => e.Labno).HasColumnName("labno");
+
+                entity.Property(e => e.Locationid).HasColumnName("locationid");
+
+                entity.Property(e => e.Orderid).HasColumnName("orderid");
+
+                entity.Property(e => e.Patientid)
+                    .HasColumnName("patientid")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Payorid).HasColumnName("payorid");
+
+                entity.Property(e => e.Pocrequest).HasColumnName("POCRequest");
+
+                entity.Property(e => e.Remarks)
+                    .HasColumnName("remarks")
+                    .HasMaxLength(1000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Serviceid).HasColumnName("serviceid");
+
+                entity.Property(e => e.Stat).HasColumnName("stat");
+
+                entity.Property(e => e.Statusid).HasColumnName("statusid");
+
+                entity.Property(e => e.Subdeptid).HasColumnName("subdeptid");
+
+                entity.Property(e => e.Unit).HasColumnName("unit");
+
+                entity.HasOne(d => d.Department)
+                    .WithMany(p => p.DiagSampleOplabMain)
+                    .HasForeignKey(d => d.Departmentid)
+                    .HasConstraintName("FK_DiagSampleOPLabMain_DepartmentMain");
+
+
+                entity.HasOne(d => d.Hospitallocation)
+                    .WithMany(p => p.DiagSampleOplabMain)
+                    .HasForeignKey(d => d.Hospitallocationid)
+                    .HasConstraintName("FK_DiagSampleOPLabMain_HospitalLocation");
+
+                entity.HasOne(d => d.Subdept)
+                    .WithMany(p => p.DiagSampleOplabMain)
+                    .HasForeignKey(d => d.Subdeptid)
+                    .HasConstraintName("FK_DiagSampleOPLabMain_DepartmentSub");
+            });
+
+
+            modelBuilder.Entity<HospitalLocation>(entity =>
+            {
+                entity.Property(e => e.Hospitallocationid).HasColumnName("hospitallocationid");
+
+                entity.Property(e => e.Address1)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Address2)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Fax)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Phone)
                     .HasMaxLength(50)
                     .IsUnicode(false);
             });
