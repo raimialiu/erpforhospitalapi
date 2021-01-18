@@ -1,5 +1,6 @@
 ﻿using medicloud.emr.api.Data;
 using medicloud.emr.api.Entities;
+using medicloud.emr.api.Etities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,6 +19,158 @@ namespace medicloud.emr.api.Controllers
         {
             _ctx = new DataContext();
         }
+
+
+        [Route("GetAllProblem")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllProblem()
+        {
+            return Ok(await _ctx.EmrProblems.ToListAsync());
+        }
+
+        [Route("GetAllProblemByKeyword/{keyword}")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllProblemByKeyword([FromRoute]string keyword)
+        {
+            return Ok(await _ctx.EmrProblems.Where(x=>x.Description.Contains(keyword)).ToListAsync());
+        }
+
+        [Route("AllProblemDuration")]
+        [HttpGet]
+        public async Task<IActionResult> AllProblemDuration()
+        {
+            return Ok(await _ctx.EmrProblemDuration.ToListAsync());
+        }
+
+        [Route("TodaysProblem")]
+        [HttpGet]
+        public async Task<IActionResult> TodaysProblem()
+        {
+            var _today = DateTime.Now.ToShortDateString();
+            return Ok(await _ctx.ConsultationComplaintsB.Where(x=>x.Dateadded.Value.ToShortDateString() == DateTime.Now.ToShortDateString()).ToListAsync());
+        }
+
+        [Route("SaveConsultationFavourites")]
+        [HttpPost]
+        public async Task<IActionResult> SaveConsultationFavoruties([FromBody] ConsultationComplaintsFavorites dto)
+        {
+            dto.Dateadded = DateTime.Now;
+            _ctx.ConsultationComplaintsFavorites.Add(dto);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+
+
+        [Route("DeleteConsultationFavourites/{id}")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteConsultationfavourites([FromRoute]long id)
+        {
+            var single = await _ctx.ConsultationComplaintsFavorites.SingleOrDefaultAsync(x => x.Favoriteid == id);
+            if (single == null) return Ok(false);
+
+            _ctx.ConsultationComplaintsFavorites.Remove(single);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+
+        [Route("LoadConsultationFavourites")]
+        [HttpGet]
+        public async Task<IActionResult> LoadConsultationFavoruties()
+        {
+            var favourites = await _ctx.ConsultationComplaintsFavorites.Include(x => x.Problem).ToListAsync();
+            return Ok(favourites);
+        }
+
+        [Route("DeleteConsultationFavoruties/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteConsultationFavourites([FromRoute]long id, [FromQuery] int doctorid)
+        {
+            var single = await _ctx.ConsultationComplaintsFavorites.SingleOrDefaultAsync(x => x.Favoriteid == id && x.Doctorid == doctorid);
+            if (single == null) return BadRequest(false);
+
+            _ctx.ConsultationComplaintsFavorites.Remove(single);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+
+        [Route("SaveConsultationComplaints")]
+        [HttpPost]
+        public async Task<IActionResult> SaveConsultationComplaints([FromBody]Etities.ConsultationComplaints dto)
+        {
+            dto.Dateadded = DateTime.Now;
+            _ctx.ConsultationComplaints.Add(dto);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+
+        [Route("LoadLastTenConsultationComplaints")]
+        [HttpGet]
+        public async Task<IActionResult> LoadLastTenConsultationComplaints()
+        {
+            var lastTen =  _ctx.ConsultationComplaints.OrderByDescending(x => x.Complaintid).Take(10);
+
+            return Ok(lastTen);
+        }
+
+        [Route("DeleteConsultationComplaint/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteConsultationComplaint([FromRoute]long id, [FromQuery] string isChronic)
+        {
+            Etities.ConsultationComplaints single = null;
+            if(Convert.ToInt32(isChronic) ==  0)
+            {
+                single = await _ctx.ConsultationComplaints.SingleOrDefaultAsync(x => x.Complaintid == id);
+            }
+            else
+            {
+                single = await _ctx.ConsultationComplaints.SingleOrDefaultAsync(x => x.Complaintid == id && x.IsChronic == 1);
+            }
+          
+            if (single == null) return Ok(false);
+
+            _ctx.ConsultationComplaints.Remove(single);
+
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+        [Route("LoadAllComplaints")]
+        [HttpGet]
+        public async Task<IActionResult> LoadAllComplaint()
+        {
+            return Ok(await _ctx.ConsultationComplaints.ToListAsync());
+        }
+
+        [Route("LoadProblemQuality")]
+        [HttpGet]
+        public async Task<IActionResult> LoadProblemQuality()
+        {
+            return Ok(await _ctx.EmrproblemsQualities.ToListAsync());
+        }
+
+        [Route("LoadProblemConditions")]
+        [HttpGet]
+        public async Task<IActionResult> LoadProblemConditions()
+        {
+            return Ok(await _ctx.EmrproblemsConditions.ToListAsync());
+        }
+
+
+        [Route("LoadProblemSeverity")]
+        [HttpGet]
+        public async Task<IActionResult> LoadProblemSeverity()
+        {
+            return Ok(await _ctx.EmrproblemsSeverity.ToListAsync());
+        }
+
+        [Route("LoadProblemContext")]
+        [HttpGet]
+        public async Task<IActionResult> LoadProblemContext()
+        {
+            return Ok(await _ctx.EmrproblemsContext.ToListAsync());
+        }
+
+        [Route("LoadProblemLocation")]
+        [HttpGet]
+        public async Task<IActionResult> LoadProblemLocation()
+        {
+            return Ok(await _ctx.EmrproblemsLocation.ToListAsync());
+        }
+
 
         [Route("addDiagnosis")]
         [HttpPost]

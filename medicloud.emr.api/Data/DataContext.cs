@@ -1,5 +1,6 @@
 ﻿using System;
 using medicloud.emr.api.Entities;
+using medicloud.emr.api.Etities;
 using Microsoft.EntityFrameworkCore;
 
 namespace medicloud.emr.api.Data
@@ -62,7 +63,8 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ConsultationCheck> ConsultationCheck { get; set; }
         public virtual DbSet<ConsultationChecks> ConsultationChecks { get; set; }
         public virtual DbSet<ConsultationCheckslist> ConsultationCheckslist { get; set; }
-        public virtual DbSet<ConsultationComplaints> ConsultationComplaints { get; set; }
+        public virtual DbSet<Etities.ConsultationComplaints> ConsultationComplaints { get; set; }
+        public virtual DbSet<Etities.ConsultationComplaints> ConsultationComplaintsB { get; set; }
         public virtual DbSet<ConsultationDental> ConsultationDental { get; set; }
         public virtual DbSet<ConsultationDentalProcedure> ConsultationDentalProcedure { get; set; }
         public virtual DbSet<ConsultationDiagnosis> ConsultationDiagnosis { get; set; }
@@ -220,6 +222,16 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ReferringPhysician> ReferringPhysician { get; set; }
         public virtual DbSet<BreakBlockSchedule> BreakBlockSchedule { get; set; }
         public virtual DbSet<ApplicationUserLocation> ApplicationUserLocation { get; set; }
+        public virtual DbSet<EmrProblems> EmrProblems { get; set; }
+        public virtual DbSet<EmrproblemDuration> EmrProblemDuration { get; set; }
+        public virtual DbSet<ConsultationComplaintsFavorites> ConsultationComplaintsFavorites { get; set; }
+
+        public virtual DbSet<EmrproblemsContext> EmrproblemsContext { get; set; }
+        public virtual DbSet<EmrproblemsLocation> EmrproblemsLocation { get; set; }
+        public virtual DbSet<EmrproblemsQuality> EmrproblemsQualities { get; set; }
+        public virtual DbSet<EmrproblemsSeverity> EmrproblemsSeverity { get; set; }
+        public virtual DbSet<EmrproblemsCondition> EmrproblemsConditions { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -241,6 +253,10 @@ namespace medicloud.emr.api.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Etities.ConsultationComplaints>(e =>
+            {
+                e.Property(e => e.Complaintid);
+            });
             modelBuilder.Entity<AccessControl>(entity =>
             {
                 entity.ToTable("access_control");
@@ -1768,7 +1784,7 @@ namespace medicloud.emr.api.Data
                     .HasConstraintName("FK_ConsultationCheckslist_ConsultationCheckslist");
             });
 
-            modelBuilder.Entity<ConsultationComplaints>(entity =>
+            modelBuilder.Entity<Entities.ConsultationComplaints>(entity =>
             {
                 entity.HasKey(e => e.Txnkey);
 
