@@ -67,6 +67,7 @@ namespace medicloud.emr.api.Entities
              DepartmentSub = new HashSet<DepartmentSub>();
             OrderPriority = new HashSet<OrderPriority>();
             DrugFormulary = new HashSet<DrugFormulary>();
+            DrugFoodrelation = new HashSet<DrugFoodrelation>();
 
         }
 
@@ -148,5 +149,7 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<OrderPriority> OrderPriority { get; set; }
 
         public virtual ICollection<DrugFormulary> DrugFormulary { get; set; }
+
+        public virtual ICollection<DrugFoodrelation> DrugFoodrelation { get; set; }
     }
 }
