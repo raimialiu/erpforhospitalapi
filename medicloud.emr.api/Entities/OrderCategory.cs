@@ -12,6 +12,7 @@ namespace medicloud.emr.api.Entities
         }
 
         public int Ordercategoryid { get; set; }
+        public int? ProviderID { get; set; }
         public int? Ordertypeid { get; set; }
         public string Ordercategory1 { get; set; }
         public string Categorycomment { get; set; }

@@ -24,6 +24,7 @@ namespace medicloud.emr.api.DataContextRepo
         IQueryable<T> ExecuteRawSql(string query);
         void CloseConnection();
         void ExecutStoredProcedure(string procedureName, out string result);
+        Task<List<OrderCategory>> GetOrderCategoryByOrderTypeId(int orderTypeId);
     }
 
     public class DataContextRepo<T> : IDataContextRepo<T> where T : class
@@ -144,5 +145,13 @@ namespace medicloud.emr.api.DataContextRepo
         {
             return dbSet.Count(filter);
         }
+
+        #region non-generic repositories
+        public async Task<List<OrderCategory>> GetOrderCategoryByOrderTypeId (int orderTypeId)
+        {
+
+            return await _dbContext.OrderCategory.Where(e => e.Ordertypeid == orderTypeId).OrderBy(p => p.Ordercategory1).ToListAsync();
+        }
+        #endregion
     }
 }
