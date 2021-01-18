@@ -15,9 +15,9 @@ namespace medicloud.emr.api.Services
         Task<List<Drug>> GetDrugs();
 
         Task<List<Store>> GetStore(int locationid);
-        //Task<List<OrderPriority>> GetOrderPriority(int locationid);
+        Task<List<OrderPriority>> GetOrderPriority(int locationid);
 
-        //Task<List<DrugFormulary>> GetDrugFormulary(int locationid);
+        Task<List<DrugFormulary>> GetDrugFormulary(int locationid);
 
         //Task<List<DrugGeneric>> GetDrugGeneric();
 
@@ -74,27 +74,28 @@ namespace medicloud.emr.api.Services
         }
 
 
-        //public async Task<List<OrderPriority>> GetOrderPriority(int locationid)
-        //{
-        //    var druglist = await _context.OrderPriority.Where(p => p.Isactive == 1 && p.Locationid == locationid)
-        //        .Select(r => new OrderPriority
-        //        {
-        //            Indenttype = r.Indenttype,
-        //            Id = r.Id
-        //        }).OrderByDescending(rq => rq.Indenttype).ToListAsync();
-        //    return druglist;
-        //}
+        public async Task<List<OrderPriority>> GetOrderPriority(int locationid)
+        {
+            var druglist = await _context.OrderPriority.Where(p => p.Isactive == 1 && p.Locationid == locationid)
+                .Select(r => new OrderPriority
+                {
+                    Indenttype = r.Indenttype,
+                    Id = r.Id
+                }).OrderByDescending(rq => rq.Indenttype).ToListAsync();
+            return druglist;
+        }
 
-        //public async Task<List<DrugFormulary>> GetDrugFormulary(int locationid)
-        //{
-        //    var druglist = await _context.DrugFormulary.Where(p => p.Isactive == true)
-        //        .Select(r => new DrugFormulary
-        //        {
-        //            FormulationName = r.FormulationName,
-        //            FormulationId = r.FormulationId
-        //        }).OrderByDescending(rq => rq.FormulationName).ToListAsync();
-        //    return druglist;
-        //}
+        public async Task<List<DrugFormulary>> GetDrugFormulary(int locationid)
+        {
+            var druglist = await _context.DrugFormulary.Where(p => p.Isactive == true)
+                .Select(r => new DrugFormulary
+                {
+                    FormulationName = r.FormulationName,
+                    FormulationId = r.FormulationId,
+                    FormulationShortName = r.FormulationShortName
+                }).OrderByDescending(rq => rq.FormulationName).ToListAsync();
+            return druglist;
+        }
 
 
 
