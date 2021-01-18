@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using se = System.Net.Mail;
+using System.Net;
 
 namespace medicloud.emr.api.DTOs
 {
@@ -23,6 +25,7 @@ namespace medicloud.emr.api.DTOs
         private EmailConfiguration _emailConfig;
         private static EmailMessageHelper _helper;
         private static object _lock= new object();
+        private se.SmtpClient _smtpClient;
 
         public static EmailMessageHelper instance(EmailConfiguration config)
         {
@@ -40,29 +43,44 @@ namespace medicloud.emr.api.DTOs
         private EmailMessageHelper(EmailConfiguration _config)
         {
             this._emailConfig = _config;
+            _smtpClient = new se.SmtpClient();
         }
 
 
-        public async Task<bool> sendMailMailMessageAsync(MailBodyDTO message)
+        public async Task<bool> sendMailMailMessageAsync(MailBodyDTO mailBodyDTO)
         {
-            EmailMessage _message = new EmailMessage()
-            {
-                Content = message.messageBody,
-                Reciever = new MailboxAddress(message.to[0]),
-                Subject = message.subject
-              //  Sender = new MailboxAddress(_emailConfig.Username)
-            };
+            MailMessage message = new MailMessage();
+            //SmtpClient smtp = new SmtpClient();
+            message.From = new MailAddress(_emailConfig.From);
+            message.To.Add(new MailAddress(mailBodyDTO.to[0]));
+            message.Subject = mailBodyDTO.subject;
+            message.IsBodyHtml = false; //to make message body as html  
+            message.Body = mailBodyDTO.messageBody;
+            _smtpClient.Port = 587;
+            _smtpClient.Host = _emailConfig.SmtpServer; //for gmail host  
+            _smtpClient.EnableSsl = false;
+            _smtpClient.UseDefaultCredentials = false;
+            _smtpClient.Credentials = new NetworkCredential(_emailConfig.Username, _emailConfig.Password);
+            _smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            _smtpClient.Send(message);
+            //EmailMessage _message = new EmailMessage()
+            //{
+            //    Content = message.messageBody,
+            //    Reciever = new MailboxAddress(message.to[0]),
+            //    Subject = message.subject
+            //  //  Sender = new MailboxAddress(_emailConfig.Username)
+            //};
 
-            var mimeMessage = CreateMimeMessageFromEmailMessage(_message);
-            using (MailKit.Net.Smtp.SmtpClient smtpClient = new MailKit.Net.Smtp.SmtpClient())
-            {
-                await smtpClient.ConnectAsync(_emailConfig.SmtpServer,
-                _emailConfig.Port, false);
-                await smtpClient.AuthenticateAsync(_emailConfig.Username,
-                _emailConfig.Password);
-                smtpClient.Send(mimeMessage);
-                smtpClient.Disconnect(true);
-            }
+            //var mimeMessage = CreateMimeMessageFromEmailMessage(_message);
+            //using (MailKit.Net.Smtp.SmtpClient smtpClient = new MailKit.Net.Smtp.SmtpClient())
+            //{
+            //    await smtpClient.ConnectAsync(_emailConfig.SmtpServer,
+            //    _emailConfig.Port, false);
+            //    await smtpClient.AuthenticateAsync(_emailConfig.Username,
+            //    _emailConfig.Password);
+            //    smtpClient.Send(mimeMessage);
+            //    smtpClient.Disconnect(true);
+            //}
             return true;
         }
 
