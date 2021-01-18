@@ -230,6 +230,22 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<DiagSampleOplabMain> DiagSampleOplabMain { get; set; }
 
         public virtual DbSet<HospitalLocation> HospitalLocation { get; set; }
+       
+        public virtual DbSet<Diagnosisgroup> Diagnosisgroup { get; set; }
+        public virtual DbSet<Diagnosissubgroup> Diagnosissubgroup { get; set; }
+        public virtual DbSet<DiagnosisLocation> DiagnosisLocation { get; set; }
+        public virtual DbSet<DiagnosisType> DiagnosisType { get; set; }
+        public virtual DbSet<DiagnosisProblems> DiagnosisProblems { get; set; }
+        public virtual DbSet<ConsultationDiagnosisFavourites> ConsultationDiagnosisFavourites { get; set; }
+        public virtual DbSet<EmrProblems> EmrProblems { get; set; }
+        public virtual DbSet<EmrproblemDuration> EmrProblemDuration { get; set; }
+        public virtual DbSet<ConsultationComplaintsFavorites> ConsultationComplaintsFavorites { get; set; }
+
+        public virtual DbSet<EmrproblemsContext> EmrproblemsContext { get; set; }
+        public virtual DbSet<EmrproblemsLocation> EmrproblemsLocation { get; set; }
+        public virtual DbSet<EmrproblemsQuality> EmrproblemsQualities { get; set; }
+        public virtual DbSet<EmrproblemsSeverity> EmrproblemsSeverity { get; set; }
+        public virtual DbSet<EmrproblemsCondition> EmrproblemsConditions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

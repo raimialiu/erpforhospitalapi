@@ -183,38 +183,38 @@ namespace medicloud.emr.api.Controllers
         }
 
 
-        [Route("UpdateDiagnosis/{id}")]
-        [HttpPut]
-        public async Task<IActionResult> UpdateDiagnosis([FromRoute] long id, [FromBody] Diagnosis body)
-        {
-            var oldChiefComplaint = await _ctx.Diagnosis.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
-            if (oldChiefComplaint == null) return BadRequest(false);
+        //[Route("UpdateDiagnosis/{id}")]
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateDiagnosis([FromRoute] long id, [FromBody] Diagnosis body)
+        //{
+        //    var oldChiefComplaint = await _ctx.Diagnosis.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
+        //    if (oldChiefComplaint == null) return BadRequest(false);
 
-            _ctx.Entry<Diagnosis>(body).State = EntityState.Modified;
-            _ctx.Entry<Diagnosis>(body).Property(x => x.Id).IsModified = false;
-            var result = await _ctx.SaveChangesAsync();
-            return Ok(result > 0);
-        }
+        //    _ctx.Entry<Diagnosis>(body).State = EntityState.Modified;
+        //    _ctx.Entry<Diagnosis>(body).Property(x => x.Id).IsModified = false;
+        //    var result = await _ctx.SaveChangesAsync();
+        //    return Ok(result > 0);
+        //}
 
-        [Route("DeleteDiagnosis/{id}")]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteDiagnosis([FromRoute] long id)
-        {
-            var oldChiefComplaint = await _ctx.Diagnosis.SingleOrDefaultAsync(x => x.Id == id);
-            if (oldChiefComplaint == null) return BadRequest(false);
+        //[Route("DeleteDiagnosis/{id}")]
+        //[HttpDelete]
+        //public async Task<IActionResult> DeleteDiagnosis([FromRoute] long id)
+        //{
+        //    var oldChiefComplaint = await _ctx.Diagnosis.SingleOrDefaultAsync(x => x.Id == id);
+        //    if (oldChiefComplaint == null) return BadRequest(false);
 
-            _ctx.Diagnosis.Remove(oldChiefComplaint);
+        //    _ctx.Diagnosis.Remove(oldChiefComplaint);
 
-            var result = await _ctx.SaveChangesAsync();
-            return Ok(result > 0);
-        }
+        //    var result = await _ctx.SaveChangesAsync();
+        //    return Ok(result > 0);
+        //}
 
-        [Route("GetDiagnosis/{id}")]
-        [HttpGet]
-        public async Task<IActionResult> GetDiagnosis([FromRoute] long id)
-        {
-            return Ok(await _ctx.Diagnosis.SingleOrDefaultAsync(x => x.Id == id));
-        }
+        //[Route("GetDiagnosis/{id}")]
+        //[HttpGet]
+        //public async Task<IActionResult> GetDiagnosis([FromRoute] long id)
+        //{
+        //    return Ok(await _ctx.Diagnosis.SingleOrDefaultAsync(x => x.Id == id));
+        //}
 
         [Route("allDiagnosis")]
         [HttpGet]
