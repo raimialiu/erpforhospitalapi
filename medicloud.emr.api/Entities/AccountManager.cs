@@ -64,7 +64,9 @@ namespace medicloud.emr.api.Entities
             PatientQueue = new HashSet<PatientQueue>();
             CheckIn = new HashSet<CheckIn>();
             PaRequest = new HashSet<PaRequest>();
+             DepartmentSub = new HashSet<DepartmentSub>();
         }
+
 
         public int ProviderId { get; set; }
         public Guid AccountId { get; set; }
@@ -137,5 +139,8 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<PatientQueue> PatientQueue { get; set; }
         public virtual ICollection<CheckIn> CheckIn { get; set; }
         public virtual ICollection<PaRequest> PaRequest { get; set; }
+
+        public virtual ICollection<Store> Store { get; set; }
+               public virtual ICollection<DepartmentSub> DepartmentSub { get; set; }
     }
 }

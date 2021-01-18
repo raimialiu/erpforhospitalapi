@@ -18,6 +18,7 @@ namespace medicloud.emr.api.Entities
             CheckIn = new HashSet<CheckIn>();
             PaRequest = new HashSet<PaRequest>();
             PatientQueue = new HashSet<PatientQueue>();
+            Store = new HashSet<Store>();
         }
 
         public int Locationid { get; set; }
@@ -43,5 +44,7 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<CheckIn> CheckIn { get; set; }
         public virtual ICollection<PaRequest> PaRequest { get; set; }
         public virtual ICollection<PatientQueue> PatientQueue { get; set; }
+
+        public virtual ICollection<Store> Store { get; set; }
     }
 }
