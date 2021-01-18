@@ -12,7 +12,7 @@ namespace medicloud.emr.api.Entities
 
         public int Bloodgroupid { get; set; }
         public string Bloodgroupname { get; set; }
-        public string Dateadded { get; set; }
+        public DateTime Dateadded { get; set; }
 
         public virtual ICollection<Patient> Patient { get; set; }
     }

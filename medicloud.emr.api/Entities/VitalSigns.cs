@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace medicloud.emr.api.Entities
 {
     public partial class VitalSigns
     {
+        [Key]
         public int Vitalid { get; set; }
         public string Patientid { get; set; }
         public int? Staffid { get; set; }

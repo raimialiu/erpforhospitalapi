@@ -21,5 +21,8 @@ namespace medicloud.emr.api.Entities
         [NotMapped]
         public DateTime? LastVisit { get; set; }
         public DateTime? DateAdded { get; set; }
+        public DateTime? ChangedLocationAt { get; set; }
+        public bool isCheckedOut { get; set; }
+        public bool isCurrent { get; set; }
     }
 }

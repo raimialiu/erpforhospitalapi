@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -85,6 +87,28 @@ namespace medicloud.emr.api.Helpers
 
 
                 };
+
+                if(!File.Exists("LogFiles.txt"))
+                {
+                   // File.Create("LogFiles.txt");
+                    //File.WriteAllText("LogFiles.txt", "\n");
+                    FileStream fs = new FileStream("LogFiles.txt", FileMode.CreateNew, FileAccess.ReadWrite);
+                    StreamWriter writer = new StreamWriter(fs);
+                    writer.WriteLine(JsonConvert.SerializeObject(messageObject));
+                    //File.WriteAllText("LogFiles.txt", JsonConvert.SerializeObject(messageObject));
+                    writer.Close();
+                    fs.Close();
+                }
+                else
+                {
+                   // FileStream fs = new FileStream("LogFiles.txt", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+                    //StreamWriter writer = new StreamWriter(fs);
+                    //writer.WriteLine("\n");
+                    //writer.WriteLine(JsonConvert.SerializeObject(messageObject));
+                    //writer.Close();
+                    //File.AppendAllText("LogFiles.txt", "\n");
+                    File.AppendAllText("LogFiles.txt", "\n"+JsonConvert.SerializeObject(messageObject));
+                }
                 
                 // log Exception details
 

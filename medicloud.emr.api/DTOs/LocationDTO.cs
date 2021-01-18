@@ -1,6 +1,11 @@
-﻿namespace medicloud.emr.api.DTOs
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace medicloud.emr.api.DTOs
 {
-    public abstract class OptionsDTO
+    public class OptionsDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -19,5 +24,6 @@
     public class ReferringDTO : OptionsDTO { }
 
     public class VisitTypeDTO : OptionsDTO { }
+
 
 }

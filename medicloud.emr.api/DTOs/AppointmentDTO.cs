@@ -1,6 +1,9 @@
 ﻿using medicloud.emr.api.Entities;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace medicloud.emr.api.DTOs
 {
@@ -69,34 +72,18 @@ namespace medicloud.emr.api.DTOs
         public string Color { get; set; }
     }
 
-    public class BlockSchedule
+    public class UpcomingAppointmentList
     {
         public int Id { get; set; }
-        public string Start { get; set; }
-        public string End { get; set; }
-        public string Days { get; set; }
-        public string Name { get; set; }
-        public string Adjuster { get; set; }
+        public int Age { get; set; }
+        public string Gender { get; set; }
+        public DateTime Date { get; set; }
         public string Location { get; set; }
         public string Provider { get; set; }
-        public DateTime Dateadded { get; set; }
-        public bool Iscurrent { get; set; }
-    }
+        public int Status { get; set; }
+        public string Color { get; set; }
+        public Patient Patient { get; set; }
 
-    public class BlockScheduleCreate
-    {
-        [Required]
-        public string Start { get; set; }
-        [Required]
-        public string End { get; set; }
-        [Required]
-        public string Days { get; set; }
-        [Required]
-        public string Adjuster { get; set; }
-        [Required]
-        public string Blockname { get; set; }
-        public int LocationId { get; set; }
-        public int ProviderId { get; set; }
     }
 
     public class AppointmentCreate
@@ -108,6 +95,7 @@ namespace medicloud.emr.api.DTOs
         public int LocationId { get; set; }
         public int SpecId { get; set; }
         public int ProviderId { get; set; }
+        public int AccountId { get; set; }
         public int VisitTypeId { get; set; }
         public int StatusId { get; set; }
         public int ReferralTypeId { get; set; }
@@ -147,17 +135,4 @@ namespace medicloud.emr.api.DTOs
         public string Color { get; set; }
     }
 
-    public class UpcomingAppointmentList
-    {
-        public int Id { get; set; }
-        public int Age { get; set; }
-        public string Gender { get; set; }
-        public DateTime Date { get; set; }
-        public string Location { get; set; }
-        public string Provider { get; set; }
-        public int Status { get; set; }
-        public string Color { get; set; }
-        public Patient Patient { get; set; }
-
-    }
 }

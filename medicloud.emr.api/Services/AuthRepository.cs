@@ -56,9 +56,10 @@ namespace medicloud.emr.api.Services
                 Phone1 = model.Mobile,
                 Phone2 = model.Phone,
                 Email = model.Email,
-                Locationid = Convert.ToInt16(model.Location),
+                Locationid = model.Location != null || model.Location != "" ? Convert.ToInt16(model.Location):4,
                 Image = model.ImageLocation,
-                Passwordhash = BC.HashPassword(model.Password),
+                Passwordhash = BC.HashPassword(model.Password)
+                 
             };
 
             _context.ApplicationUser.Add(personnel);
