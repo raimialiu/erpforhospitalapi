@@ -99,6 +99,21 @@ namespace medicloud.emr.api.Controllers
                 return BadRequest();
             }
         }
+        
+        [HttpGet, Route("GetPatientLatestEncounter")]
+        public async Task<IActionResult> GetPatientLatestEncounter(string patientId, int accountId)
+        {
+            try
+            {
+                var result = await _checkInRepository.GetPatientLatestEncounter(patientId, accountId);
+                
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+        }
 
     }
 }

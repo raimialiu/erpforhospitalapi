@@ -16,6 +16,7 @@ namespace medicloud.emr.api.Services
         Task<List<CheckInDTO>> GetCheckInList(int locationId, string searchWord, int accountId);
         Task<CheckIn> GetCheckedInPatient(int locationId, string patientId, int accountId);
         Task<(int, int, bool)> GetTotalCheckInTodayCount(int locationId, int accountId);
+        Task<CheckInDTO> GetPatientLatestEncounter(string patientId, int accountId);
     }
 
     public class CheckInRepository : ICheckInRepository
@@ -153,7 +154,27 @@ namespace medicloud.emr.api.Services
         public async Task<CheckIn> GetCheckedInPatient(int locationId, string patientId, int accountId)
         {
             var result = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false && 
-                            c.ProviderId == accountId && c.Patientid == patientId).AsNoTracking().FirstOrDefaultAsync();
+                            c.ProviderId == accountId && c.Patientid == patientId && c.CheckInDate.Date == DateTime.Today.Date).AsNoTracking().FirstOrDefaultAsync();
+            return result;
+        }
+        
+        public async Task<CheckInDTO> GetPatientLatestEncounter(string patientId, int accountId)
+        {
+            var result = await _context.CheckIn.Where(c => c.CheckInDate.Date == DateTime.Today.Date  && c.ProviderId == accountId && c.Patientid == patientId && c.IsCheckedOut == false).AsNoTracking()
+                .Select(r => new CheckInDTO
+                {
+                    CheckInDate = r.CheckInDate,
+                    CheckOutDate = r.CheckOutDate.Value,
+                    EncounterId = r.Encounterid,
+                    isCheckedIn = r.IsCheckedIn,
+                    isCheckedOut = r.IsCheckedOut,
+                    LocationId = r.Locationid,
+                    PatientId = r.Patientid,
+                    ProviderId = r.ProviderId,
+                    //PatientDetails = r.Patient,
+                    //AppointmentSchedule = _context.AppointmentSchedule.Where(a => a.PatientNumber == r.Patientid && a.ProviderID == accountId && a.Starttime.Date == DateTime.Today.Date).FirstOrDefault()
+
+                }).FirstOrDefaultAsync();
             return result;
         }
 

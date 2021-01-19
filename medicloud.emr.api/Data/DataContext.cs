@@ -329,7 +329,7 @@ namespace medicloud.emr.api.Data
                 entity.Property(e => e.encodedby).HasColumnName("encodedby");
                 entity.Property(e => e.encodeddate).HasColumnName("encodeddate");
                 entity.Property(e => e.isactive).HasColumnName("isactive");
-                entity.Property(e => e.lastchangeddate).HasColumnName("lastchangeddate");
+                entity.Property(e => e.lastchangedate).HasColumnName("lastchangedate");
                 entity.Property(e => e.lastchangeby).HasColumnName("lastchangeby");
                 entity.Property(e => e.ICDID).HasColumnName("ICDID");
             });
@@ -356,21 +356,8 @@ namespace medicloud.emr.api.Data
 
                 entity.HasKey(e => e.diagnosislocationid);
 
-                entity.Property(e => e.condition).HasColumnName("condition");
-                entity.Property(e => e.Dateadded).HasColumnName("Dateadded");
-
-                entity.Property(e => e.diagnosis).HasColumnName("diagnosis");
-                entity.Property(e => e.groupid).HasColumnName("groupid");
-                entity.Property(e => e.ICDCode).HasColumnName("ICDCode");
-                entity.Property(e => e.ischronic).HasColumnName("ischronic");
-                entity.Property(e => e.isprimary).HasColumnName("isprimary");
-                entity.Property(e => e.isprovisional).HasColumnName("isprovisional");
-                entity.Property(e => e.isresolved).HasColumnName("isresolved");
-                entity.Property(e => e.location).HasColumnName("location");
-                entity.Property(e => e.onsetdate).HasColumnName("onsetdate");
-                entity.Property(e => e.remarks).HasColumnName("remarks");
-                entity.Property(e => e.subgroupid).HasColumnName("subgroupid");
-                entity.Property(e => e.type).HasColumnName("type");
+                entity.Property(e => e.diagnosislocationname).HasColumnName("diagnosislocationname");
+                entity.Property(e => e.dateadded).HasColumnName("dateadded");
             });
             
             modelBuilder.Entity<RegistrationType>(entity =>
@@ -2052,19 +2039,19 @@ namespace medicloud.emr.api.Data
 
             modelBuilder.Entity<ConsultationDiagnosis>(entity =>
             {
-                entity.HasKey(e => e.Txnkey);
+                entity.HasKey(e => e.Id);
 
                 entity.ToTable("Consultation_Diagnosis");
 
-                entity.Property(e => e.Txnkey).HasColumnName("txnkey");
+                entity.Property(e => e.Id).HasColumnName("Id");
 
                 entity.Property(e => e.Consultationid).HasColumnName("consultationid");
 
-                entity.Property(e => e.Dateadded)
+                entity.Property(e => e.dateadded)
                     .HasColumnName("dateadded")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.Diagnosiscode)
+                entity.Property(e => e.diagnosiscode)
                     .HasColumnName("diagnosiscode")
                     .HasMaxLength(250)
                     .IsUnicode(false);
@@ -2074,7 +2061,7 @@ namespace medicloud.emr.api.Data
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
+                entity.Property(e => e.ProviderID).HasColumnName("ProviderID");
 
                 entity.Property(e => e.Status)
                     .HasColumnName("status")
@@ -2086,7 +2073,28 @@ namespace medicloud.emr.api.Data
                     .HasForeignKey(d => d.Consultationid)
                     .HasConstraintName("FK_Consultation_Diagnosis_Consultation");
 
-                entity.Property(e => e.LocationId).HasColumnName("locationId");
+                entity.Property(e => e.diagnosisdesc).HasColumnName("diagnosisdesc");
+                entity.Property(e => e.genderconstraint).HasColumnName("genderconstraint");
+                entity.Property(e => e.encounterId).HasColumnName("encounterId");
+                entity.Property(e => e.primarydiagnosis).HasColumnName("primarydiagnosis");
+                entity.Property(e => e.locationid).HasColumnName("locationid");
+                entity.Property(e => e.ischronic).HasColumnName("ischronic");
+                entity.Property(e => e.isresolved).HasColumnName("isresolved");
+                entity.Property(e => e.doctorid).HasColumnName("doctorid");
+                entity.Property(e => e.remarks).HasColumnName("remarks");
+                entity.Property(e => e.isactive).HasColumnName("isactive");
+                entity.Property(e => e.encodedby).HasColumnName("encodedby");
+                entity.Property(e => e.encodeddate).HasColumnName("encodeddate");
+                entity.Property(e => e.MRDCode).HasColumnName("MRDCode");
+                entity.Property(e => e.IsOTDiagnosis).HasColumnName("IsOTDiagnosis");
+                entity.Property(e => e.diagnosisid).HasColumnName("diagnosisid");
+                entity.Property(e => e.Onsetdate).HasColumnName("Onsetdate");
+                entity.Property(e => e.Typeid).HasColumnName("Typeid");
+                entity.Property(e => e.conditionid1).HasColumnName("conditionid1");
+                entity.Property(e => e.conditionid2).HasColumnName("conditionid2");
+                entity.Property(e => e.conditionid3).HasColumnName("conditionid3");
+                entity.Property(e => e.isprovisional).HasColumnName("isprovisional");
+                entity.Property(e => e.diagnosislocationid).HasColumnName("diagnosislocationid");
 
                 entity.HasOne(d => d.Patient)
                     .WithMany(p => p.ConsultationDiagnosis)
@@ -2095,7 +2103,7 @@ namespace medicloud.emr.api.Data
 
                 entity.HasOne(d => d.Provider)
                     .WithMany(p => p.ConsultationDiagnosis)
-                    .HasForeignKey(d => d.ProviderId)
+                    .HasForeignKey(d => d.ProviderID)
                     .HasConstraintName("fk_consultationdiagnosis_accountmanager");
             });
 
@@ -2816,35 +2824,26 @@ namespace medicloud.emr.api.Data
             {
                 entity.ToTable("diagnosis");
 
-                entity.Property(e => e.ID).HasColumnName("ID");
+                entity.Property(e => e.diagnosisid).HasColumnName("diagnosisid");
 
                 entity.Property(e => e.Category).HasColumnName("category");
 
                 entity.Property(e => e.Code).HasColumnName("code");
 
-                entity.Property(e => e.Comments).HasColumnName("comments");
-                entity.Property(e => e.hospitallocationid).HasColumnName("hospitallocationid");
-                entity.Property(e => e.encounterId).HasColumnName("encounterId");
-                entity.Property(e => e.patientid).HasColumnName("patientid");
-                entity.Property(e => e.primarydiagnosis).HasColumnName("primarydiagnosis");
-                entity.Property(e => e.ischronic).HasColumnName("ischronic");
-                entity.Property(e => e.isresolved).HasColumnName("isresolved");
+                entity.Property(e => e.diseaseid).HasColumnName("diseaseid");
+                entity.Property(e => e.diseasecode).HasColumnName("diseasecode");
+                entity.Property(e => e.subgroupid).HasColumnName("subgroupid");
+                entity.Property(e => e.groupid).HasColumnName("groupid");
                 entity.Property(e => e.locationid).HasColumnName("locationid");
-                entity.Property(e => e.doctorid).HasColumnName("doctorid");
-                entity.Property(e => e.remarks).HasColumnName("remarks");
                 entity.Property(e => e.isactive).HasColumnName("isactive");
                 entity.Property(e => e.encodedby).HasColumnName("encodedby");
                 entity.Property(e => e.encodeddate).HasColumnName("encodeddate");
-                entity.Property(e => e.MRDCode).HasColumnName("MRDCode");
-                entity.Property(e => e.IsOTDiagnosis).HasColumnName("IsOTDiagnosis");
-                entity.Property(e => e.ICDId).HasColumnName("ICDId");
+                entity.Property(e => e.ICDCode).HasColumnName("ICDCode");
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Genderconstraint).HasColumnName("genderconstraint");
 
                 entity.Property(e => e.Name).HasColumnName("name");
 
