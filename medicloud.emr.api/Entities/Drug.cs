@@ -15,6 +15,8 @@ namespace medicloud.emr.api.Entities
         public string Drugcode { get; set; }
         public string Name { get; set; }
         public int? Drugcategoryid { get; set; }
+
+        public int? Classid{get; set;}
         public string Brandname { get; set; }
         public string Description { get; set; }
         public string Manufacturer { get; set; }

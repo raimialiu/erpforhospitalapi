@@ -43,7 +43,7 @@ namespace medicloud.emr.api.Helpers
             public const string registerNewPatient = "newPatient";
             public const string checkIfPatientExist = "lookUpPatient";
             public const string registerDependantPatient = "registerDependantPatient";
-            public const string saveRegistrationLink = "saveRegistrationLink/{link}";
+            public const string saveRegistrationLink = "saveRegistrationLink/{link}/{email}";
         }
         private class bloodgroup
         {
