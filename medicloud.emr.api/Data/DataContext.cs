@@ -17,7 +17,7 @@ namespace medicloud.emr.api.Data
         }
 
         public virtual DbSet<PlanType> PlanType { get; set; }
-
+        public virtual DbSet<DiagnosisFreeForm> DiagnosisFreeForms { get; set; }
         public virtual DbSet<AccessControl> AccessControl { get; set; }
         public virtual DbSet<TemplateCategoryB> TemplateCategoryB { get; set; }
         public virtual DbSet<TemplateCategoryC> TemplateCategoryC { get; set; }

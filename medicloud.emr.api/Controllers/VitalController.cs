@@ -71,6 +71,48 @@ namespace medicloud.emr.api.Controllers
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
 
+        [Route("SaveFreeForm")]
+        [HttpPost]
+        public async Task<IActionResult> SaveFreeForm([FromBody] DiagnosisFreeFormDTO vl)
+        {
+            foreach(DiagnosisFreeForm k in vl.values)
+            {
+               if(k != null)
+                {
+                    if(k.Bodyarea != null || k.Textvalue != null)
+                     {
+                          k.Dateadded = DateTime.Now;
+                          _ctx.DiagnosisFreeForms.Add(k);
+                     }
+                }
+                
+               
+            }
+
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+
+        [Route("LoadFreeFormByDateRange")]
+        public async Task<IActionResult> LoadFreeFormByDateRange([FromQuery]string startDate, string endDate)
+        {
+            //DateTime start = DateTime.Parse(startDate);
+            //DateTime end = DateTime.Parse(endDate);
+
+            var FreeForms = await _ctx.DiagnosisFreeForms.FromSqlRaw($"select * from diagnosis_freeform where dateaded between {startDate} and {endDate}").ToListAsync();
+
+
+            return Ok(FreeForms);
+        }
+
+        [Route("LoadFreeFormLastTen")]
+        public async Task<IActionResult> LoadFreeFormLastTen()
+        {
+            var FreeForms = await _ctx.DiagnosisFreeForms.OrderByDescending(x => x.Freeformid).Take(10).ToListAsync();
+
+
+            return Ok(FreeForms);
+        }
+
         [Route("LoadConsultationFavourites")]
         [HttpGet]
         public async Task<IActionResult> LoadConsultationFavoruties()
@@ -106,6 +148,19 @@ namespace medicloud.emr.api.Controllers
             var lastTen =  _ctx.ConsultationComplaints.OrderByDescending(x => x.Complaintid).Take(10);
 
             return Ok(lastTen);
+        }
+
+        [Route("ConsultationComplainByDateRange")]
+        [HttpGet]
+        public async Task<IActionResult> ConsultationComplainByDateRange([FromQuery]string startDate, [FromQuery]string endDate)
+        {
+            string _start = DateTime.Parse(startDate).ToString("mm-dd-yyyy");
+            string  _end = DateTime.Parse(endDate).ToString("mm-dd-yyyy");
+            //var complaints = await _ctx.ConsultationComplaints.Where(x => x.Dateadded.Value == _start && x.Dateadded.Value <= _end).ToListAsync();
+            var complaints = await _ctx.ConsultationComplaints.FromSqlRaw($"select * from consultation_complaints where dateadded between '{startDate}' and '{endDate}'").ToListAsync();
+            // select * from consultation_complaints where dateadded between
+
+            return Ok(complaints);
         }
 
         [Route("DeleteConsultationComplaint/{id}")]
