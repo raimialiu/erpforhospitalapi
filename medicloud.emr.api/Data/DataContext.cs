@@ -128,6 +128,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<Nationality> Nationality { get; set; }
         public virtual DbSet<Network> Network { get; set; }
         public virtual DbSet<NextOfKinRelationship> NextOfKinRelationship { get; set; }
+        public virtual DbSet<DrugFormulary> DrugFormulary { get; set; }
         public virtual DbSet<NursingRecord> NursingRecord { get; set; }
         public virtual DbSet<OrderCategory> OrderCategory { get; set; }
         public virtual DbSet<OrderListing> OrderListing { get; set; }
@@ -249,7 +250,7 @@ namespace medicloud.emr.api.Data
 
         public virtual DbSet<OrderPriority> OrderPriority { get; set; }
 
-        public virtual DbSet<DrugFormulary> DrugFormulary { get; set; }
+        //public virtual DbSet<DrugFormulary> DrugFormulary { get; set; }
 
         public virtual DbSet<DrugGeneric> DrugGeneric { get; set; }
 
@@ -8366,31 +8367,31 @@ namespace medicloud.emr.api.Data
                     .HasConstraintName("FK_OrderPriority_AccountManager");
             });
 
-            modelBuilder.Entity<DrugFormulary>(entity =>
-            {
-                entity.HasKey(e => e.FormulationId);
+            //modelBuilder.Entity<DrugFormulary>(entity =>
+            //{
+            //    entity.HasKey(e => e.FormulationId);
 
-                entity.ToTable("Drug_Formulary");
+            //    entity.ToTable("Drug_Formulary");
 
-                entity.Property(e => e.EncodedDate).HasColumnType("datetime");
+            //    entity.Property(e => e.EncodedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.FormulationName)
-                    .HasMaxLength(200)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.FormulationName)
+            //        .HasMaxLength(200)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.FormulationShortName)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.FormulationShortName)
+            //        .HasMaxLength(50)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.LastChangeDate).HasColumnType("datetime");
+            //    entity.Property(e => e.LastChangeDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
+            //    entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
 
-                entity.HasOne(d => d.Provider)
-                    .WithMany(p => p.DrugFormulary)
-                    .HasForeignKey(d => d.ProviderId)
-                    .HasConstraintName("FK_Drug_FormularyAccountManager");
-            });
+            //    entity.HasOne(d => d.Provider)
+            //        .WithMany(p => p.DrugFormulary)
+            //        .HasForeignKey(d => d.ProviderId)
+            //        .HasConstraintName("FK_Drug_FormularyAccountManager");
+            //});
 
             modelBuilder.Entity<DrugGeneric>(entity =>
             {

@@ -93,12 +93,12 @@ namespace medicloud.emr.api.Controllers
         }
 
         [Route("LoadFreeFormByDateRange")]
-        public async Task<IActionResult> LoadFreeFormByDateRange([FromQuery]string startDate, string endDate)
+        public async Task<IActionResult> LoadFreeFormByDateRange([FromQuery]string startDate, [FromQuery]string endDate)
         {
             //DateTime start = DateTime.Parse(startDate);
             //DateTime end = DateTime.Parse(endDate);
 
-            var FreeForms = await _ctx.DiagnosisFreeForms.FromSqlRaw($"select * from diagnosis_freeform where dateaded between {startDate} and {endDate}").ToListAsync();
+            var FreeForms = await _ctx.DiagnosisFreeForms.FromSqlRaw($"select * from diagnosis_freeform where dateadded between '{startDate}' and '{endDate}'").ToListAsync();
 
 
             return Ok(FreeForms);

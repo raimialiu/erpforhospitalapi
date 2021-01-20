@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace medicloud.emr.api.Entities
 {
+    [Table("Drug_Formulary")]
     public partial class DrugFormulary
     {
-        public int FormulationId { get; set; }
-        public string FormulationName { get; set; }
-        public string FormulationShortName { get; set; }
-        public bool? Iscalculated { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Formularyid { get; set; }
+        public string Formularyname { get; set; }
         public int? ProviderId { get; set; }
+        public DateTime? Dateadded { get; set; }
         public bool? Isactive { get; set; }
-        public int? EncodedBy { get; set; }
-        public DateTime? EncodedDate { get; set; }
-        public int? LastChangeBy { get; set; }
-        public DateTime? LastChangeDate { get; set; }
-        public int? DefaultRouteId { get; set; }
-
-        public virtual AccountManager Provider { get; set; }
     }
 }

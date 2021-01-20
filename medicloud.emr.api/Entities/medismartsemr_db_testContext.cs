@@ -15,7 +15,7 @@ namespace medicloud.emr.api.Entities
         {
         }
 
-        public virtual DbSet<ChiefComplain> ChiefComplain { get; set; }
+        public virtual DbSet<DrugFormulary> DrugFormulary { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -28,48 +28,27 @@ namespace medicloud.emr.api.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ChiefComplain>(entity =>
+            modelBuilder.Entity<DrugFormulary>(entity =>
             {
-                entity.Property(e => e.Doctorid).HasColumnName("doctorid");
+                entity.HasKey(e => e.Formularyid)
+                    .HasName("PK_Drug_Formulary_1");
 
-                entity.Property(e => e.Encodedby).HasColumnName("encodedby");
+                entity.ToTable("Drug_Formulary");
 
-                entity.Property(e => e.Encodeddate)
-                    .HasColumnName("encodeddate")
+                entity.Property(e => e.Formularyid).HasColumnName("formularyid");
+
+                entity.Property(e => e.Dateadded)
+                    .HasColumnName("dateadded")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.EncounterId).HasColumnName("encounterId");
-
-                entity.Property(e => e.Hospitallocationid).HasColumnName("hospitallocationid");
-
-                entity.Property(e => e.Isactive).HasColumnName("isactive");
-
-                entity.Property(e => e.Lastchangeby).HasColumnName("lastchangeby");
-
-                entity.Property(e => e.Lastchangedate)
-                    .HasColumnName("lastchangedate")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.Locationid).HasColumnName("locationid");
-
-                entity.Property(e => e.Patientid)
-                    .HasColumnName("patientid")
+                entity.Property(e => e.Formularyname)
+                    .HasColumnName("formularyname")
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.ProblemId).HasColumnName("problemId");
-
-                entity.Property(e => e.Problemdescription)
-                    .HasColumnName("problemdescription")
-                    .HasMaxLength(2000)
-                    .IsUnicode(false);
+                entity.Property(e => e.Isactive).HasColumnName("isactive");
 
                 entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
-
-                entity.Property(e => e.Remarks)
-                    .HasColumnName("remarks")
-                    .HasMaxLength(500)
-                    .IsUnicode(false);
             });
 
             OnModelCreatingPartial(modelBuilder);
