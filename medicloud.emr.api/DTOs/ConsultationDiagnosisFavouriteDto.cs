@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace medicloud.emr.api.Entities
+namespace medicloud.emr.api.DTOs
 {
-    public class ConsultationDiagnosisFavourites
+    public class ConsultationDiagnosisFavouriteDto
     {
         public int Id { get; set; }
         public int? ProviderID { get; set; }
         public int? ICDID { get; set; }
+        public string diagnosisName { get; set; }
         public int? doctorid { get; set; }
         public int? encodedby { get; set; }
         public int? lastchangeby { get; set; }

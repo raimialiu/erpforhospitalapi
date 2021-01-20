@@ -18,5 +18,6 @@ namespace medicloud.emr.api.DTOs
         public bool isCheckedOut { get; set; }
         public bool isCheckedIn { get; set; }
         public Patient PatientDetails { get; set; }
+        public AppointmentSchedule AppointmentSchedule { get; set; }
     }
 }
