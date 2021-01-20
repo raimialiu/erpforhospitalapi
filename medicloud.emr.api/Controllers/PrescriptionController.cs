@@ -1,7 +1,9 @@
-﻿using medicloud.emr.api.DTOs;
+﻿using medicloud.emr.api.Data;
+using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Entities;
 using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +17,12 @@ namespace medicloud.emr.api.Controllers
     {
 
         private readonly IPrescriptionRepository _prescriptionRepository;
+        private DataContext _ctx;
 
         public PrescriptionController(IPrescriptionRepository prescriptionRepository)
         {
             _prescriptionRepository = prescriptionRepository;
+            _ctx = new DataContext();
         }
 
         //get orderpriority
@@ -68,21 +72,43 @@ namespace medicloud.emr.api.Controllers
             }
         }
 
-
-        ////get drug formulary
-        [HttpGet, Route("GetDrugFormulary")]
-        public async Task<IActionResult> GetDrugFormulary(int locationid)
+        [Route("GetDrugFormulary")]
+        [HttpGet]
+        public async Task<IActionResult> GetDrugFormulary()
         {
-            try
-            {
-                var getresult = await _prescriptionRepository.GetDrugFormulary(locationid);
-                return Ok(getresult);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest();
-            }
+            return Ok(await _ctx.DrugFormulary.ToListAsync());
         }
+
+
+        [Route("GetDrugBrandByGenericid")]
+        [HttpGet]
+        public async Task<IActionResult> GetDrugBrandByGenericID([FromQuery] long id)
+        {
+            if(id != 0)
+            {
+                var genericBrand = await _ctx.Drug.Where(x => x.genericid.Value == id).ToListAsync();
+
+                if (genericBrand != null || genericBrand.Count > 0) return Ok(genericBrand);
+            }
+          
+
+            return Ok(await _ctx.Drug.ToListAsync());
+        }
+
+        //////get drug formulary
+        //[HttpGet, Route("GetDrugFormulary")]
+        //public async Task<IActionResult> GetDrugFormulary(int locationid)
+        //{
+        //    try
+        //    {
+        //        var getresult = await _prescriptionRepository.GetDrugFormulary(locationid);
+        //        return Ok(getresult);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest();
+        //    }
+        //}
 
         //////get drug generic
         [HttpGet, Route("GetDrugGeneric")]
