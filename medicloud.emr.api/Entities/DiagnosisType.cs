@@ -11,7 +11,7 @@ namespace medicloud.emr.api.Entities
         public int? ProviderId { get; set; }
         public int? encodedby { get; set; }
         public DateTime? encodeddate { get; set; }
-        public bool description { get; set; }
-        public string isactive { get; set; }
+        public string description { get; set; }
+        public bool isactive { get; set; }
     }
 }
