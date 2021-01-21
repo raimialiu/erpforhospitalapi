@@ -1458,7 +1458,23 @@ namespace medicloud.emr.api.Controllers
 
         #endregion
 
+        [Route("getOrderDetailsByOrderTypeAndOrderCategoryId")]
+        [HttpGet]
+        public async Task<IActionResult> getOrderDetailsByOrderTypeAndOrderCategoryId(int accountId, int? orderCategory, string searchword)
+        {
+            try
+            {
+                var orderdetails = await _setupRepository.GetOrderDetailsList(accountId, searchword, orderCategory);
 
+                _reponse = BaseResponse.GetResponse(orderdetails, "success", "00");
+                return Ok(_reponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
 
         #endregion
 
