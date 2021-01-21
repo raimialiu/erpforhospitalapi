@@ -1,6 +1,7 @@
 ﻿using medicloud.emr.api.Data;
 using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Entities;
+using medicloud.emr.api.Etities;
 using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,13 @@ namespace medicloud.emr.api.Controllers
 
         private readonly IPrescriptionRepository _prescriptionRepository;
         private DataContext _ctx;
+        
 
         public PrescriptionController(IPrescriptionRepository prescriptionRepository)
         {
             _prescriptionRepository = prescriptionRepository;
             _ctx = new DataContext();
+            //_ct = new medismartsemr_db_testContext();
         }
 
         //get orderpriority
@@ -200,23 +203,25 @@ namespace medicloud.emr.api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPrescriptionHistory()
         {
-            return Ok(await _ctx.Prescriptions.ToListAsync());
+            // await _ctx.Prescriptions.ToListAsync()
+            return Ok(await _ctx.ConsultationPrescription.ToListAsync());
         }
 
         [Route("LoadPrescriptionHistorybyDateRange")]
         [HttpGet]
         public async Task<IActionResult> LoadPrescriptionHistorybyDateRange([FromQuery]string startDate, [FromQuery]string endDate)
         {
-            return Ok(await _ctx.Prescriptions.FromSqlRaw($"select * from Consultation_Prescription where dateadded between '{startDate}' and '{endDate}'").ToListAsync());
+           // return Ok("");
+           return Ok(await _ctx.ConsultationPrescription.FromSqlRaw($"select * from Consultation_Prescription where dateadded between '{startDate}' and '{endDate}'").ToListAsync());
         }
 
         [Route("SavePescription")]
         [HttpPost]
-        public async Task<IActionResult> SavePescription([FromBody]Etities.ConsultationPrescription dto)
+        public async Task<IActionResult> SavePescription([FromForm] ConsultationPrescription dto)
         {
             dto.Dateadded = DateTime.Now;
-            _ctx.Prescriptions.Add(dto);
-            return Ok(await _ctx.SaveChangesAsync());
+            _ctx.ConsultationPrescription.Add(dto);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
         }
         [Route("SaveToFavourites")]
         [HttpPost]
@@ -236,7 +241,8 @@ namespace medicloud.emr.api.Controllers
         public async Task<IActionResult> GetPrescriptionByDoctorid([FromQuery] long doctorid)
         {
             //return Ok(await _ctx.ConsultationPrescription.Where(x=>x);
-            return Ok(await _ctx.Prescriptions.Where(x=>x.Doctorid.Value == doctorid).ToListAsync());
+            // await _ctx.Prescriptions.Where(x=>x.Doctorid.Value == doctorid).ToListAsync()
+            return Ok("");
         }
 
 

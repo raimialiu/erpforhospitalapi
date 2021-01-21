@@ -8,7 +8,7 @@ namespace medicloud.emr.api.Etities
     [Table("Consultation_Prescription")]
     public partial class ConsultationPrescription
     {
-        [Key]
+        [Key()]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Prescriptionid { get; set; }
         public string Patientid { get; set; }
