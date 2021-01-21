@@ -1,5 +1,6 @@
 ﻿using System;
 using medicloud.emr.api.Entities;
+using medicloud.emr.api.Etities;
 using Microsoft.EntityFrameworkCore;
 
 namespace medicloud.emr.api.Data
@@ -16,7 +17,7 @@ namespace medicloud.emr.api.Data
         }
 
         public virtual DbSet<PlanType> PlanType { get; set; }
-
+        public virtual DbSet<DiagnosisFreeForm> DiagnosisFreeForms { get; set; }
         public virtual DbSet<AccessControl> AccessControl { get; set; }
         public virtual DbSet<TemplateCategoryB> TemplateCategoryB { get; set; }
         public virtual DbSet<TemplateCategoryC> TemplateCategoryC { get; set; }
@@ -32,6 +33,8 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<Payer> Payer { get; set; }
         public virtual DbSet<ApplicationUser> ApplicationUser { get; set; }
         public virtual DbSet<Appointment> Appointment { get; set; }
+
+        public virtual DbSet<ChiefComplain> ChiefComplain { get; set; }
         public virtual DbSet<AppointmentStatus> AppointmentStatus { get; set; }
         public virtual DbSet<Asset> Asset { get; set; }
         public virtual DbSet<AssetType> AssetType { get; set; }
@@ -60,7 +63,8 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ConsultationCheck> ConsultationCheck { get; set; }
         public virtual DbSet<ConsultationChecks> ConsultationChecks { get; set; }
         public virtual DbSet<ConsultationCheckslist> ConsultationCheckslist { get; set; }
-        public virtual DbSet<ConsultationComplaints> ConsultationComplaints { get; set; }
+        public virtual DbSet<Etities.ConsultationComplaints> ConsultationComplaints { get; set; }
+        public virtual DbSet<Etities.ConsultationComplaints> ConsultationComplaintsB { get; set; }
         public virtual DbSet<ConsultationDental> ConsultationDental { get; set; }
         public virtual DbSet<ConsultationDentalProcedure> ConsultationDentalProcedure { get; set; }
         public virtual DbSet<ConsultationDiagnosis> ConsultationDiagnosis { get; set; }
@@ -124,6 +128,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<Nationality> Nationality { get; set; }
         public virtual DbSet<Network> Network { get; set; }
         public virtual DbSet<NextOfKinRelationship> NextOfKinRelationship { get; set; }
+        public virtual DbSet<DrugFormulary> DrugFormulary { get; set; }
         public virtual DbSet<NursingRecord> NursingRecord { get; set; }
         public virtual DbSet<OrderCategory> OrderCategory { get; set; }
         public virtual DbSet<OrderListing> OrderListing { get; set; }
@@ -220,6 +225,13 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ReferringPhysician> ReferringPhysician { get; set; }
         public virtual DbSet<BreakBlockSchedule> BreakBlockSchedule { get; set; }
         public virtual DbSet<ApplicationUserLocation> ApplicationUserLocation { get; set; }
+
+        public virtual DbSet<DepartmentSub> DepartmentSub { get; set; }
+
+        public virtual DbSet<DiagSampleOplabMain> DiagSampleOplabMain { get; set; }
+
+        public virtual DbSet<HospitalLocation> HospitalLocation { get; set; }
+       
         public virtual DbSet<Diagnosisgroup> Diagnosisgroup { get; set; }
         public virtual DbSet<Diagnosissubgroup> Diagnosissubgroup { get; set; }
         public virtual DbSet<DiagnosisLocation> DiagnosisLocation { get; set; }
@@ -230,16 +242,19 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<OrderDetails> OrderDetails { get; set; }
         public virtual DbSet<ConsultationOrderFavorites> ConsultationOrderFavorites { get; set; }
         public virtual DbSet<ConsultationOrderDetails> ConsultationOrderDetails { get; set; }
+        public virtual DbSet<EmrProblems> EmrProblems { get; set; }
+        public virtual DbSet<EmrproblemDuration> EmrProblemDuration { get; set; }
+        public virtual DbSet<ConsultationComplaintsFavorites> ConsultationComplaintsFavorites { get; set; }
 
-        public virtual DbSet<DepartmentSub> DepartmentSub { get; set; }
-
-        public virtual DbSet<DiagSampleOplabMain> DiagSampleOplabMain { get; set; }
-
-        public virtual DbSet<HospitalLocation> HospitalLocation { get; set; }
+        public virtual DbSet<EmrproblemsContext> EmrproblemsContext { get; set; }
+        public virtual DbSet<EmrproblemsLocation> EmrproblemsLocation { get; set; }
+        public virtual DbSet<EmrproblemsQuality> EmrproblemsQualities { get; set; }
+        public virtual DbSet<EmrproblemsSeverity> EmrproblemsSeverity { get; set; }
+        public virtual DbSet<EmrproblemsCondition> EmrproblemsConditions { get; set; }
 
         public virtual DbSet<OrderPriority> OrderPriority { get; set; }
 
-        public virtual DbSet<DrugFormulary> DrugFormulary { get; set; }
+        //public virtual DbSet<DrugFormulary> DrugFormulary { get; set; }
 
         public virtual DbSet<DrugGeneric> DrugGeneric { get; set; }
 
@@ -274,6 +289,10 @@ namespace medicloud.emr.api.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Etities.ConsultationComplaints>(e =>
+            {
+                e.Property(e => e.Complaintid);
+            });
             modelBuilder.Entity<AccessControl>(entity =>
             {
                 entity.ToTable("access_control");
@@ -2036,7 +2055,7 @@ namespace medicloud.emr.api.Data
                     .HasConstraintName("FK_ConsultationCheckslist_ConsultationCheckslist");
             });
 
-            modelBuilder.Entity<ConsultationComplaints>(entity =>
+            modelBuilder.Entity<Entities.ConsultationComplaints>(entity =>
             {
                 entity.HasKey(e => e.Txnkey);
 
@@ -8506,31 +8525,31 @@ namespace medicloud.emr.api.Data
                     .HasConstraintName("FK_OrderPriority_AccountManager");
             });
 
-            modelBuilder.Entity<DrugFormulary>(entity =>
-            {
-                entity.HasKey(e => e.FormulationId);
+            //modelBuilder.Entity<DrugFormulary>(entity =>
+            //{
+            //    entity.HasKey(e => e.FormulationId);
 
-                entity.ToTable("Drug_Formulary");
+            //    entity.ToTable("Drug_Formulary");
 
-                entity.Property(e => e.EncodedDate).HasColumnType("datetime");
+            //    entity.Property(e => e.EncodedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.FormulationName)
-                    .HasMaxLength(200)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.FormulationName)
+            //        .HasMaxLength(200)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.FormulationShortName)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.FormulationShortName)
+            //        .HasMaxLength(50)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.LastChangeDate).HasColumnType("datetime");
+            //    entity.Property(e => e.LastChangeDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
+            //    entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
 
-                entity.HasOne(d => d.Provider)
-                    .WithMany(p => p.DrugFormulary)
-                    .HasForeignKey(d => d.ProviderId)
-                    .HasConstraintName("FK_Drug_FormularyAccountManager");
-            });
+            //    entity.HasOne(d => d.Provider)
+            //        .WithMany(p => p.DrugFormulary)
+            //        .HasForeignKey(d => d.ProviderId)
+            //        .HasConstraintName("FK_Drug_FormularyAccountManager");
+            //});
 
             modelBuilder.Entity<DrugGeneric>(entity =>
             {

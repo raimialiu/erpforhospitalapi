@@ -17,9 +17,7 @@ namespace medicloud.emr.api.Services
         Task<List<Store>> GetStore(int locationid);
         Task<List<OrderPriority>> GetOrderPriority(int locationid);
 
-        Task<List<DrugFormulary>> GetDrugFormulary(int locationid);
-
-        Task<List<DrugGeneric>> GetDrugGeneric();
+                          Task<List<DrugGeneric>> GetDrugGeneric();
 
         Task<List<DrugUnit>> GetDrugUnit();
 
@@ -86,17 +84,7 @@ namespace medicloud.emr.api.Services
             return druglist;
         }
 
-        public async Task<List<DrugFormulary>> GetDrugFormulary(int locationid)
-        {
-            var druglist = await _context.DrugFormulary.Where(p => p.Isactive == true)
-                .Select(r => new DrugFormulary
-                {
-                    FormulationName = r.FormulationName,
-                    FormulationId = r.FormulationId,
-                    FormulationShortName = r.FormulationShortName
-                }).OrderByDescending(rq => rq.FormulationName).ToListAsync();
-            return druglist;
-        }
+       
 
         public async Task<List<DrugGeneric>> GetDrugGeneric()
         {

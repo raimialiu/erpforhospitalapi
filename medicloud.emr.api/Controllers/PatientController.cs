@@ -93,6 +93,8 @@ namespace medicloud.emr.api.Controllers
                 return Ok(BaseResponse.GetResponse(null, "success", "00"));
             }
 
+            
+
             return BadRequest(BaseResponse.GetResponse(null, "request failed to update data try again", "99"));
 
         }

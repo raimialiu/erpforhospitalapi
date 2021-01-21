@@ -88,27 +88,27 @@ namespace medicloud.emr.api.Helpers
 
                 };
 
-                if(!File.Exists("LogFiles.txt"))
-                {
-                   // File.Create("LogFiles.txt");
-                    //File.WriteAllText("LogFiles.txt", "\n");
-                    FileStream fs = new FileStream("LogFiles.txt", FileMode.CreateNew, FileAccess.ReadWrite);
-                    StreamWriter writer = new StreamWriter(fs);
-                    writer.WriteLine(JsonConvert.SerializeObject(messageObject));
-                    //File.WriteAllText("LogFiles.txt", JsonConvert.SerializeObject(messageObject));
-                    writer.Close();
-                    fs.Close();
-                }
-                else
-                {
-                   // FileStream fs = new FileStream("LogFiles.txt", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-                    //StreamWriter writer = new StreamWriter(fs);
-                    //writer.WriteLine("\n");
-                    //writer.WriteLine(JsonConvert.SerializeObject(messageObject));
-                    //writer.Close();
-                    //File.AppendAllText("LogFiles.txt", "\n");
-                    File.AppendAllText("LogFiles.txt", "\n"+JsonConvert.SerializeObject(messageObject));
-                }
+                //if(!File.Exists("LogFiles.txt"))
+                //{
+                //   // File.Create("LogFiles.txt");
+                //    //File.WriteAllText("LogFiles.txt", "\n");
+                //    FileStream fs = new FileStream("LogFiles.txt", FileMode.CreateNew, FileAccess.ReadWrite);
+                //    StreamWriter writer = new StreamWriter(fs);
+                //    writer.WriteLine(JsonConvert.SerializeObject(messageObject));
+                //    //File.WriteAllText("LogFiles.txt", JsonConvert.SerializeObject(messageObject));
+                //    writer.Close();
+                //    fs.Close();
+                //}
+                //else
+                //{
+                //   // FileStream fs = new FileStream("LogFiles.txt", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+                //    //StreamWriter writer = new StreamWriter(fs);
+                //    //writer.WriteLine("\n");
+                //    //writer.WriteLine(JsonConvert.SerializeObject(messageObject));
+                //    //writer.Close();
+                //    //File.AppendAllText("LogFiles.txt", "\n");
+                //    File.AppendAllText("LogFiles.txt", "\n"+JsonConvert.SerializeObject(messageObject));
+                //}
                 
                 // log Exception details
 
