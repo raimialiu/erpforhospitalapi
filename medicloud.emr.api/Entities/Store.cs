@@ -9,7 +9,7 @@ namespace medicloud.emr.api.Entities
     {
         public Store()
         {
-            ConsultationPrescription = new HashSet<ConsultationPrescription>();
+            ConsultationPrescription = new HashSet<Etities.ConsultationPrescription>();
             DepartmentSub = new HashSet<DepartmentSub>();
             DiagSampleOplabMain = new HashSet<DiagSampleOplabMain>();
         }
@@ -26,7 +26,7 @@ namespace medicloud.emr.api.Entities
 
         public virtual Location Location { get; set; }
         public virtual AccountManager Provider { get; set; }
-        public virtual ICollection<ConsultationPrescription> ConsultationPrescription { get; set; }
+        public virtual ICollection<Etities.ConsultationPrescription> ConsultationPrescription { get; set; }
         public virtual ICollection<DepartmentSub> DepartmentSub { get; set; }
         public virtual ICollection<DiagSampleOplabMain> DiagSampleOplabMain { get; set; }
     }

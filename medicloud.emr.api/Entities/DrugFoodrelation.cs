@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace medicloud.emr.api.Entities
 {
+    [Table("Drug_foodrelation")]
     public partial class DrugFoodrelation
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Foodid { get; set; }
         public string FoodName { get; set; }
         public int? ProviderId { get; set; }
