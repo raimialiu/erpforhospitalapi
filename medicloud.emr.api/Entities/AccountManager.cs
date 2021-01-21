@@ -64,7 +64,13 @@ namespace medicloud.emr.api.Entities
             PatientQueue = new HashSet<PatientQueue>();
             CheckIn = new HashSet<CheckIn>();
             PaRequest = new HashSet<PaRequest>();
+             DepartmentSub = new HashSet<DepartmentSub>();
+            OrderPriority = new HashSet<OrderPriority>();
+            DrugFormulary = new HashSet<DrugFormulary>();
+            DrugFoodrelation = new HashSet<DrugFoodrelation>();
+
         }
+
 
         public int ProviderId { get; set; }
         public Guid AccountId { get; set; }
@@ -137,5 +143,13 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<PatientQueue> PatientQueue { get; set; }
         public virtual ICollection<CheckIn> CheckIn { get; set; }
         public virtual ICollection<PaRequest> PaRequest { get; set; }
+
+        public virtual ICollection<Store> Store { get; set; }
+               public virtual ICollection<DepartmentSub> DepartmentSub { get; set; }
+        public virtual ICollection<OrderPriority> OrderPriority { get; set; }
+
+        public virtual ICollection<DrugFormulary> DrugFormulary { get; set; }
+
+        public virtual ICollection<DrugFoodrelation> DrugFoodrelation { get; set; }
     }
 }
