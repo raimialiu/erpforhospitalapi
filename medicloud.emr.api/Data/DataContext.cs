@@ -266,6 +266,8 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<DrugRoute> DrugRoute { get; set; }
 
         public virtual DbSet<DrugFrequency> DrugFrequency { get; set; }
+        public virtual DbSet<TarriffPlan> TarriffPlan { get; set; }
+        public virtual DbSet<TariffServiceCode> TariffServiceCode { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -400,6 +402,43 @@ namespace medicloud.emr.api.Data
                 entity.Property(e => e.ordercategoryid).HasColumnName("ordercategoryid");
                 entity.Property(e => e.encodeddate).HasColumnName("encodeddate");
                 entity.Property(e => e.ordercategoryid).HasColumnName("ordercategoryid");
+            });
+            
+            modelBuilder.Entity<TarriffPlan>(entity =>
+            {
+                entity.HasKey(e => e.plantariffid);
+
+                entity.ToTable("Tariff_Plan");
+
+                entity.Property(e => e.planid).HasColumnName("planid");
+
+                entity.Property(e => e.tariffid).HasColumnName("tariffid");
+                entity.Property(e => e.ProviderID).HasColumnName("ProviderID");
+
+                entity.Property(e => e.alternatecode).HasColumnName("alternatecode");
+                entity.Property(e => e.comments).HasColumnName("comments");
+                entity.Property(e => e.locationid).HasColumnName("locationid");
+                entity.Property(e => e.dateadded).HasColumnName("dateadded");
+            });
+            
+            modelBuilder.Entity<TariffServiceCode>(entity =>
+            {
+                entity.HasKey(e => e.tariffserviceid);
+
+                entity.ToTable("Tariff_ServiceCode");
+
+                entity.Property(e => e.tariffserviceid).HasColumnName("tariffserviceid");
+
+                entity.Property(e => e.tariffid).HasColumnName("tariffid");
+                entity.Property(e => e.serviceid).HasColumnName("serviceid");
+
+                entity.Property(e => e.drugid).HasColumnName("drugid");
+                entity.Property(e => e.comments).HasColumnName("comments");
+                entity.Property(e => e.locationid).HasColumnName("locationid");
+                entity.Property(e => e.dateadded).HasColumnName("dateadded");
+                entity.Property(e => e.tariffamount).HasColumnName("tariffamount");
+                entity.Property(e => e.premiumtariffamount).HasColumnName("premiumtariffamount");
+                entity.Property(e => e.alternatecode).HasColumnName("alternatecode");
             });
             
             modelBuilder.Entity<ConsultationOrders>(entity =>
@@ -4264,6 +4303,9 @@ namespace medicloud.emr.api.Data
                     .HasColumnName("zipcode")
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.AccountID).HasColumnName("AccountID");
+                entity.Property(e => e.ispremium).HasColumnName("ispremium");
             });
 
             modelBuilder.Entity<Login>(entity =>

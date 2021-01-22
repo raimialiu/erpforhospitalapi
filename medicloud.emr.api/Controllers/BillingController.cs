@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using medicloud.emr.api.DTOs;
+using medicloud.emr.api.Services;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +12,35 @@ namespace medicloud.emr.api.Controllers
     [ApiController]
     public class BillingController : ControllerBase
     {
-        public BillingController()
+        private readonly IBillingRepository _billingRepository;
+        public BillingController(IBillingRepository billingRepository)
         {
+            _billingRepository = billingRepository;
+        }
+
+        [HttpGet("GetPatientTarrifByPayor")]
+        public async Task<IActionResult> GetPatientTarrifByPayor(int accountId, string patientId, int servicecode)
+        {
+            try
+            {
+                //patientId = "1011302952"; servicecode = 145; accountId = 1;
+
+                var patienttariff = await _billingRepository.getPatientTarrifByPayor(accountId, patientId, servicecode);
+
+                PatientTariffByPayorResponse response = new PatientTariffByPayorResponse()
+                {
+                    TariffAmount = patienttariff.Item3,
+                    ResponseMessage = patienttariff.Item2,
+                    Status = patienttariff.Item1
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
         }
     }
 }

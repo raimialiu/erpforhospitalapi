@@ -34,7 +34,7 @@ namespace medicloud.emr.api.Entities
         public string ApprovalCode { get; set; }
         public bool IsCapitatedService { get; set; }
         public string unit { get; set; }
-        public string chargeamount { get; set; }
+        public decimal? chargeamount { get; set; }
         public int? tariffid { get; set; }
         public int? plantypeid { get; set; }
         public int? LocationId { get; set; }
