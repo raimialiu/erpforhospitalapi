@@ -23,6 +23,7 @@ namespace medicloud.emr.api.Services
         Task<List<DiagnosisType>> GetDiagnosisTypeList(int accountId);
         Task<List<DiagnosisProblems>> GetDiagnosisProblemList(int accountId);
         Task<Diagnosis> GetDiagnosisByCode(int accountId, string icdCode);
+        Task<List<OrderDetails>> GetOrderDetailsList(int accountId, string searchWord, /*int? orderTypeId, */int? orderCategoryId);
     }
 
     public class SetupRepository : ISetupRepository
@@ -155,6 +156,69 @@ namespace medicloud.emr.api.Services
             return _diagnosis;
         }
         
+        public async Task<List<OrderDetails>> GetOrderDetailsList(int accountId, string searchWord, /*int? orderTypeId,*/ int? orderCategoryId)
+        {
+            if (!string.IsNullOrEmpty(searchWord))
+            {
+                // if subgroupId is not equal to null definetely groupId is not equal to null
+                if (orderCategoryId != null)
+                {
+                    var orderdetailsl = await _context.OrderDetails.Where(a => a.servicename.ToUpper().Contains(searchWord.ToUpper())
+                                    && a.providerId == accountId && a.ordercategoryid == orderCategoryId).Take(500).OrderBy(p => p.servicename).ToListAsync();
+
+                    //var _diagnosisSearch = diagnosis.Where(a => a.Name.ToUpper().Contains(searchWord.ToUpper()) || a.ICDCode.ToUpper().Contains(searchWord.ToUpper() ))
+                    //.OrderBy(p => p.Name).ToList();
+
+                    return orderdetailsl;
+                }
+                
+                // for scenario where groupId is not equal to null but subgroupId is equal to null
+                //if (orderTypeId != null)
+                //{
+                //    var orderdetailsl = await _context.OrderDetails.Where(a => a.servicename.ToUpper().Contains(searchWord.ToUpper())
+                //                    && a.providerId == accountId).Take(500).OrderBy(p => p.servicename).ToListAsync();
+
+                //    //var _diagnosisSearch = diagnosis.Where(a => a.Name.ToUpper().Contains(searchWord.ToUpper()) || a.ICDCode.ToUpper().Contains(searchWord.ToUpper() ))
+                //    //.OrderBy(p => p.Name).ToList();
+
+                //    return orderdetailsl;
+                //}
+
+                var _orderdetailsl = await _context.OrderDetails.Where(a => a.servicename.ToUpper().Contains(searchWord.ToUpper()) 
+                                    && a.providerId == accountId ).Take(500).OrderBy(p => p.servicename).ToListAsync();
+
+                //var _diagnosisSearch = diagnosis.Where(a => a.Name.ToUpper().Contains(searchWord.ToUpper()) || a.ICDCode.ToUpper().Contains(searchWord.ToUpper() ))
+                //.OrderBy(p => p.Name).ToList();
+
+                return _orderdetailsl;
+            }
+
+            // if subgroupId is not equal to null definetely groupId is not equal to null
+            if (orderCategoryId != null)
+            {
+                var diag = await _context.OrderDetails.Where(a => a.providerId == accountId && a.ordercategoryid == orderCategoryId)
+                                    .Take(500).OrderBy(p => p.servicename).ToListAsync();
+
+                //var _diagnosisSearch = diagnosis.Where(a => a.Name.ToUpper().Contains(searchWord.ToUpper()) || a.ICDCode.ToUpper().Contains(searchWord.ToUpper() ))
+                //.OrderBy(p => p.Name).ToList();
+
+                return diag;
+            }
+
+            // for scenario where orderTypeId is not null but orderCategoryId is null
+            //if (orderTypeId != null)
+            //{
+            //    var _ordDetails = await _context.OrderDetails.Where(a => a.providerId == accountId && a.groupid == orderTypeId).Take(500).OrderBy(p => p.Name).ToListAsync();
+
+            //    return _ordDetails;
+            //}
+
+
+            var _orderDetails = await _context.OrderDetails.Where(a => a.providerId == accountId).Take(50).OrderBy(p => p.servicename).ToListAsync();
+
+            return _orderDetails;
+        }
+        
         public async Task<Diagnosis> GetDiagnosisByCode(int accountId, string icdCode)
         {
             var _diagnosis = await _context.Diagnosis.Where(a => a.ProviderID == accountId && a.ICDCode == icdCode).FirstOrDefaultAsync();
@@ -195,7 +259,6 @@ namespace medicloud.emr.api.Services
 
             return _diagnosisSubGroup;
         }
-
-
+        
     }
 }

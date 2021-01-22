@@ -1,5 +1,6 @@
 ﻿using medicloud.emr.api.Data;
 using medicloud.emr.api.DTOs;
+using medicloud.emr.api.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace medicloud.emr.api.Services
         Task<IEnumerable<ReferralDTO>> GetReferralTypes();
         Task<IEnumerable<ReminderDTO>> GetReminderOptions();
         Task<IEnumerable<VisitTypeDTO>> GetVisitTypes();
+        Task<IEnumerable<Location>> GetAllLocationDetails();
     }
     public class LocationRepository : ILocationRepository
     {
@@ -31,6 +33,11 @@ namespace medicloud.emr.api.Services
             return await _context.Location.Where(l => l.Locationid > 2)
                 .Select(l => new LocationDTO { Id = l.Locationid, Name = l.Locationname})
                 .AsNoTracking().OrderBy(p => p.Name).ToListAsync();
+        }
+        
+        public async Task<IEnumerable<Location>> GetAllLocationDetails()
+        {
+            return await _context.Location.OrderBy(p => p.Locationname).ToListAsync();
         }
 
         public async Task<IEnumerable<ProviderDTO>> GetProviders(int locationid, int specid)

@@ -33,7 +33,9 @@ namespace medicloud.emr.api.Entities
         public string Comments { get; set; }
         public string Locationadmin { get; set; }
         public DateTime? Dateadded { get; set; }
+        public int? AccountID { get; set; }
         public string Locationdescription { get; set; }
+        public bool ispremium { get; set; }
 
         public virtual ICollection<ApplicationUser> ApplicationUser { get; set; }
         public virtual ICollection<Asset> Asset { get; set; }
