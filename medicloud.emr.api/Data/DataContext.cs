@@ -244,7 +244,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ConsultationOrderDetails> ConsultationOrderDetails { get; set; }
         public virtual DbSet<EmrProblems> EmrProblems { get; set; }
         public virtual DbSet<EmrproblemDuration> EmrProblemDuration { get; set; }
-        public virtual DbSet<ConsultationComplaintsFavorites> ConsultationComplaintsFavorites { get; set; }
+        //public virtual DbSet<ConsultationComplaintsFavorites> ConsultationComplaintsFavorites { get; set; }
 
         public virtual DbSet<EmrproblemsContext> EmrproblemsContext { get; set; }
         public virtual DbSet<EmrproblemsLocation> EmrproblemsLocation { get; set; }

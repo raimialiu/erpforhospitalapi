@@ -242,10 +242,11 @@ namespace medicloud.emr.api.Controllers
         }
         [Route("SaveToFavourites")]
         [HttpPost]
-        public async Task<IActionResult> SaveToFavourites([FromBody]Etities.ConsultationComplaintsFavorites dto)
+        public async Task<IActionResult> SaveToFavourites([FromBody]Etities.ConsultationPrescriptionFavorites dto)
         {
-            dto.Dateadded = DateTime.Now;
-            _ctx.ConsultationComplaintsFavorites.Add(dto);
+            dto.DateAdded = DateTime.Now;
+            //   _ctx.consultationPrescriptionFavorites.Add(dto);
+            _ctx.consultationPrescriptionFavorites.Add(dto);
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
 
@@ -253,7 +254,7 @@ namespace medicloud.emr.api.Controllers
         [HttpGet, Route("GetPrescriptionFavouritesByDoctorid")]
         public async Task<IActionResult> GetPrescriptionFavouritesByDoctorid([FromQuery] long doctorid)
         {
-            return Ok(await _ctx.ConsultationComplaintsFavorites.Where(x => x.Doctorid.Value == doctorid).ToListAsync());
+            return Ok(await _ctx.consultationPrescriptionFavorites.Where(x => x.DoctorId.Value == doctorid).ToListAsync());
         }
 
         [HttpGet, Route("GetPrescriptionByDoctorid")]
