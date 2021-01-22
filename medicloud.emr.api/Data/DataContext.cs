@@ -276,6 +276,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ImmunizationBrand> ImmunizationBrand { get; set; }
         public virtual DbSet<EmrimmunizationMaster> ImmunizatiinMaster { get; set; }
         public virtual DbSet<ConsultationPrescriptionDetails> ConsultationPrescriptionDetails { get; set; }
+        public virtual DbSet<ImmunizationDetails> ImmunizationDetails { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

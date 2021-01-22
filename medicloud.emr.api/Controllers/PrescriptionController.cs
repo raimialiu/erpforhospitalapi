@@ -204,22 +204,39 @@ namespace medicloud.emr.api.Controllers
         public async Task<IActionResult> GetPrescriptionHistory()
         {
             // await _ctx.Prescriptions.ToListAsync()
-            return Ok(await _ctx.ConsultationPrescription.ToListAsync());
+            return Ok(await _ctx.ConsultationPrescriptionDetails.ToListAsync());
+        }
+        [Route("LoadPrescriptionHistoryByPatientid/{patientid}")]
+        [HttpGet]
+        public async Task<IActionResult> LoadPrescriptionHistory([FromRoute] string patientid)
+        {
+            // await _ctx.Prescriptions.ToListAsync()
+            return Ok(await _ctx.ConsultationPrescriptionDetails.Where(x=>x.Patientid == patientid).OrderByDescending(x=>x.Id).Take(10).ToListAsync());
         }
 
-        [Route("LoadPrescriptionHistorybyDateRange")]
+        [Route("LoadPrescriptionHistoryByDoctorid/{doctorid}")]
         [HttpGet]
-        public async Task<IActionResult> LoadPrescriptionHistorybyDateRange([FromQuery]string startDate, [FromQuery]string endDate)
+        public async Task<IActionResult> LoadPrescriptionHistoryByDoctorid([FromRoute] string doctorid)
+        {
+            // await _ctx.Prescriptions.ToListAsync()
+            return Ok(await _ctx.ConsultationPrescriptionDetails.Where(x => x.Patientid == doctorid).ToListAsync());
+        }
+
+
+
+        [Route("LoadPrescriptionHistorybyDateRange/{patientid}")]
+        [HttpGet]
+        public async Task<IActionResult> LoadPrescriptionHistorybyDateRange([FromRoute]string patientid, [FromQuery]string startDate, [FromQuery]string endDate)
         {
            // return Ok("");
-           return Ok(await _ctx.ConsultationPrescription.FromSqlRaw($"select * from Consultation_Prescription where dateadded between '{startDate}' and '{endDate}'").ToListAsync());
+           return Ok(await _ctx.ConsultationPrescription.FromSqlRaw($"select * from Consultation_Prescription where patientid = '{patientid}' and dateadded between '{startDate}' and '{endDate}'").ToListAsync());
         }
 
         [Route("SavePescription")]
         [HttpPost]
         public async Task<IActionResult> SavePescription([FromForm] ConsultationPrescriptionDetails dto)
         {
-            dto.Dateadded = DateTime.Now;
+            //dto. = DateTime.Now;
             _ctx.ConsultationPrescriptionDetails.Add(dto);
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
