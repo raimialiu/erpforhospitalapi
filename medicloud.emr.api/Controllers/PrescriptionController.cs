@@ -217,10 +217,10 @@ namespace medicloud.emr.api.Controllers
 
         [Route("SavePescription")]
         [HttpPost]
-        public async Task<IActionResult> SavePescription([FromForm] ConsultationPrescription dto)
+        public async Task<IActionResult> SavePescription([FromForm] ConsultationPrescriptionDetails dto)
         {
             dto.Dateadded = DateTime.Now;
-            _ctx.ConsultationPrescription.Add(dto);
+            _ctx.ConsultationPrescriptionDetails.Add(dto);
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
         [Route("SaveToFavourites")]
