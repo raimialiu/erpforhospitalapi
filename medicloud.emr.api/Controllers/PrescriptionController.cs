@@ -250,6 +250,16 @@ namespace medicloud.emr.api.Controllers
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
 
+        [Route("DeleteFavorites/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteFavorites([FromRoute] long id)
+        {
+            var single = await _ctx.consultationPrescriptionFavorites.FirstOrDefaultAsync(x => x.FavouriteId == id);
+            if (single == null) return Ok(false);
+            _ctx.consultationPrescriptionFavorites.Remove(single);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+
         //[Route("DeleteFavourite/{id}")]
         [HttpGet, Route("GetPrescriptionFavouritesByDoctorid")]
         public async Task<IActionResult> GetPrescriptionFavouritesByDoctorid([FromQuery] long doctorid)
