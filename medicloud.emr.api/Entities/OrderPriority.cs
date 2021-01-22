@@ -23,6 +23,6 @@ namespace medicloud.emr.api.Entities
 
         public virtual Location Location { get; set; }
         public virtual AccountManager Provider { get; set; }
-        public virtual ICollection<ConsultationPrescription> ConsultationPrescription { get; set; }
+       // public virtual ICollection<Etities.ConsultationPrescription> ConsultationPrescription { get; set; }
     }
 }
