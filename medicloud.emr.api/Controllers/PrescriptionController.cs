@@ -248,6 +248,8 @@ namespace medicloud.emr.api.Controllers
             _ctx.ConsultationComplaintsFavorites.Add(dto);
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
+
+        //[Route("DeleteFavourite/{id}")]
         [HttpGet, Route("GetPrescriptionFavouritesByDoctorid")]
         public async Task<IActionResult> GetPrescriptionFavouritesByDoctorid([FromQuery] long doctorid)
         {
@@ -265,37 +267,6 @@ namespace medicloud.emr.api.Controllers
 
       
 
-        ////[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        //// GET: api/Prescribtion/5
-        //[HttpGet("{id}", Name = "Get")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        //// POST: api/Prescribtion
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-
-        //// PUT: api/Prescribtion/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-
-        //// DELETE: api/ApiWithActions/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
-        // GET: api/Prescribtion
-
+      
     }
 } 
