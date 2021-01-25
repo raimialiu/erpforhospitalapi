@@ -38,10 +38,13 @@ namespace medicloud.emr.api.Entities
         public DateTime? Dateadded { get; set; }
         public string Unitofstorage { get; set; }
 
+        public int? genericid { get; set; }
+
         public virtual DrugCategory Drugcategory { get; set; }
         public virtual AccountManager Provider { get; set; }
         public virtual Supplier Supplier { get; set; }
         public virtual ICollection<DispensingStore> DispensingStore { get; set; }
         public virtual ICollection<DrugOrders> DrugOrders { get; set; }
+        public virtual ICollection<ConsultationAllergy> ConsultationAllergy { get; set; }
     }
 }
