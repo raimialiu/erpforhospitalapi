@@ -15,6 +15,8 @@ namespace medicloud.emr.api.Entities
         public string Drugcode { get; set; }
         public string Name { get; set; }
         public int? Drugcategoryid { get; set; }
+
+        public int? Classid{get; set;}
         public string Brandname { get; set; }
         public string Description { get; set; }
         public string Manufacturer { get; set; }
@@ -37,6 +39,7 @@ namespace medicloud.emr.api.Entities
         public string Drugtype { get; set; }
         public DateTime? Dateadded { get; set; }
         public string Unitofstorage { get; set; }
+        public int? genericid { get; set; }
 
         public virtual DrugCategory Drugcategory { get; set; }
         public virtual AccountManager Provider { get; set; }

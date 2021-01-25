@@ -15,6 +15,6 @@ namespace medicloud.emr.api.Entities
         public int? lastchangeby { get; set; }
         public bool isactive { get; set; }
         public DateTime encodeddate { get; set; }
-        public DateTime lastchangeddate { get; set; }
+        public DateTime lastchangedate { get; set; }
     }
 }

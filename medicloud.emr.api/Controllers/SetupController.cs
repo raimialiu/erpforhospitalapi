@@ -1200,7 +1200,7 @@ namespace medicloud.emr.api.Controllers
 
         #endregion
 
-        #region Order Listing
+        #region Orders and investigation
 
         #region OrderCategory Setup
 
@@ -1458,17 +1458,35 @@ namespace medicloud.emr.api.Controllers
 
         #endregion
 
+        [Route("getOrderDetailsByOrderTypeAndOrderCategoryId")]
+        [HttpGet]
+        public async Task<IActionResult> getOrderDetailsByOrderTypeAndOrderCategoryId(int accountId, int? orderCategory, string searchword)
+        {
+            try
+            {
+                var orderdetails = await _setupRepository.GetOrderDetailsList(accountId, searchword, orderCategory);
+
+                _reponse = BaseResponse.GetResponse(orderdetails, "success", "00");
+                return Ok(_reponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
         #endregion
 
         #region Consultation_Diagnosis Setup
 
         [Route("getDiagnosisGroupList")]
         [HttpGet]
-        public async Task<IActionResult> getDiagnosisGroupList(string searchWord)
+        public async Task<IActionResult> getDiagnosisGroupList()
         {
             try
             {
-                var diagnosisGroup = await _setupRepository.GetDiagnosisGroupList(searchWord);
+                var diagnosisGroup = await _setupRepository.GetDiagnosisGroupList();
 
                 _reponse = BaseResponse.GetResponse(diagnosisGroup, "success", "00");
                 return Ok(_reponse);
@@ -1482,11 +1500,11 @@ namespace medicloud.emr.api.Controllers
 
         [Route("getDiagnosisSubGroupListByGroupId")]
         [HttpGet]
-        public async Task<IActionResult> getDiagnosisSubGroupListByGroupId(int groupId, string searchWord)
+        public async Task<IActionResult> getDiagnosisSubGroupListByGroupId(int groupId)
         {
             try
             {
-                var diagnosisSubGroup = await _setupRepository.GetDiagnosisSupGroupListByGroupId(groupId, searchWord);
+                var diagnosisSubGroup = await _setupRepository.GetDiagnosisSupGroupListByGroupId(groupId);
 
                 _reponse = BaseResponse.GetResponse(diagnosisSubGroup, "success", "00");
                 return Ok(_reponse);
@@ -1504,7 +1522,7 @@ namespace medicloud.emr.api.Controllers
         {
             try
             {
-                var diagnosisLocations = _diagnosisLocationRepo.GetAll().ToList();
+                var diagnosisLocations = _diagnosisLocationRepo.GetAll().OrderBy(a => a.diagnosislocationname).ToList();
 
                 _reponse = BaseResponse.GetResponse(diagnosisLocations, "success", "00");
                 return Ok(_reponse);
@@ -1522,7 +1540,7 @@ namespace medicloud.emr.api.Controllers
         {
             try
             {
-                var diagnosisTypes = _setupRepository.GetDiagnosisTypeList(accountId);
+                var diagnosisTypes = await _setupRepository.GetDiagnosisTypeList(accountId);
 
                 _reponse = BaseResponse.GetResponse(diagnosisTypes, "success", "00");
                 return Ok(_reponse);
@@ -1554,11 +1572,11 @@ namespace medicloud.emr.api.Controllers
 
         [Route("getDiagnosisList")]
         [HttpGet]
-        public async Task<IActionResult> getDiagnosisList(int accountId, string searchWord)
+        public async Task<IActionResult> getDiagnosisList(int accountId, string searchWord, int? groupId, int? subgroupId)
         {
             try
             {
-                var diagnosis = await _setupRepository.GetDiagnosisList(accountId, searchWord);
+                var diagnosis = await _setupRepository.GetDiagnosisList(accountId, searchWord, groupId, subgroupId);
 
                 _reponse = BaseResponse.GetResponse(diagnosis, "success", "00");
                 return Ok(_reponse);

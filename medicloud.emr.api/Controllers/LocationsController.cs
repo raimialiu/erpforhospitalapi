@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using medicloud.emr.api.Data;
+using medicloud.emr.api.Entities;
 using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,21 @@ namespace medicloud.emr.api.Controllers
             {
                 var reminder = await _repository.GetReminderOptions();
                 return Ok(reminder);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest();
+            }
+        }
+        
+        [HttpGet("GetAllLocationDetails")]
+        public async Task<IActionResult> GetAllLocationDetails()
+        {
+            try
+            {
+                var locations = await _repository.GetAllLocationDetails();
+                return Ok(locations);
             }
             catch (Exception ex)
             {

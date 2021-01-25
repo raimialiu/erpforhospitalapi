@@ -30,7 +30,7 @@ namespace medicloud.emr.api.Entities
             ConsultationDiagnosis = new HashSet<ConsultationDiagnosis>();
             ConsultationLaboratory = new HashSet<ConsultationLaboratory>();
             ConsultationOtherDiagnosis = new HashSet<ConsultationOtherDiagnosis>();
-            ConsultationPrescription = new HashSet<ConsultationPrescription>();
+           // ConsultationPrescription = new HashSet<Etities.ConsultationPrescription>();
             ConsultationProblem = new HashSet<ConsultationProblem>();
             ConsultationProcedure = new HashSet<ConsultationProcedure>();
             ConsultationRadiology = new HashSet<ConsultationRadiology>();
@@ -64,7 +64,13 @@ namespace medicloud.emr.api.Entities
             PatientQueue = new HashSet<PatientQueue>();
             CheckIn = new HashSet<CheckIn>();
             PaRequest = new HashSet<PaRequest>();
+             DepartmentSub = new HashSet<DepartmentSub>();
+            OrderPriority = new HashSet<OrderPriority>();
+            //DrugFormulary = new HashSet<DrugFormulary>();
+            DrugFoodrelation = new HashSet<DrugFoodrelation>();
+
         }
+
 
         public int ProviderId { get; set; }
         public Guid AccountId { get; set; }
@@ -103,7 +109,7 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<ConsultationDiagnosis> ConsultationDiagnosis { get; set; }
         public virtual ICollection<ConsultationLaboratory> ConsultationLaboratory { get; set; }
         public virtual ICollection<ConsultationOtherDiagnosis> ConsultationOtherDiagnosis { get; set; }
-        public virtual ICollection<ConsultationPrescription> ConsultationPrescription { get; set; }
+     //   public virtual ICollection<Etities.ConsultationPrescription> ConsultationPrescription { get; set; }
         public virtual ICollection<ConsultationProblem> ConsultationProblem { get; set; }
         public virtual ICollection<ConsultationProcedure> ConsultationProcedure { get; set; }
         public virtual ICollection<ConsultationRadiology> ConsultationRadiology { get; set; }
@@ -137,5 +143,13 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<PatientQueue> PatientQueue { get; set; }
         public virtual ICollection<CheckIn> CheckIn { get; set; }
         public virtual ICollection<PaRequest> PaRequest { get; set; }
+
+        public virtual ICollection<Store> Store { get; set; }
+               public virtual ICollection<DepartmentSub> DepartmentSub { get; set; }
+        public virtual ICollection<OrderPriority> OrderPriority { get; set; }
+
+        //public virtual ICollection<DrugFormulary> DrugFormulary { get; set; }
+
+        public virtual ICollection<DrugFoodrelation> DrugFoodrelation { get; set; }
     }
 }
