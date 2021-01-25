@@ -160,7 +160,7 @@ namespace medicloud.emr.api.Controllers
 
         [Route("SaveImmunizationDetails")]
         [HttpPost]
-        public async Task<IActionResult> SaveImmunizationDetails([FromForm]ImmunizationDetails dto)
+        public async Task<IActionResult> SaveImmunizationDetails([FromBody]ImmunizationDetails dto)
         {
             _ctx.ImmunizationDetails.Add(dto);
             return Ok(await _ctx.SaveChangesAsync() > 0);
