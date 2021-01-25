@@ -32,7 +32,7 @@ namespace medicloud.emr.api.Controllers
         [HttpGet]
         public async Task<IActionResult> AllImunizationSchedule()
         {
-            var all =await _conn.QueryAsync<ImmunizationSchedule>("select * from Immunization_Schedule");
+            var all =await _conn.QueryAsync("select * from Immunization_Schedule a join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid");
 
             return Ok(all);
         }
@@ -42,6 +42,7 @@ namespace medicloud.emr.api.Controllers
         public async Task<IActionResult> UpdateImmunizationSchedule([FromRoute] long id, [FromBody]ImmunizationSchedule dto)
         {
             var single = await _ctx.ImmunizationSchedule.FirstOrDefaultAsync(x => x.Scheduleid == id);
+            //dto.
             if (single == null) return Ok(false);
 
             _ctx.Entry<ImmunizationSchedule>(single).State = EntityState.Modified;
@@ -68,7 +69,7 @@ namespace medicloud.emr.api.Controllers
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
 
-        [Route("GetImmunizationById/{id}")]
+        [Route("GetImmunizationScheduleById/{id}")]
         [HttpGet]
         public async Task<IActionResult> GetImmunizationById([FromRoute]long id)
         {
@@ -128,10 +129,50 @@ namespace medicloud.emr.api.Controllers
 
 
         [Route("AllImmunizationDetail")]
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> AllImmunizationDetail()
+
         {
-            return Ok(await _ctx.ImmunizationDetails.ToListAsync());
+            var query = "select * from Immunization_details a join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid";
+            var all = _conn.QueryAsync(query);
+            return Ok(all);
+        }
+
+        [Route("GetImmunizationDetailById/{id}")]
+        [HttpGet]
+        public async Task<IActionResult> AllImmunizationDetail([FromRoute]long id)
+        {
+            return Ok(await _ctx.ImmunizationDetails.FirstOrDefaultAsync(x=>x.Id == id));
+        }
+
+
+        [Route("UpdateImmunizationDetails/{id}")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateCancellationRemark([FromRoute]long id, 
+            [FromForm]ImmunizationDetails dto)
+        {
+            var single = await _ctx.ImmunizationDetails.Where(x => x.Id == id).SingleOrDefaultAsync();
+            if (single == null) return Ok(false);
+            _ctx.Entry(dto).State = EntityState.Modified;
+            _ctx.Entry(dto).Property(x => x.Id).IsModified = false;
+            return Ok(await _ctx.SaveChangesAsync());
+        }
+
+        [Route("SaveImmunizationDetails")]
+        [HttpPost]
+        public async Task<IActionResult> SaveImmunizationDetails([FromForm]ImmunizationDetails dto)
+        {
+            _ctx.ImmunizationDetails.Add(dto);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+
+        [Route("DeleteImmunizationDetails/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteImmunizationDetails([FromRoute] long id)
+        {
+            var single = await _ctx.ImmunizatiinMaster.FirstOrDefaultAsync(x => x.Immunizationid == id);
+            if (single == null) return Ok(false);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
         }
     }
 }

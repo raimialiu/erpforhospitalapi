@@ -16,5 +16,6 @@ namespace medicloud.emr.api.Etities
         public bool? Isactive { get; set; }
         public int? Encodedby { get; set; }
         public DateTime? Encodeddate { get; set; }
+        public string brandname { get; set; }
     }
 }
