@@ -125,9 +125,14 @@ namespace medicloud.emr.api
             services.AddScoped<ISetupRepository, SetupRepository>();
             services.AddScoped<IOrderListingRepository, OrderListingRepository>();
             services.AddScoped<IConsultationDiagnosisRepository, ConsultationDiagnosisRepository>();
+<<<<<<< Updated upstream
             services.AddScoped<IOrderInvestigationRepository, OrderInvestigationRepository>();
             services.AddScoped<IBillingRepository, BillingRepository>();
             services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+=======
+            services.AddScoped<ISoapRepository, SoapRepository>();
+            services.AddScoped<IVitalSignsRepository, VitalSignsRepository>();
+>>>>>>> Stashed changes
 
             const string connectionString = "lagoonDB";
             services.AddDbContext<DataContext>(options =>
