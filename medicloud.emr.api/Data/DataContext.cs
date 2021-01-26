@@ -238,7 +238,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<DiagnosisType> DiagnosisType { get; set; }
         public virtual DbSet<DiagnosisProblems> DiagnosisProblems { get; set; }
         public virtual DbSet<ConsultationDiagnosisFavourites> ConsultationDiagnosisFavourites { get; set; }
-<<<<<<< Updated upstream
+
         public virtual DbSet<ConsultationOrders> ConsultationOrders { get; set; }
         public virtual DbSet<OrderDetails> OrderDetails { get; set; }
         public virtual DbSet<ConsultationOrderFavorites> ConsultationOrderFavorites { get; set; }
@@ -273,12 +273,10 @@ namespace medicloud.emr.api.Data
 
        // public DbSet<Etities.ConsultationPrescription> Prescriptions { get; set; }
         public DbSet<Etities.ConsultationPrescriptionFavorites> consultationPrescriptionFavorites { get; set; }
-=======
+
         public virtual DbSet<ConsultationVitals> ConsultationVitals { get; set; }
         public virtual DbSet<DiagnosisSoap> DiagnosisSoap { get; set; }
 
-
->>>>>>> Stashed changes
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
