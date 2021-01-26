@@ -64,6 +64,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ConsultationChecks> ConsultationChecks { get; set; }
         public virtual DbSet<ConsultationCheckslist> ConsultationCheckslist { get; set; }
         public virtual DbSet<Etities.ConsultationComplaints> ConsultationComplaints { get; set; }
+        public virtual DbSet<Etities.ConsultationComplaintsFavorites> ConsultationComplaintsFavorites { get; set; }
         public virtual DbSet<Etities.ConsultationComplaints> ConsultationComplaintsB { get; set; }
         public virtual DbSet<ConsultationDental> ConsultationDental { get; set; }
         public virtual DbSet<ConsultationDentalProcedure> ConsultationDentalProcedure { get; set; }
