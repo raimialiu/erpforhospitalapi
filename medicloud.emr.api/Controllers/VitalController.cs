@@ -93,6 +93,7 @@ namespace medicloud.emr.api.Controllers
         }
 
         [Route("LoadFreeFormByDateRange")]
+        [HttpGet]
         public async Task<IActionResult> LoadFreeFormByDateRange([FromQuery]string startDate, [FromQuery]string endDate)
         {
             //DateTime start = DateTime.Parse(startDate);
@@ -105,6 +106,7 @@ namespace medicloud.emr.api.Controllers
         }
 
         [Route("LoadFreeFormLastTen")]
+        [HttpGet]
         public async Task<IActionResult> LoadFreeFormLastTen()
         {
             var FreeForms = await _ctx.DiagnosisFreeForms.OrderByDescending(x => x.Freeformid).Take(10).ToListAsync();
@@ -121,7 +123,7 @@ namespace medicloud.emr.api.Controllers
             return Ok(favourites);
         }
 
-        [Route("DeleteConsultationFavoruties/{id}")]
+        [Route("DeleteConsultationFavorites/{id}")]
         [HttpDelete]
         public async Task<IActionResult> DeleteConsultationFavourites([FromRoute]long id, [FromQuery] int doctorid)
         {
