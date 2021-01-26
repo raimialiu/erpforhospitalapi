@@ -27,7 +27,7 @@ namespace medicloud.emr.api.Services
         Task<bool> UpdateAppointment(AppointmentCreate model);
         //Task<(string, bool, bool)> UpdateAppointment(AppointmentCreate model);
         Task AddAppointment(AppointmentCreate model);
-        Task<IEnumerable<AppointmentList>> GetListAppointments();
+        Task<IEnumerable<AppointmentList>> GetListAppointments(int locationId, int accountId);
         Task<AppointmentCreate> GetAppointmentForEdit(int apptId);
         Task<IEnumerable<AppointmentView>> GetScheduleAppointments(int locationId, int specId, IEnumerable<int> provIds, int statusId);
         Task<AppointmentCreate> GetPatientAppointmentsToday(string patientId, int locationId, int accountId);
@@ -338,13 +338,13 @@ namespace medicloud.emr.api.Services
             if (!string.IsNullOrEmpty(searchWord))
             {
                 var _appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.ProviderID == accountId &&
-                                a.Starttime.Date == DateTime.Today.Date && a.Starttime >= DateTime.Now)
+                                a.Starttime >= DateTime.Now)
                 .Select(r => new UpcomingAppointmentList()
                 {
                     Location = _context.Location.Where(l => l.Locationid == r.Locationid).Select(e => e.Locationname).FirstOrDefault(),
                     Date = r.Starttime,
                     Patient = _context.Patient.Where(p => p.Patientid == r.PatientNumber).FirstOrDefault(),
-                    Provider = _context.AccountManager.Where(p => p.ProviderId == r.Provid).Select(e => e.HospitalName).FirstOrDefault(),
+                    Provider = _context.AccountManager.Where(p => p.ProviderId == r.ProviderID).Select(e => e.HospitalName).FirstOrDefault(),
                     Id = r.Apptid,
                     Status = (int)r.Statusid,
                     Gender = _context.Patient.Where(p => p.Patientid == r.PatientNumber).Select(g => g.Gender.Gendername).FirstOrDefault(),
@@ -356,14 +356,14 @@ namespace medicloud.emr.api.Services
                 return appointmentSearch;
             }
 
-            var appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.ProviderID == accountId &&
-                                a.Starttime.Date == DateTime.Today.Date && a.Starttime >= DateTime.Now)
+            var appointments = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.ProviderID == accountId
+                                && a.Starttime >= DateTime.Now.AddHours(1))
                 .Select(r => new UpcomingAppointmentList()
                 {
                     Location = _context.Location.Where(l => l.Locationid == r.Locationid).Select(e => e.Locationname).FirstOrDefault(),
                     Date = r.Starttime,
                     Patient = _context.Patient.Where(p => p.Patientid == r.PatientNumber).FirstOrDefault(),
-                    Provider = _context.AccountManager.Where(p => p.ProviderId == r.Provid).Select(e => e.HospitalName).FirstOrDefault(),
+                    Provider = _context.AccountManager.Where(p => p.ProviderId == r.ProviderID).Select(e => e.HospitalName).FirstOrDefault(),
                     Id = r.Apptid,
                     Status = (int)r.Statusid,
                     Gender = _context.Patient.Where(p => p.Patientid == r.PatientNumber).Select(g => g.Gender.Gendername).FirstOrDefault(),
@@ -502,9 +502,9 @@ namespace medicloud.emr.api.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<AppointmentList>> GetListAppointments()
+        public async Task<IEnumerable<AppointmentList>> GetListAppointments(int locationId, int accountId)
         {
-            return await _context.AppointmentSchedule
+            var appointmentList = await _context.AppointmentSchedule.Where(a => a.Locationid == locationId && a.ProviderID == accountId)
             .Include(s => s.PatientNumberNavigation)
             .ThenInclude(p => p.Gender)
             .Include(s => s.Location)
@@ -514,7 +514,7 @@ namespace medicloud.emr.api.Services
             { 
                Id = s.Apptid,
                PatientNo = s.PatientNumberNavigation.Patientid,
-               Name = $"{s.PatientNumberNavigation.Firstname} {s.PatientNumberNavigation.Lastname}",
+               Name = s.PatientNumberNavigation.Firstname +" "+ s.PatientNumberNavigation.Lastname,
                Age = DateTime.Now.Year - s.PatientNumberNavigation.Dob.Value.Year,
                Gender = s.PatientNumberNavigation.Gender.Gendername,
                Date = s.Starttime,
@@ -522,8 +522,10 @@ namespace medicloud.emr.api.Services
                Color = s.Status.Statuscolor,
                Location = s.Location.Locationname,
                Phone = s.PatientNumberNavigation.Mobilephone,
-               Provider = $"Dr. {s.Prov.Firstname} {s.Prov.Lastname}"
-            }).ToListAsync();
+               Provider = "Dr. " + s.Prov.Firstname != null ? s.Prov.Firstname : "" + " " + s.Prov.Lastname != null ? s.Prov.Lastname : ""
+            }).OrderBy(p => p.Name).ToListAsync();
+
+            return appointmentList;
 
         }
 

@@ -96,7 +96,7 @@ namespace medicloud.emr.api.Controllers
         }
 
         //[Route]
-
+        // payorinformations
         [Route("payorinformation")]
         [HttpGet]
         public async Task<IActionResult> GetPayorInformation()
@@ -237,7 +237,7 @@ namespace medicloud.emr.api.Controllers
                         TemplateCategoryB catb = (TemplateCategoryB)master;
                         TemplateCategoryC catc = (TemplateCategoryC)master;
 
-                        if (catb != null || catb.categoryname != null)
+                        if (catb != null && !String.IsNullOrEmpty(catb.categoryname))
                         {
                             catb.id = request.Masterid;
 
@@ -246,7 +246,7 @@ namespace medicloud.emr.api.Controllers
                             _dataContext.SaveChanges();
                         }
 
-                        if (catc != null || catc.categoryname != null)
+                        if (catc != null && !String.IsNullOrEmpty(catc.categoryname))
                         {
                             catc.id = request.Masterid;
                             catc.templatecategorybid = catb.id;
@@ -266,7 +266,7 @@ namespace medicloud.emr.api.Controllers
                 else
                 {
                     TemplateCategoryB catb = (TemplateCategoryB)master;
-                    if (catb != null || catb.categoryname != null)
+                    if (catb != null && !String.IsNullOrEmpty(catb.categoryname))
                     {
                         catb.templatecategoryid = checkexisting.Masterid;
 
@@ -279,16 +279,44 @@ namespace medicloud.emr.api.Controllers
                             string createtable = CreateTable(request.Jsonform, request.Formname);
                             if (createtable == "Success")
                             {
-                                _dataContext.TemplateMaster.Add(request);
-                                _dataContext.SaveChanges();
+                                //_dataContext.TemplateMaster.Add(request);
+                                //_dataContext.SaveChanges();
 
-                                catb.id = request.Masterid;
-                                catb.templatecategoryid = request.Masterid;
+                                catb.id = checkexisting.Masterid;
+                                catb.templatecategoryid = checkexisting.Masterid;
                                 _dataContext.TemplateCategoryB.Add(catb);
                                 _dataContext.SaveChanges();
                             }
 
                             return Ok("Success");
+                        }
+
+                        TemplateCategoryC catc = (TemplateCategoryC)master;
+
+                        if(catc != null && !String.IsNullOrEmpty(catc.categoryname))
+                        {
+                            catc.templatecategoryid = checkexisting.Masterid;
+                            catc.templatecategorybid = categorybExist.templatecategoryid;
+
+                            var categorycExist = _dataContext.TemplateCategoryC.Where(x => x.categoryname == catc.categoryname && x.templatecategoryid == catc.templatecategoryid).FirstOrDefault();
+                            if(categorycExist == null)
+                            {
+                                string oldform = request.Formname;
+                                request.Formname = oldform + "_" + catc.categoryname;
+                                string createtable = CreateTable(request.Jsonform, request.Formname);
+                                if (createtable == "Success")
+                                {
+                                    //_dataContext.TemplateMaster.Add(request);
+                                    //_dataContext.SaveChanges();
+
+                                    catc.id = request.Masterid;
+                                    catc.templatecategoryid = request.Masterid;
+                                    _dataContext.TemplateCategoryC.Add(catc);
+                                    _dataContext.SaveChanges();
+                                }
+
+                                return Ok("Success");
+                            }
                         }
 
                         return Ok("Form Exists before");
@@ -371,7 +399,8 @@ namespace medicloud.emr.api.Controllers
             SQLDataManager sql = new SQLDataManager(false);
 
            
-            string query_create = "CREATE TABLE template_" + formname.Replace(" ", "").ToLower() + " (Id INT IDENTITY(1,1) PRIMARY KEY, accountid int, locationid int, patientid varchar(100)";
+            //string query_create = "CREATE TABLE template_" + formname.Replace(" ", "").ToLower() + " (Id INT IDENTITY(1,1), accountid int, locationid int, patientid varchar(100)";
+            string query_create = "CREATE TABLE template_" + formname.Replace(" ", "").ToLower() + " (Id INT, accountid int, locationid int, patientid varchar(100)";
 
             //List<Component> request = new List<Component>();
             try
@@ -413,8 +442,9 @@ namespace medicloud.emr.api.Controllers
                 }
             }
 
-             query_create += " , Dateadded datetime DEFAULT GETDATE() )";
-             sql.ExecuteNonQuery(query_create, CommandType.Text);
+            //query_create += $" , Dateadded datetime DEFAULT GETDATE(), CONSTRAINT [{formname.Replace(" ", "").ToLower()+"_"+Guid.NewGuid().ToString()}] PRIMARY KEY CLUSTERED ([id] asc) )";
+            query_create += $" , Dateadded datetime , CONSTRAINT [{formname.Replace(" ", "").ToLower() + "_" + Guid.NewGuid().ToString()}] PRIMARY KEY CLUSTERED ([id] asc) )";
+            sql.ExecuteNonQuery(query_create, CommandType.Text);
 
             return "Success";
         }

@@ -2,6 +2,7 @@ using System.IO;
 using System.Text;
 using medicloud.emr.api.Data;
 using medicloud.emr.api.DataContextRepo;
+using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Helpers;
 using medicloud.emr.api.Mocks;
 using medicloud.emr.api.Services;
@@ -37,6 +38,9 @@ namespace medicloud.emr.api
             var jwtSettings = Configuration.GetSection(nameof(JwtSettings))
                                         .Get<JwtSettings>();
 
+            var emailSettings = Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+            services.AddSingleton(emailSettings);
+
             services.AddControllers(setupActions =>
             {
                 setupActions.ReturnHttpNotAcceptable = true;
@@ -58,11 +62,14 @@ namespace medicloud.emr.api
 
             services.AddCors(options =>
             {
-                options.AddPolicy(corsPolicy, 
-                                  builder => builder.WithOrigins(new[] { "http://localhost:4200", "http://test.medicloud.ng/lagoonhis", "http://localhost:58213",
-                                                                        "https://hnlhisdev.azurewebsites.net",
-                                                                        "http://localhost", "http://test.medicloud.ng/lagoonhisdev" })
-                                                    .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" }).AllowAnyHeader());
+                options.AddPolicy(corsPolicy,
+                                  builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+                                                    //.WithOrigins(new[] { "http://localhost:4200", "http://test.medicloud.ng/lagoonhis", "http://localhost:58213",
+                                                    //                                      "https://hnlhisdev.azurewebsites.net",
+                                                    //                                      "http://localhost", "http://test.medicloud.ng/lagoonhisdev" })
+                                                    //.AllowAnyMethod().AllowAnyHeader()) ; ;
+                // new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" }
             });
 
             //swaggerSettings = new SwaggerSettings();
@@ -114,8 +121,14 @@ namespace medicloud.emr.api
             services.AddScoped<IPaRequestRepository, PaRequestRepository>();
             services.AddScoped<IHospitalUnitRepository, HospitalUnitRepository>();
             services.AddScoped<IPayerInsuranceRepository, PayerInsuranceRepository>();
+            services.AddScoped<IServiceRepository, ServiceRepository>();
+            services.AddScoped<ISetupRepository, SetupRepository>();
+            services.AddScoped<IOrderListingRepository, OrderListingRepository>();
+            services.AddScoped<IConsultationDiagnosisRepository, ConsultationDiagnosisRepository>();
+            services.AddScoped<IOrderInvestigationRepository, OrderInvestigationRepository>();
+            services.AddScoped<IBillingRepository, BillingRepository>();
+            services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
 
- 
             const string connectionString = "lagoonDB";
             services.AddDbContext<DataContext>(options =>
                         options.UseSqlServer(Configuration.GetConnectionString(connectionString), sqlServerOptionsAction: action=>

@@ -2,6 +2,7 @@
 using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Entities;
 using medicloud.emr.api.Helpers;
+using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -35,9 +36,13 @@ namespace medicloud.emr.api.Controllers
         private IDataContextRepo<Plan> planRepo;
         private IDataContextRepo<Payer> payerRepo;
         private IDataContextRepo<RegistrationType> _registrationTypeRepo;
+        private IDataContextRepo<OrderType> _orderTypeRepo;
+        private IDataContextRepo<OrderCategory> _orderCategoryRepo;
+        private IDataContextRepo<DiagnosisLocation> _diagnosisLocationRepo;
+        private ISetupRepository _setupRepository;
         // private ITitleRepo titleRepo;
         public SetupController(IBloodGroupRepo bloodGroupRepo,
-                    ITitleRepo titleRepo)
+                    ITitleRepo titleRepo, ISetupRepository setupRepository)
         {
             this.bloodGroupRepo = bloodGroupRepo;
             this.titleRepo = titleRepo;
@@ -59,6 +64,10 @@ namespace medicloud.emr.api.Controllers
             planRepo = new DataContextRepo<Plan>();
             payerRepo = new DataContextRepo<Payer>();
             _registrationTypeRepo = new DataContextRepo<RegistrationType>();
+            _orderTypeRepo = new DataContextRepo<OrderType>();
+            _orderCategoryRepo = new DataContextRepo<OrderCategory>();
+            _diagnosisLocationRepo = new DataContextRepo<DiagnosisLocation>();
+            _setupRepository = setupRepository;
         }
 
 
@@ -1191,6 +1200,415 @@ namespace medicloud.emr.api.Controllers
 
         #endregion
 
+        #region Orders and investigation
+
+        #region OrderCategory Setup
+
+        [Route("addOrderCategory")]
+        [HttpPost]
+        public async Task<IActionResult> addOrderCategory([FromBody] OrderCategoryDto dto)
+        {
+            try
+            {
+                var addResult = _orderCategoryRepo.AddNew(new OrderCategory() { Ordercategory1 = dto.Ordercategory1, Dateadded = DateTime.Now, Ordertypeid = dto.Ordertypeid, Categorycomment = dto.Categorycomment, Ordercategoryid = dto.Ordercategoryid, ProviderID = dto.ProviderID });
+                if (addResult)
+                {
+                    _reponse = BaseResponse.GetResponse(null, "success", "00");
+                    return Ok(_reponse);
+                }
+                _reponse = BaseResponse.GetResponse(null, "failure", "99");
+                return BadRequest(_reponse);
+            }
+            catch(Exception ex)
+            {
+                _reponse = BaseResponse.GetResponse(null, ex.Message, "99");
+                return BadRequest(_reponse);
+            }
+            
+        }
+
+        [Route("updateOrderCategory/")]
+        [HttpPost]
+        public async Task<IActionResult> updateOrderCategory([FromBody] OrderCategoryDto dto)
+        {
+            try
+            {
+                var getResult = await _setupRepository.GetOrderCategoryById((int)dto.ProviderID, dto.Ordercategoryid);
+                if (getResult != null)
+                {
+                    getResult.Ordercategory1 = dto.Ordercategory1;
+                    getResult.Categorycomment = dto.Categorycomment;
+                    getResult.Ordertypeid = dto.Ordertypeid;
+                    var updateResult = _orderCategoryRepo.Update(getResult);
+                    var _reponse = BaseResponse.GetResponse(null, "success", "00");
+                    return Ok(_reponse);
+                }
+                else
+                {
+                    var _reponse = BaseResponse.GetResponse(null, "Order type does not exist", NotFound().StatusCode.ToString());
+                    return Ok(_reponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                var _reponse = BaseResponse.GetResponse(null, "failure", "99");
+                return BadRequest(_reponse);
+            }
+
+        }
+
+        [Route("deleteOrderOrderCategory/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> deleteOrderOrderCategory([FromRoute] int orderCatId, int accountId)
+        {
+            try
+            {
+                var deleteResult = _setupRepository.DelelteOrderCategory(accountId, orderCatId);
+                var _reponse = BaseResponse.GetResponse(null, "success", "00");
+                    return Ok(_reponse);
+            }
+            catch(Exception ex)
+            {
+                var _reponse = BaseResponse.GetResponse(null, "failure", "99");
+                return BadRequest(_reponse);
+            }
+            
+        }
+
+        [Route("getOrderCategoryList")]
+        [HttpGet]
+        public async Task<IActionResult> getOrderCategoryList(int accountId)
+        {
+            try
+            {
+                var allResult = await _setupRepository.GetOrderCategoryList(accountId);
+
+                _reponse = BaseResponse.GetResponse(allResult, "success", "00");
+                return Ok(_reponse);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+        
+        [Route("getOrderCategoryListByOrderTypeId")]
+        [HttpGet]
+        public async Task<IActionResult> getOrderCategoryListByOrderTypeId(int orderTypeId, int accountId)
+        {
+            try
+            {
+                var allResult = await _setupRepository.GetOrderCategoryByOrdeTypeIdList(accountId, orderTypeId);
+
+                _reponse = BaseResponse.GetResponse(allResult, "success", "00");
+                return Ok(_reponse);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        [Route("getOrderCategoryById/")]
+        [HttpGet]
+        public async Task<IActionResult> getOrderCategoryById(int orderCatId, int accountId)
+        {
+            try
+            {
+                var getResult = await _setupRepository.GetOrderCategoryById(orderCatId, accountId);
+                if (getResult != null)
+                {
+                    _reponse = BaseResponse.GetResponse(getResult, "success", "00");
+                    return Ok(_reponse);
+                }
+
+                _reponse = BaseResponse.GetResponse(null, "failed", "99");
+                return BadRequest(_reponse);
+            }
+            catch (Exception ex)
+            {
+                _reponse = BaseResponse.GetResponse(null, ex.Message, "99");
+                return BadRequest(_reponse);
+            }
+
+            
+        }
+
+
+        #endregion
+        
+        #region OrderType Setup
+
+        [Route("addOrderType")]
+        [HttpPost]
+        public async Task<IActionResult> addOrderType([FromBody] OrderTypeDto dto)
+        {
+            try
+            {
+                var addResult = _orderTypeRepo.AddNew(new OrderType() { Ordername = dto.Ordername, Dateadded = DateTime.Now, Ordertypeid = dto.Ordertypeid, Comments = dto.Comments, ProviderID = dto.ProviderID });
+                if (addResult)
+                {
+                    _reponse = BaseResponse.GetResponse(null, "success", "00");
+                    return Ok(_reponse);
+                }
+                _reponse = BaseResponse.GetResponse(null, "failure", "99");
+                return BadRequest(_reponse);
+            }
+            catch(Exception ex)
+            {
+                _reponse = BaseResponse.GetResponse(null, ex.Message, "99");
+                return BadRequest(_reponse);
+            }
+            
+        }
+
+        [Route("updateOrderType/")]
+        [HttpPost]
+        public async Task<IActionResult> updateOrderType([FromBody] OrderTypeDto dto)
+        {
+            try
+            {
+                var getResult = await _setupRepository.GetOrderTypeById((int)dto.ProviderID, dto.Ordertypeid);
+                if (getResult != null)
+                {
+                    getResult.Ordername = dto.Ordername;
+                    var updateResult = _orderTypeRepo.Update(getResult);
+                    var _reponse = BaseResponse.GetResponse(null, "success", "00");
+                    return Ok(_reponse);
+                }
+                else
+                {
+                    var _reponse = BaseResponse.GetResponse(null, "Order type does not exist", NotFound().StatusCode.ToString());
+                    return Ok(_reponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                var _reponse = BaseResponse.GetResponse(null, "failure", "99");
+                return BadRequest(_reponse);
+            }
+
+        }
+
+        [Route("deleteOrderType/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> deleteOrderType([FromRoute] int orderTypeId, int accountId)
+        {
+            try
+            {
+                var deleteResult = _setupRepository.DelelteOrderTypeById(accountId, orderTypeId);
+                var _reponse = BaseResponse.GetResponse(null, "success", "00");
+                    return Ok(_reponse);
+            }
+            catch(Exception ex)
+            {
+                var _reponse = BaseResponse.GetResponse(null, "failure", "99");
+                return BadRequest(_reponse);
+            }
+            
+        }
+
+        [Route("getOrderTypeList")]
+        [HttpGet]
+        public async Task<IActionResult> getOrderTypeList(int accountId)
+        {
+            try
+            {
+                var allResult = await _setupRepository.GetOrderTypeList(accountId);
+
+                _reponse = BaseResponse.GetResponse(allResult, "success", "00");
+                return Ok(_reponse);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+
+            
+
+        }
+
+        [Route("getOrderTypeById/{id}")]
+        [HttpGet]
+        public async Task<IActionResult> getOrderTypeById([FromRoute] long id)
+        {
+            try
+            {
+                var getResult = _orderTypeRepo.GetSingle(x => x.Ordertypeid == id);
+                if (getResult != null)
+                {
+                    _reponse = BaseResponse.GetResponse(getResult, "success", "00");
+                    return Ok(_reponse);
+                }
+
+                _reponse = BaseResponse.GetResponse(null, "failed", "99");
+                return BadRequest(_reponse);
+            }
+            catch (Exception ex)
+            {
+                _reponse = BaseResponse.GetResponse(null, ex.Message, "99");
+                return BadRequest(_reponse);
+            }
+
+            
+        }
+
+
+        #endregion
+
+        [Route("getOrderDetailsByOrderTypeAndOrderCategoryId")]
+        [HttpGet]
+        public async Task<IActionResult> getOrderDetailsByOrderTypeAndOrderCategoryId(int accountId, int? orderCategory, string searchword)
+        {
+            try
+            {
+                var orderdetails = await _setupRepository.GetOrderDetailsList(accountId, searchword, orderCategory);
+
+                _reponse = BaseResponse.GetResponse(orderdetails, "success", "00");
+                return Ok(_reponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        #endregion
+
+        #region Consultation_Diagnosis Setup
+
+        [Route("getDiagnosisGroupList")]
+        [HttpGet]
+        public async Task<IActionResult> getDiagnosisGroupList()
+        {
+            try
+            {
+                var diagnosisGroup = await _setupRepository.GetDiagnosisGroupList();
+
+                _reponse = BaseResponse.GetResponse(diagnosisGroup, "success", "00");
+                return Ok(_reponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        [Route("getDiagnosisSubGroupListByGroupId")]
+        [HttpGet]
+        public async Task<IActionResult> getDiagnosisSubGroupListByGroupId(int groupId)
+        {
+            try
+            {
+                var diagnosisSubGroup = await _setupRepository.GetDiagnosisSupGroupListByGroupId(groupId);
+
+                _reponse = BaseResponse.GetResponse(diagnosisSubGroup, "success", "00");
+                return Ok(_reponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        [Route("getDiagnosisLocations")]
+        [HttpGet]
+        public async Task<IActionResult> getDiagnosisLocations()
+        {
+            try
+            {
+                var diagnosisLocations = _diagnosisLocationRepo.GetAll().OrderBy(a => a.diagnosislocationname).ToList();
+
+                _reponse = BaseResponse.GetResponse(diagnosisLocations, "success", "00");
+                return Ok(_reponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        [Route("getDiagnosisTypes")]
+        [HttpGet]
+        public async Task<IActionResult> getDiagnosisTypes(int accountId)
+        {
+            try
+            {
+                var diagnosisTypes = await _setupRepository.GetDiagnosisTypeList(accountId);
+
+                _reponse = BaseResponse.GetResponse(diagnosisTypes, "success", "00");
+                return Ok(_reponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        [Route("getDiagnosisByIcdCode")]
+        [HttpGet]
+        public async Task<IActionResult> getDiagnosisByIcdCode(int accountId, string icdCode)
+        {
+            try
+            {
+                var diagnosis = await _setupRepository.GetDiagnosisByCode(accountId, icdCode);
+
+                _reponse = BaseResponse.GetResponse(diagnosis, "success", "00");
+                return Ok(_reponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        [Route("getDiagnosisList")]
+        [HttpGet]
+        public async Task<IActionResult> getDiagnosisList(int accountId, string searchWord, int? groupId, int? subgroupId)
+        {
+            try
+            {
+                var diagnosis = await _setupRepository.GetDiagnosisList(accountId, searchWord, groupId, subgroupId);
+
+                _reponse = BaseResponse.GetResponse(diagnosis, "success", "00");
+                return Ok(_reponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        [Route("getDiagnosisProblemList")]
+        [HttpGet]
+        public async Task<IActionResult> getDiagnosisProblemList(int accountId)
+        {
+            try
+            {
+                var diagnosisProblems = await _setupRepository.GetDiagnosisProblemList(accountId);
+
+                _reponse = BaseResponse.GetResponse(diagnosisProblems, "success", "00");
+                return Ok(_reponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
+
+        #endregion
+
         #region registrationType Setup
 
         //[Route("addGender")]
@@ -1256,7 +1674,7 @@ namespace medicloud.emr.api.Controllers
         {
             try
             {
-                var allResult = _registrationTypeRepo.GetAll();
+                var allResult = _registrationTypeRepo.GetAll().OrderBy(p => p.regtypeName).ToList();
 
                 _reponse = BaseResponse.GetResponse(allResult, "success", "00");
                 return Ok(_reponse);
@@ -1288,6 +1706,7 @@ namespace medicloud.emr.api.Controllers
 
 
         #endregion
+
         #region maritalStatusSetpUp
         [Route("addMaritalStatus")]
         [HttpPost]

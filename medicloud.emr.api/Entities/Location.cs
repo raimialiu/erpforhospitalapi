@@ -18,6 +18,9 @@ namespace medicloud.emr.api.Entities
             CheckIn = new HashSet<CheckIn>();
             PaRequest = new HashSet<PaRequest>();
             PatientQueue = new HashSet<PatientQueue>();
+            Store = new HashSet<Store>();
+            OrderPriority = new HashSet<OrderPriority>();
+            DrugFoodrelation = new HashSet<DrugFoodrelation>();
         }
 
         public int Locationid { get; set; }
@@ -30,7 +33,9 @@ namespace medicloud.emr.api.Entities
         public string Comments { get; set; }
         public string Locationadmin { get; set; }
         public DateTime? Dateadded { get; set; }
+        public int? AccountID { get; set; }
         public string Locationdescription { get; set; }
+        public bool ispremium { get; set; }
 
         public virtual ICollection<ApplicationUser> ApplicationUser { get; set; }
         public virtual ICollection<Asset> Asset { get; set; }
@@ -43,5 +48,12 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<CheckIn> CheckIn { get; set; }
         public virtual ICollection<PaRequest> PaRequest { get; set; }
         public virtual ICollection<PatientQueue> PatientQueue { get; set; }
+
+        public virtual ICollection<Store> Store { get; set; }
+
+        public virtual ICollection<OrderPriority> OrderPriority { get; set; }
+
+
+        public virtual ICollection<DrugFoodrelation> DrugFoodrelation { get; set; }
     }
 }
