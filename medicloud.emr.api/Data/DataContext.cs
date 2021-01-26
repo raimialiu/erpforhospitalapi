@@ -227,14 +227,12 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ApplicationUserLocation> ApplicationUserLocation { get; set; }
         public virtual DbSet<ConsultationAllergy>consultation_allergy { get; set; }
 
-<<<<<<< HEAD
         public virtual DbSet<drug_generic> drug_generic { get; set; }
 
         public virtual DbSet<allergytype> allergytype { get; set; }
 
         public virtual DbSet<allergymaster>  allergymaster { get; set; }
         public virtual DbSet<drugseverity>  drugseverity { get; set; }
-=======
         public virtual DbSet<DepartmentSub> DepartmentSub { get; set; }
 
         public virtual DbSet<DiagSampleOplabMain> DiagSampleOplabMain { get; set; }
@@ -288,7 +286,6 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ImmunizationDetails> ImmunizationDetails { get; set; }
 
 
->>>>>>> upstream/master
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -8327,7 +8324,6 @@ namespace medicloud.emr.api.Data
                     .IsUnicode(false);
             });
 
-<<<<<<< HEAD
             modelBuilder.Entity<ConsultationAllergy>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -8476,7 +8472,6 @@ namespace medicloud.emr.api.Data
 
             });
 
-=======
             modelBuilder.Entity<Store>(entity =>
             {
                 entity.HasKey(e => e.DepartmentId)
@@ -8885,7 +8880,6 @@ namespace medicloud.emr.api.Data
 
 
 
->>>>>>> upstream/master
             OnModelCreatingPartial(modelBuilder);
         }
 

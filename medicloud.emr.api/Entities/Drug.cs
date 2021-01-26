@@ -41,7 +41,6 @@ namespace medicloud.emr.api.Entities
         public string Unitofstorage { get; set; }
         public int? genericid { get; set; }
 
-        public int? genericid { get; set; }
 
         public virtual DrugCategory Drugcategory { get; set; }
         public virtual AccountManager Provider { get; set; }
