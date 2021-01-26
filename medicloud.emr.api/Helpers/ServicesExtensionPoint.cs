@@ -85,7 +85,6 @@ namespace medicloud.emr.api.Helpers
                         ControllerName = currentControllerName
                     }
 
-
                 };
 
                 //if(!File.Exists("LogFiles.txt"))
