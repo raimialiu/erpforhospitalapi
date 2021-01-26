@@ -268,6 +268,10 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<DrugFrequency> DrugFrequency { get; set; }
         public virtual DbSet<TarriffPlan> TarriffPlan { get; set; }
         public virtual DbSet<TariffServiceCode> TariffServiceCode { get; set; }
+        public virtual DbSet<BillingInvoice> BillingInvoice { get; set; }
+        public virtual DbSet<ServiceCode> ServiceCode { get; set; }
+        public virtual DbSet<BillingReceipt> BillingReceipt { get; set; }
+        public virtual DbSet<BillType> BillType { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -279,7 +283,7 @@ namespace medicloud.emr.api.Data
              // optionsBuilder.UseSqlServer("Data Source=FCMB-IT-L16582\\TUNDE;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=olatunde;Password=DVorak@23000;MultipleActiveResultSets=True");
 
               // optionsBuilder.UseSqlServer("Data Source=52.251.49.79;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=medismarts;Password=md2015@tech");
-             optionsBuilder.UseSqlServer("Data Source=hnltestuatlhis.database.windows.net;Initial Catalog=medismartsemr_db_test;Persist Security Info=True;User ID=!lagadmin!;Password=8mT@92EFQi0x;MultipleActiveResultSets=True",
+             optionsBuilder.UseSqlServer("Data Source=hnltestuatlhis.database.windows.net;Initial Catalog=medismartsemr_db_dev;Persist Security Info=True;User ID=!lagadmin!;Password=8mT@92EFQi0x;MultipleActiveResultSets=True",
                  builder=>builder.EnableRetryOnFailure());
 
                 // "Data Source=FCMB-IT-L16582\\TUNDE;Initial Catalog=medismartsemr_db;Persist Security Info=True;User ID=olatunde;Password=DVorak@23000;MultipleActiveResultSets=True"
@@ -364,6 +368,22 @@ namespace medicloud.emr.api.Data
                 entity.Property(e => e.ProviderId).HasColumnName("ProviderId");
             });
             
+            modelBuilder.Entity<BillType>(entity =>
+            {
+                entity.ToTable("BillType");
+
+                entity.HasKey(e => e.billtypeid);
+
+                entity.Property(e => e.ProviderID).HasColumnName("ProviderID");
+
+                entity.Property(e => e.billtypedescription).HasColumnName("billtypedescription");
+                entity.Property(e => e.alternatecode).HasColumnName("alternatecode");
+                entity.Property(e => e.billtypedescription).HasColumnName("billtypedescription");
+                entity.Property(e => e.billtypename).HasColumnName("billtypename");
+                entity.Property(e => e.comments).HasColumnName("comments");
+                entity.Property(e => e.dateadded).HasColumnName("dateadded");
+            });
+            
             modelBuilder.Entity<DiagnosisProblems>(entity =>
             {
                 entity.ToTable("DiagnosisProblems");
@@ -380,6 +400,32 @@ namespace medicloud.emr.api.Data
                 entity.Property(e => e.description).HasColumnName("description");
             });
 
+            modelBuilder.Entity<BillingReceipt>(entity =>
+            {
+                entity.HasKey(e => e.receiptid);
+
+                entity.ToTable("Billing_Receipt");
+
+                entity.Property(e => e.patientid).HasColumnName("patientid");
+
+                entity.Property(e => e.encounterId)
+                    .HasColumnName("encounterId");
+
+                entity.Property(e => e.billid).HasColumnName("billid");
+                entity.Property(e => e.openingbalance).HasColumnName("openingbalance");
+                entity.Property(e => e.creditamount).HasColumnName("creditamount");
+                entity.Property(e => e.closingbalance).HasColumnName("closingbalance");
+                entity.Property(e => e.credittypeid).HasColumnName("credittypeid");
+                entity.Property(e => e.plantypeid).HasColumnName("plantypeid");
+                entity.Property(e => e.tariffid).HasColumnName("tariffid");
+                entity.Property(e => e.adjusterid).HasColumnName("adjusterid");
+                entity.Property(e => e.receiptdate).HasColumnName("receiptdate");
+                entity.Property(e => e.comments).HasColumnName("comments");
+                entity.Property(e => e.ProviderID).HasColumnName("ProviderID");
+                entity.Property(e => e.locationid).HasColumnName("locationid");
+                entity.Property(e => e.dateadded).HasColumnName("dateadded");
+            });
+            
             modelBuilder.Entity<OrderDetails>(entity =>
             {
                 entity.HasKey(e => e.serviceid);
@@ -419,6 +465,26 @@ namespace medicloud.emr.api.Data
                 entity.Property(e => e.comments).HasColumnName("comments");
                 entity.Property(e => e.locationid).HasColumnName("locationid");
                 entity.Property(e => e.dateadded).HasColumnName("dateadded");
+            });
+            
+            modelBuilder.Entity<ServiceCode>(entity =>
+            {
+                entity.HasKey(e => e.serviceid);
+
+                entity.ToTable("ServiceCode");
+
+                entity.Property(e => e.cptcode).HasColumnName("cptcode");
+
+                entity.Property(e => e.cptdescription).HasColumnName("cptdescription");
+                entity.Property(e => e.serviceid).HasColumnName("serviceid");
+
+                entity.Property(e => e.servicename).HasColumnName("servicename");
+                entity.Property(e => e.comments).HasColumnName("comments");
+                entity.Property(e => e.locationid).HasColumnName("locationid");
+                entity.Property(e => e.dateadded).HasColumnName("dateadded");
+                entity.Property(e => e.servicecategoryid).HasColumnName("servicecategoryid");
+                entity.Property(e => e.ProviderID).HasColumnName("ProviderID");
+                entity.Property(e => e.alternatecode).HasColumnName("alternatecode");
             });
             
             modelBuilder.Entity<TariffServiceCode>(entity =>
@@ -471,6 +537,40 @@ namespace medicloud.emr.api.Data
             });
 
 
+            modelBuilder.Entity<BillingInvoice>(entity =>
+            {
+                entity.HasKey(e => e.billid);
+
+                entity.ToTable("Billing_Invoice");
+
+                entity.Property(e => e.billid).HasColumnName("billid");
+
+                entity.Property(e => e.patientid).HasColumnName("patientid");
+                entity.Property(e => e.unit).HasColumnName("unit");
+                entity.Property(e => e.unitcharge).HasColumnName("unitcharge");
+                entity.Property(e => e.encounterId).HasColumnName("encounterId");
+                entity.Property(e => e.servicecode).HasColumnName("servicecode");
+                entity.Property(e => e.payortypeid).HasColumnName("payortypeid");
+                entity.Property(e => e.sponsorid).HasColumnName("sponsorid");
+                entity.Property(e => e.plantypeid).HasColumnName("plantypeid");
+                entity.Property(e => e.tariffid).HasColumnName("tariffid");
+                entity.Property(e => e.billtypeid).HasColumnName("billtypeid");
+                entity.Property(e => e.billamount).HasColumnName("billamount");
+                entity.Property(e => e.discount).HasColumnName("discount");
+                entity.Property(e => e.copay).HasColumnName("copay");
+                entity.Property(e => e.amounttopay).HasColumnName("amounttopay");
+                entity.Property(e => e.isadjusted).HasColumnName("isadjusted");
+                entity.Property(e => e.adjusterid).HasColumnName("adjusterid");
+                entity.Property(e => e.billdate).HasColumnName("billdate");
+                entity.Property(e => e.panumber).HasColumnName("panumber");
+                entity.Property(e => e.isbilledclosed).HasColumnName("isbilledclosed");
+                entity.Property(e => e.alternatecode).HasColumnName("alternatecode");
+                entity.Property(e => e.comments).HasColumnName("comments");
+                entity.Property(e => e.ProviderID).HasColumnName("ProviderID");
+                entity.Property(e => e.locationid).HasColumnName("locationid");
+                entity.Property(e => e.dateadded).HasColumnName("dateadded");
+            });
+            
             modelBuilder.Entity<ConsultationOrderDetails>(entity =>
             {
                 entity.HasKey(e => e.Id);
