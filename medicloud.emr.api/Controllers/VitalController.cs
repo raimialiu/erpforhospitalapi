@@ -12,10 +12,10 @@ namespace medicloud.emr.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VitalController : ControllerBase
+    public class VitalsController : ControllerBase
     {
         private DataContext _ctx;
-        public VitalController()
+        public VitalsController()
         {
             _ctx = new DataContext();
         }
