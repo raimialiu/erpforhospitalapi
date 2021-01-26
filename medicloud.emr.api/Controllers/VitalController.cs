@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace medicloud.emr.api.Controllers
 {
-    [Route("api/vitals")]
+    [Route("api/[controller]")]
     [ApiController]
     public class VitalController : ControllerBase
     {

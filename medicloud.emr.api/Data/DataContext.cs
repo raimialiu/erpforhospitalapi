@@ -245,7 +245,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ConsultationOrderDetails> ConsultationOrderDetails { get; set; }
         public virtual DbSet<EmrProblems> EmrProblems { get; set; }
         public virtual DbSet<EmrproblemDuration> EmrProblemDuration { get; set; }
-        public virtual DbSet<ConsultationComplaintsFavorites> ConsultationComplaintsFavorites { get; set; }
+        //public virtual DbSet<ConsultationComplaintsFavorites> ConsultationComplaintsFavorites { get; set; }
 
         public virtual DbSet<EmrproblemsContext> EmrproblemsContext { get; set; }
         public virtual DbSet<EmrproblemsLocation> EmrproblemsLocation { get; set; }
@@ -273,6 +273,12 @@ namespace medicloud.emr.api.Data
 
        // public DbSet<Etities.ConsultationPrescription> Prescriptions { get; set; }
         public DbSet<Etities.ConsultationPrescriptionFavorites> consultationPrescriptionFavorites { get; set; }
+        public virtual DbSet<ImmunizationSchedule> ImmunizationSchedule { get; set; }
+        public virtual DbSet<ImmunizationBrand> ImmunizationBrand { get; set; }
+        public virtual DbSet<EmrimmunizationMaster> ImmunizatiinMaster { get; set; }
+        public virtual DbSet<ConsultationPrescriptionDetails> ConsultationPrescriptionDetails { get; set; }
+        public virtual DbSet<ImmunizationDetails> ImmunizationDetails { get; set; }
+
 
         public virtual DbSet<ConsultationVitals> ConsultationVitals { get; set; }
         public virtual DbSet<DiagnosisSoap> DiagnosisSoap { get; set; }

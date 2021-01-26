@@ -204,37 +204,67 @@ namespace medicloud.emr.api.Controllers
         public async Task<IActionResult> GetPrescriptionHistory()
         {
             // await _ctx.Prescriptions.ToListAsync()
-            return Ok(await _ctx.ConsultationPrescription.ToListAsync());
+            return Ok(await _ctx.ConsultationPrescriptionDetails.ToListAsync());
+        }
+        [Route("LoadPrescriptionHistoryByPatientid/{patientid}")]
+        [HttpGet]
+        public async Task<IActionResult> LoadPrescriptionHistory([FromRoute] string patientid)
+        {
+            // await _ctx.Prescriptions.ToListAsync()
+            return Ok(await _ctx.ConsultationPrescriptionDetails.Where(x=>x.Patientid == patientid).OrderByDescending(x=>x.Id).Take(10).ToListAsync());
         }
 
-        [Route("LoadPrescriptionHistorybyDateRange")]
+        [Route("LoadPrescriptionHistoryByDoctorid/{doctorid}")]
         [HttpGet]
-        public async Task<IActionResult> LoadPrescriptionHistorybyDateRange([FromQuery]string startDate, [FromQuery]string endDate)
+        public async Task<IActionResult> LoadPrescriptionHistoryByDoctorid([FromRoute] string doctorid)
+        {
+            // await _ctx.Prescriptions.ToListAsync()
+            return Ok(await _ctx.ConsultationPrescriptionDetails.Where(x => x.Patientid == doctorid).ToListAsync());
+        }
+
+
+
+        [Route("LoadPrescriptionHistorybyDateRange/{patientid}")]
+        [HttpGet]
+        public async Task<IActionResult> LoadPrescriptionHistorybyDateRange([FromRoute]string patientid, [FromQuery]string startDate, [FromQuery]string endDate)
         {
            // return Ok("");
-           return Ok(await _ctx.ConsultationPrescription.FromSqlRaw($"select * from Consultation_Prescription where dateadded between '{startDate}' and '{endDate}'").ToListAsync());
+           return Ok(await _ctx.ConsultationPrescription.FromSqlRaw($"select * from Consultation_Prescription where patientid = '{patientid}' and dateadded between '{startDate}' and '{endDate}'").ToListAsync());
         }
 
         [Route("SavePescription")]
         [HttpPost]
-        public async Task<IActionResult> SavePescription([FromForm] ConsultationPrescription dto)
+        public async Task<IActionResult> SavePescription([FromForm] ConsultationPrescriptionDetails dto)
         {
-            dto.Dateadded = DateTime.Now;
-            _ctx.ConsultationPrescription.Add(dto);
+            //dto. = DateTime.Now;
+            _ctx.ConsultationPrescriptionDetails.Add(dto);
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
         [Route("SaveToFavourites")]
         [HttpPost]
-        public async Task<IActionResult> SaveToFavourites([FromBody]Etities.ConsultationComplaintsFavorites dto)
+        public async Task<IActionResult> SaveToFavourites([FromBody]Etities.ConsultationPrescriptionFavorites dto)
         {
-            dto.Dateadded = DateTime.Now;
-            _ctx.ConsultationComplaintsFavorites.Add(dto);
+            dto.DateAdded = DateTime.Now;
+            //   _ctx.consultationPrescriptionFavorites.Add(dto);
+            _ctx.consultationPrescriptionFavorites.Add(dto);
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
+
+        [Route("DeleteFavorites/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteFavorites([FromRoute] long id)
+        {
+            var single = await _ctx.consultationPrescriptionFavorites.FirstOrDefaultAsync(x => x.FavouriteId == id);
+            if (single == null) return Ok(false);
+            _ctx.consultationPrescriptionFavorites.Remove(single);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+
+        //[Route("DeleteFavourite/{id}")]
         [HttpGet, Route("GetPrescriptionFavouritesByDoctorid")]
         public async Task<IActionResult> GetPrescriptionFavouritesByDoctorid([FromQuery] long doctorid)
         {
-            return Ok(await _ctx.ConsultationComplaintsFavorites.Where(x => x.Doctorid.Value == doctorid).ToListAsync());
+            return Ok(await _ctx.consultationPrescriptionFavorites.Where(x => x.DoctorId.Value == doctorid).ToListAsync());
         }
 
         [HttpGet, Route("GetPrescriptionByDoctorid")]
@@ -248,37 +278,6 @@ namespace medicloud.emr.api.Controllers
 
       
 
-        ////[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        //// GET: api/Prescribtion/5
-        //[HttpGet("{id}", Name = "Get")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        //// POST: api/Prescribtion
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-
-        //// PUT: api/Prescribtion/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-
-        //// DELETE: api/ApiWithActions/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
-        // GET: api/Prescribtion
-
+      
     }
 } 

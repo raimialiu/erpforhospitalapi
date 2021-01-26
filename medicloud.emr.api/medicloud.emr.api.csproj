@@ -5,9 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\FormController.cs" />
-    <Compile Remove="Entities\MRP.cs" />
-    <Compile Remove="Services\MRPRepository.cs" />
+
   </ItemGroup>
 
   <ItemGroup>
