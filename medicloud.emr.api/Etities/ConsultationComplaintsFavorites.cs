@@ -16,6 +16,9 @@ namespace medicloud.emr.api.Etities
         public int? ProviderId { get; set; }
         public int? Locationid { get; set; }
         public DateTime? Dateadded { get; set; }
+        public string patientid { get; set; }
+        public int? brandid { get; set; }
+        public int? EncounterId { get; set; }
 
         public virtual EmrProblems Problem { get; set; }
     }
