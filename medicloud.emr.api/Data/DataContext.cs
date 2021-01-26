@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using medicloud.emr.api.Entities;
 using medicloud.emr.api.Etities;
 using Microsoft.EntityFrameworkCore;
@@ -71,7 +71,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ConsultationImpression> ConsultationImpression { get; set; }
         public virtual DbSet<ConsultationLaboratory> ConsultationLaboratory { get; set; }
         public virtual DbSet<ConsultationOtherDiagnosis> ConsultationOtherDiagnosis { get; set; }
-        public virtual DbSet<ConsultationPrescription> ConsultationPrescription { get; set; }
+        //public virtual DbSet<Entities.ConsultationPrescription> ConsultationPrescription { get; set; }
         public virtual DbSet<ConsultationProblem> ConsultationProblem { get; set; }
         public virtual DbSet<ConsultationProcedure> ConsultationProcedure { get; set; }
         public virtual DbSet<ConsultationRadiology> ConsultationRadiology { get; set; }
@@ -225,7 +225,14 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ReferringPhysician> ReferringPhysician { get; set; }
         public virtual DbSet<BreakBlockSchedule> BreakBlockSchedule { get; set; }
         public virtual DbSet<ApplicationUserLocation> ApplicationUserLocation { get; set; }
+        public virtual DbSet<ConsultationAllergy>consultation_allergy { get; set; }
 
+        public virtual DbSet<drug_generic> drug_generic { get; set; }
+
+        public virtual DbSet<allergytype> allergytype { get; set; }
+
+        public virtual DbSet<allergymaster>  allergymaster { get; set; }
+        public virtual DbSet<drugseverity>  drugseverity { get; set; }
         public virtual DbSet<DepartmentSub> DepartmentSub { get; set; }
 
         public virtual DbSet<DiagSampleOplabMain> DiagSampleOplabMain { get; set; }
@@ -238,13 +245,14 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<DiagnosisType> DiagnosisType { get; set; }
         public virtual DbSet<DiagnosisProblems> DiagnosisProblems { get; set; }
         public virtual DbSet<ConsultationDiagnosisFavourites> ConsultationDiagnosisFavourites { get; set; }
+
         public virtual DbSet<ConsultationOrders> ConsultationOrders { get; set; }
         public virtual DbSet<OrderDetails> OrderDetails { get; set; }
         public virtual DbSet<ConsultationOrderFavorites> ConsultationOrderFavorites { get; set; }
         public virtual DbSet<ConsultationOrderDetails> ConsultationOrderDetails { get; set; }
         public virtual DbSet<EmrProblems> EmrProblems { get; set; }
         public virtual DbSet<EmrproblemDuration> EmrProblemDuration { get; set; }
-        public virtual DbSet<ConsultationComplaintsFavorites> ConsultationComplaintsFavorites { get; set; }
+        //public virtual DbSet<ConsultationComplaintsFavorites> ConsultationComplaintsFavorites { get; set; }
 
         public virtual DbSet<EmrproblemsContext> EmrproblemsContext { get; set; }
         public virtual DbSet<EmrproblemsLocation> EmrproblemsLocation { get; set; }
@@ -264,14 +272,28 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<DrugFoodrelation> DrugFoodrelation { get; set; }
 
         public virtual DbSet<DrugRoute> DrugRoute { get; set; }
-
+        public virtual DbSet<ConsultationPrescription> ConsultationPrescription { get; set; }
         public virtual DbSet<DrugFrequency> DrugFrequency { get; set; }
+
         public virtual DbSet<TarriffPlan> TarriffPlan { get; set; }
         public virtual DbSet<TariffServiceCode> TariffServiceCode { get; set; }
         public virtual DbSet<BillingInvoice> BillingInvoice { get; set; }
         public virtual DbSet<ServiceCode> ServiceCode { get; set; }
         public virtual DbSet<BillingReceipt> BillingReceipt { get; set; }
         public virtual DbSet<BillType> BillType { get; set; }
+
+       // public DbSet<Etities.ConsultationPrescription> Prescriptions { get; set; }
+        public DbSet<Etities.ConsultationPrescriptionFavorites> consultationPrescriptionFavorites { get; set; }
+        public virtual DbSet<ImmunizationSchedule> ImmunizationSchedule { get; set; }
+        public virtual DbSet<ImmunizationBrand> ImmunizationBrand { get; set; }
+        public virtual DbSet<EmrimmunizationMaster> ImmunizatiinMaster { get; set; }
+        public virtual DbSet<ConsultationPrescriptionDetails> ConsultationPrescriptionDetails { get; set; }
+        public virtual DbSet<ImmunizationDetails> ImmunizationDetails { get; set; }
+
+
+        public virtual DbSet<ConsultationVitals> ConsultationVitals { get; set; }
+        public virtual DbSet<DiagnosisSoap> DiagnosisSoap { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -312,6 +334,161 @@ namespace medicloud.emr.api.Data
 
                 entity.Property(e => e.Roles).HasColumnName("roles");
             });
+
+ modelBuilder.Entity<ConsultationVitals>(entity =>
+      {
+        entity.ToTable("Consultation_Vitals");
+
+        entity.Property(e => e.Abnormal).HasColumnName("abnormal");
+
+        entity.Property(e => e.Anyfall)
+            .HasColumnName("Anyfall")
+            .HasMaxLength(45)
+            .IsUnicode(false)
+            .IsFixedLength();
+
+        entity.Property(e => e.Billable).HasColumnName("billable");
+
+        entity.Property(e => e.Bmi).HasColumnName("BMI");
+
+        entity.Property(e => e.Bpdiastolic).HasColumnName("BPDiastolic");
+
+        entity.Property(e => e.Bpsystolic).HasColumnName("BPSystolic");
+
+        entity.Property(e => e.Bsa).HasColumnName("BSA");
+
+        entity.Property(e => e.Cancellationremarks)
+            .HasColumnName("cancellationremarks")
+            .HasMaxLength(1000)
+            .IsUnicode(false);
+
+        entity.Property(e => e.Convertedunitid).HasColumnName("convertedunitid");
+
+        entity.Property(e => e.Convertedvalue).HasColumnName("convertedvalue");
+
+        entity.Property(e => e.dizziness)
+            .HasColumnName("dizziness")
+            .HasMaxLength(45)
+            .IsUnicode(false)
+            .IsFixedLength();
+
+        entity.Property(e => e.Encodedby).HasColumnName("encodedby");
+
+        entity.Property(e => e.Encodeddate)
+            .HasColumnName("encodeddate")
+            .HasColumnType("datetime");
+
+        entity.Property(e => e.EncounterId).HasColumnName("encounterId");
+
+        entity.Property(e => e.Enteredunitid1).HasColumnName("enteredunitid1");
+
+        entity.Property(e => e.Enteredvalue1).HasColumnName("enteredvalue1");
+
+        entity.Property(e => e.fetalheartrate)
+            .HasColumnName("fetalheartrate")
+            .HasMaxLength(45)
+            .IsUnicode(false)
+            .IsFixedLength();
+
+        entity.Property(e => e.Isactive).HasColumnName("isactive");
+
+        entity.Property(e => e.meanarterialpressure)
+            .HasColumnName("meanarterialpressure")
+            .HasMaxLength(45)
+            .IsUnicode(false)
+            .IsFixedLength();
+
+        entity.Property(e => e.needhelpstanding)
+            .HasColumnName("needhelpstanding")
+            .HasMaxLength(45)
+            .IsUnicode(false)
+            .IsFixedLength();
+
+        entity.Property(e => e.Patientid)
+            .HasColumnName("patientid")
+            .HasMaxLength(50)
+            .IsUnicode(false);
+
+        entity.Property(e => e.Remarks)
+            .HasColumnName("remarks")
+            .HasMaxLength(500)
+            .IsUnicode(false);
+
+        entity.Property(e => e.Spo2).HasColumnName("SPO2");
+
+        entity.Property(e => e.Templatefieldid).HasColumnName("templatefieldid");
+
+        entity.Property(e => e.UrinalysisBil).HasColumnName("UrinalysisBIL");
+
+        entity.Property(e => e.UrinalysisEry).HasColumnName("UrinalysisERY");
+
+        entity.Property(e => e.UrinalysisGlu).HasColumnName("UrinalysisGLU");
+
+        entity.Property(e => e.UrinalysisHb).HasColumnName("UrinalysisHB");
+
+        entity.Property(e => e.UrinalysisKet).HasColumnName("UrinalysisKET");
+
+        entity.Property(e => e.UrinalysisLeu).HasColumnName("UrinalysisLEU");
+
+        entity.Property(e => e.UrinalysisNit).HasColumnName("UrinalysisNIT");
+
+        entity.Property(e => e.UrinalysisPh).HasColumnName("UrinalysisPH");
+
+        entity.Property(e => e.UrinalysisPro).HasColumnName("UrinalysisPRO");
+
+        entity.Property(e => e.UrinalysisSg).HasColumnName("UrinalysisSG");
+
+        entity.Property(e => e.UrinalysisUbg).HasColumnName("UrinalysisUBG");
+
+        entity.Property(e => e.Valueid).HasColumnName("valueid");
+
+        entity.Property(e => e.Vitalentrydate)
+            .HasColumnName("vitalentrydate")
+            .HasColumnType("datetime");
+      });
+
+      modelBuilder.Entity<DiagnosisSoap>(entity =>
+      {
+        entity.HasKey(e => e.Soapid);
+
+        entity.ToTable("Diagnosis_Soap");
+
+        entity.Property(e => e.Soapid).HasColumnName("soapid");
+
+        entity.Property(e => e.Assessment)
+            .HasColumnName("assessment")
+            .HasMaxLength(500)
+            .IsUnicode(false);
+
+        entity.Property(e => e.Dateadded)
+            .HasColumnName("dateadded")
+            .HasColumnType("datetime");
+
+        entity.Property(e => e.Encounterid).HasColumnName("encounterid");
+
+        entity.Property(e => e.Locationid).HasColumnName("locationid");
+
+        entity.Property(e => e.Objective)
+            .HasColumnName("objective")
+            .HasMaxLength(500)
+            .IsUnicode(false);
+
+        entity.Property(e => e.Patientid)
+            .HasColumnName("patientid")
+            .HasMaxLength(50)
+            .IsUnicode(false);
+
+        entity.Property(e => e.Plans)
+            .HasColumnName("plans")
+            .HasMaxLength(500)
+            .IsUnicode(false);
+
+        entity.Property(e => e.Subjective)
+            .HasColumnName("subjective")
+            .HasMaxLength(500)
+            .IsUnicode(false);
+      });
+
             
             modelBuilder.Entity<ApplicationUserLocation>(entity =>
             {
@@ -2571,111 +2748,111 @@ namespace medicloud.emr.api.Data
                     .HasConstraintName("FK_Consultation_OtherDiagnosis_AccountManager");
             });
 
-            modelBuilder.Entity<ConsultationPrescription>(entity =>
-            {
-                entity.HasKey(e => e.Txnkey);
+            //modelBuilder.Entity<Etities.ConsultationPrescription>(entity =>
+            //{
+            //    entity.HasKey(e => e.Txnkey);
 
-                entity.ToTable("Consultation_Prescription");
+            //    entity.ToTable("Consultation_Prescription");
 
-                entity.Property(e => e.Txnkey).HasColumnName("txnkey");
+            //    entity.Property(e => e.Txnkey).HasColumnName("txnkey");
 
-                entity.Property(e => e.Consultationid).HasColumnName("consultationid");
+            //    entity.Property(e => e.Consultationid).HasColumnName("consultationid");
 
-                entity.Property(e => e.Dateadded)
-                    .HasColumnName("dateadded")
-                    .HasColumnType("datetime");
+            //    entity.Property(e => e.Dateadded)
+            //        .HasColumnName("dateadded")
+            //        .HasColumnType("datetime");
 
-                entity.Property(e => e.Dispensedate)
-                    .HasColumnName("dispensedate")
-                    .HasColumnType("datetime");
+            //    entity.Property(e => e.Dispensedate)
+            //        .HasColumnName("dispensedate")
+            //        .HasColumnType("datetime");
 
-                entity.Property(e => e.Dispensenotes)
-                    .HasColumnName("dispensenotes")
-                    .HasMaxLength(5000)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Dispensenotes)
+            //        .HasColumnName("dispensenotes")
+            //        .HasMaxLength(5000)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.Docname)
-                    .HasColumnName("docname")
-                    .HasMaxLength(250)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Docname)
+            //        .HasColumnName("docname")
+            //        .HasMaxLength(250)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.Docpath)
-                    .HasColumnName("docpath")
-                    .HasMaxLength(500)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Docpath)
+            //        .HasColumnName("docpath")
+            //        .HasMaxLength(500)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.Dosage)
-                    .HasColumnName("dosage")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Dosage)
+            //        .HasColumnName("dosage")
+            //        .HasMaxLength(50)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.Drugcode)
-                    .HasColumnName("drugcode")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Drugcode)
+            //        .HasColumnName("drugcode")
+            //        .HasMaxLength(50)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.Drugstrength)
-                    .HasColumnName("drugstrength")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Drugstrength)
+            //        .HasColumnName("drugstrength")
+            //        .HasMaxLength(50)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.Drugtype)
-                    .HasColumnName("drugtype")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Drugtype)
+            //        .HasColumnName("drugtype")
+            //        .HasMaxLength(50)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.Duration).HasColumnName("duration");
+            //    entity.Property(e => e.Duration).HasColumnName("duration");
 
-                entity.Property(e => e.Frequency)
-                    .HasColumnName("frequency")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Frequency)
+            //        .HasColumnName("frequency")
+            //        .HasMaxLength(50)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.Injectionflow).HasColumnName("injectionflow");
+            //    entity.Property(e => e.Injectionflow).HasColumnName("injectionflow");
 
-                entity.Property(e => e.Isdispensed).HasColumnName("isdispensed");
+            //    entity.Property(e => e.Isdispensed).HasColumnName("isdispensed");
 
-                entity.Property(e => e.Isdocattached).HasColumnName("isdocattached");
+            //    entity.Property(e => e.Isdocattached).HasColumnName("isdocattached");
 
-                entity.Property(e => e.Isundispensed).HasColumnName("isundispensed");
+            //    entity.Property(e => e.Isundispensed).HasColumnName("isundispensed");
 
-                entity.Property(e => e.Patientid)
-                    .HasColumnName("patientid")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Patientid)
+            //        .HasColumnName("patientid")
+            //        .HasMaxLength(50)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.Prescriptionnotes)
-                    .HasColumnName("prescriptionnotes")
-                    .HasMaxLength(5000)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Prescriptionnotes)
+            //        .HasColumnName("prescriptionnotes")
+            //        .HasMaxLength(5000)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
+            //    entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
 
-                entity.Property(e => e.Quantity)
-                    .HasColumnName("quantity")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Quantity)
+            //        .HasColumnName("quantity")
+            //        .HasMaxLength(50)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.Units)
-                    .HasColumnName("units")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Units)
+            //        .HasColumnName("units")
+            //        .HasMaxLength(50)
+            //        .IsUnicode(false);
 
-                entity.HasOne(d => d.Consultation)
-                    .WithMany(p => p.ConsultationPrescription)
-                    .HasForeignKey(d => d.Consultationid)
-                    .HasConstraintName("FK_Consultation_Prescription_Consultation");
+            //    entity.HasOne(d => d.Consultation)
+            //        .WithMany(p => p.ConsultationPrescription)
+            //        .HasForeignKey(d => d.Consultationid)
+            //        .HasConstraintName("FK_Consultation_Prescription_Consultation");
 
-                entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.ConsultationPrescription)
-                    .HasForeignKey(d => d.Patientid)
-                    .HasConstraintName("FK_Consultation_Prescription_Patient");
+            //    entity.HasOne(d => d.Patient)
+            //        .WithMany(p => p.ConsultationPrescription)
+            //        .HasForeignKey(d => d.Patientid)
+            //        .HasConstraintName("FK_Consultation_Prescription_Patient");
 
-                entity.HasOne(d => d.Provider)
-                    .WithMany(p => p.ConsultationPrescription)
-                    .HasForeignKey(d => d.ProviderId)
-                    .HasConstraintName("fk_consultationprescription_accountmanager");
-            });
+            //    entity.HasOne(d => d.Provider)
+            //        .WithMany(p => p.ConsultationPrescription)
+            //        .HasForeignKey(d => d.ProviderId)
+            //        .HasConstraintName("fk_consultationprescription_accountmanager");
+            //});
 
             modelBuilder.Entity<ConsultationProblem>(entity =>
             {
@@ -3255,6 +3432,8 @@ namespace medicloud.emr.api.Data
 
                 entity.Property(e => e.Adverseeffect).HasColumnName("adverseeffect");
 
+                entity.Property(e => e.genericid).HasColumnName("genericid");
+                
                 entity.Property(e => e.Brandname).HasColumnName("brandname");
 
                 entity.Property(e => e.Comment).HasColumnName("comment");
@@ -8403,6 +8582,154 @@ namespace medicloud.emr.api.Data
                     .HasColumnName("wardname")
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<ConsultationAllergy>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id).HasColumnName("Id");
+
+                entity.Property(e => e.patientid)
+                    .HasColumnName("patientid")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.encounterId).HasColumnName("encounterId");
+
+                entity.Property(e => e.allergydate)
+                   .HasColumnName("allergydate")
+                   .HasColumnType("datetime");
+
+                entity.Property(e => e.drugId).HasColumnName("drugId");
+
+                entity.Property(e => e.reaction).HasColumnName("reaction");
+
+                entity.Property(e => e.remarks).HasColumnName("remarks");
+
+                entity.Property(e => e.locationid).HasColumnName("locationid");
+
+                entity.Property(e => e.cancellationremarks)
+                   .HasColumnName("cancellationremarks")
+                   .HasMaxLength(500);
+
+                entity.Property(e => e.isactive).HasColumnName("isactive");
+                entity.Property(e => e.encodedby).HasColumnName("encodedby");
+
+                entity.Property(e => e.encodeddate)
+                  .HasColumnName("encodeddate")
+                  .HasColumnType("datetime");
+
+                entity.Property(e => e.isDrugAllergy).HasColumnName("isDrugAllergy");
+                entity.Property(e => e.genericid).HasColumnName("genericid");
+                entity.Property(e => e.allergytypeid).HasColumnName("allergytypeid");
+                entity.Property(e => e.allergyid).HasColumnName("allergyid");
+                entity.Property(e => e.drugseverityid).HasColumnName("drugseverityid");
+                entity.Property(e => e.istolerance).HasColumnName("istolerance");
+                entity.Property(e => e.reactions).HasColumnName("reactions");
+
+                entity.Property(e => e.allergydate)
+                  .HasColumnName("allergydate")
+                  .HasColumnType("datetime");
+
+                entity.HasOne(d => d.Drug)
+               .WithMany(p => p.ConsultationAllergy)
+               .HasForeignKey(d => d.drugId);
+
+                entity.HasOne(d => d.AllergyMaster)
+              .WithMany(p => p.ConsultationAllergy)
+              .HasForeignKey(d => d.allergyid);
+            });
+
+            modelBuilder.Entity<drug_generic>(entity =>
+            {
+                entity.HasKey(e => e.genericid);
+
+                entity.Property(e => e.genericid).HasColumnName("genericid");
+
+                entity.Property(e => e.genericname)
+                    .HasColumnName("genericname")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CIMSCategoryId).HasColumnName("CIMSCategoryId");
+
+                entity.Property(e => e.CIMSSubcategoryId).HasColumnName("CIMSSubcategoryId");
+
+                entity.Property(e => e.isactive).HasColumnName("isactive");
+
+                entity.Property(e => e.Encodedby).HasColumnName("Encodedby");
+
+                entity.Property(e => e.lastchangeby).HasColumnName("lastchangeby");
+
+                entity.Property(e => e.lastchangedate)
+                  .HasColumnName("lastchangedate")
+                  .HasColumnType("datetime");
+
+                entity.Property(e => e.encodeddate)
+                  .HasColumnName("encodeddate")
+                  .HasColumnType("datetime");
+
+            });
+
+            modelBuilder.Entity<allergytype>(entity =>
+                  {
+                      entity.HasKey(e => e.typeid);
+
+                      entity.Property(e => e.ProviderId).HasColumnName("ProviderId");
+
+                      entity.Property(e => e.typename)
+                          .HasColumnName("typename")
+                          .HasMaxLength(50);
+
+                      entity.Property(e => e.isactive).HasColumnName("isactive");
+
+                      entity.Property(e => e.encodedby).HasColumnName("encodedby");
+
+                      entity.Property(e => e.lastchangedby).HasColumnName("lastchangedby");
+
+                      entity.Property(e => e.lastchangeddate)
+                        .HasColumnName("lastchangeddate")
+                        .HasColumnType("datetime");
+
+                      entity.Property(e => e.encodeddate)
+                        .HasColumnName("encodeddate")
+                        .HasColumnType("datetime");
+
+                  });
+            modelBuilder.Entity<allergymaster>(entity =>
+            {
+                entity.HasKey(e => e.allergyid);
+
+                entity.Property(e => e.providerid).HasColumnName("providerid");
+                entity.Property(e => e.typeid).HasColumnName("typeid");
+
+                entity.Property(e => e.description)
+                    .HasColumnName("description")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.isactive).HasColumnName("isactive");
+
+                entity.Property(e => e.encodedby).HasColumnName("encodedby");
+
+                entity.Property(e => e.lastchangedby).HasColumnName("lastchangedby");
+
+                entity.Property(e => e.lastchangeddate)
+                  .HasColumnName("lastchangeddate")
+                  .HasColumnType("datetime");
+
+                entity.Property(e => e.encodeddate)
+                  .HasColumnName("encodeddate")
+                  .HasColumnType("datetime");
+
+                entity.Property(e => e.interfacecode).HasColumnName("interfacecode");
+                entity.Property(e => e.cimstype).HasColumnName("cimstype");
+            });
+
+            modelBuilder.Entity<drugseverity>(entity =>
+            {
+                entity.HasKey(e => e.drugseverityid);
+
+                entity.Property(e => e.drugseverityname).HasColumnName("drugseverityname");
+
             });
 
             modelBuilder.Entity<Store>(entity =>

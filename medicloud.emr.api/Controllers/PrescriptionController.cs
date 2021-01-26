@@ -1,6 +1,7 @@
 ﻿using medicloud.emr.api.Data;
 using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Entities;
+using medicloud.emr.api.Etities;
 using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,13 @@ namespace medicloud.emr.api.Controllers
 
         private readonly IPrescriptionRepository _prescriptionRepository;
         private DataContext _ctx;
+        
 
         public PrescriptionController(IPrescriptionRepository prescriptionRepository)
         {
             _prescriptionRepository = prescriptionRepository;
             _ctx = new DataContext();
+            //_ct = new medismartsemr_db_testContext();
         }
 
         //get orderpriority
@@ -191,121 +194,90 @@ namespace medicloud.emr.api.Controllers
 
         ////get drug food relation
         [HttpGet, Route("GetDrugFoodRelation")]
-        public async Task<IActionResult> GetDrugFoodRelation(int locationid)
+        public async Task<IActionResult> GetDrugFoodRelation()
         {
-            try
-            {
-                var getresult = await _prescriptionRepository.GetDrugFoodRelation(locationid);
-                return Ok(getresult);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest();
-            }
+            return Ok(await _ctx.DrugFoodrelation.ToListAsync());
+        }
+
+        [Route("PrescriptionHistory")]
+        [HttpGet]
+        public async Task<IActionResult> GetPrescriptionHistory()
+        {
+            // await _ctx.Prescriptions.ToListAsync()
+            return Ok(await _ctx.ConsultationPrescriptionDetails.ToListAsync());
+        }
+        [Route("LoadPrescriptionHistoryByPatientid/{patientid}")]
+        [HttpGet]
+        public async Task<IActionResult> LoadPrescriptionHistory([FromRoute] string patientid)
+        {
+            // await _ctx.Prescriptions.ToListAsync()
+            return Ok(await _ctx.ConsultationPrescriptionDetails.Where(x=>x.Patientid == patientid).OrderByDescending(x=>x.Id).Take(10).ToListAsync());
+        }
+
+        [Route("LoadPrescriptionHistoryByDoctorid/{doctorid}")]
+        [HttpGet]
+        public async Task<IActionResult> LoadPrescriptionHistoryByDoctorid([FromRoute] string doctorid)
+        {
+            // await _ctx.Prescriptions.ToListAsync()
+            return Ok(await _ctx.ConsultationPrescriptionDetails.Where(x => x.Patientid == doctorid).ToListAsync());
         }
 
 
 
-        //[HttpPost("AddFavourites")]
-        //public async Task<IActionResult> Create(PrescriptionDTO model)
-        //{
-        //    try
-        //    {
-        //        await _prescriptionRepository.AddFavourites(model);
-        //        var status = true;
-        //        return Ok(status);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        var status = false;
-        //        return BadRequest(status);
-        //    }
+        [Route("LoadPrescriptionHistorybyDateRange/{patientid}")]
+        [HttpGet]
+        public async Task<IActionResult> LoadPrescriptionHistorybyDateRange([FromRoute]string patientid, [FromQuery]string startDate, [FromQuery]string endDate)
+        {
+           // return Ok("");
+           return Ok(await _ctx.ConsultationPrescription.FromSqlRaw($"select * from Consultation_Prescription where patientid = '{patientid}' and dateadded between '{startDate}' and '{endDate}'").ToListAsync());
+        }
 
-        //}
+        [Route("SavePescription")]
+        [HttpPost]
+        public async Task<IActionResult> SavePescription([FromForm] ConsultationPrescriptionDetails dto)
+        {
+            //dto. = DateTime.Now;
+            _ctx.ConsultationPrescriptionDetails.Add(dto);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+        [Route("SaveToFavourites")]
+        [HttpPost]
+        public async Task<IActionResult> SaveToFavourites([FromBody]Etities.ConsultationPrescriptionFavorites dto)
+        {
+            dto.DateAdded = DateTime.Now;
+            //   _ctx.consultationPrescriptionFavorites.Add(dto);
+            _ctx.consultationPrescriptionFavorites.Add(dto);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+
+        [Route("DeleteFavorites/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteFavorites([FromRoute] long id)
+        {
+            var single = await _ctx.consultationPrescriptionFavorites.FirstOrDefaultAsync(x => x.FavouriteId == id);
+            if (single == null) return Ok(false);
+            _ctx.consultationPrescriptionFavorites.Remove(single);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+
+        //[Route("DeleteFavourite/{id}")]
+        [HttpGet, Route("GetPrescriptionFavouritesByDoctorid")]
+        public async Task<IActionResult> GetPrescriptionFavouritesByDoctorid([FromQuery] long doctorid)
+        {
+            return Ok(await _ctx.consultationPrescriptionFavorites.Where(x => x.DoctorId.Value == doctorid).ToListAsync());
+        }
+
+        [HttpGet, Route("GetPrescriptionByDoctorid")]
+        public async Task<IActionResult> GetPrescriptionByDoctorid([FromQuery] long doctorid)
+        {
+            //return Ok(await _ctx.ConsultationPrescription.Where(x=>x);
+            // await _ctx.Prescriptions.Where(x=>x.Doctorid.Value == doctorid).ToListAsync()
+            return Ok("");
+        }
 
 
-        ////get drug frequency
-        //[HttpGet, Route("GetPreviousMedication")]
-        //public async Task<IActionResult> GetPreviousMedication(string patientid)
-        //{
-        //    try
-        //    {
-        //        var getresult = await _prescriptionRepository.GetPreviousMedication(patientid);
-        //        return Ok(getresult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
+      
 
-
-        //[HttpPost("AddConsultation")]
-        //public async Task<IActionResult> AddConsultation(PrescriptionDTO model)
-        //{
-        //    try
-        //    {
-        //        await _prescriptionRepository.AddConsultation(model);
-        //        var status = true;
-        //        return Ok(status);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        var status = false;
-        //        return BadRequest(status);
-        //    }
-
-        //}
-
-
-        //[HttpPost("AddDetails")]
-        //public async Task<IActionResult> AddDetails(PrescriptionDTO model)
-        //{
-        //    try
-        //    {
-        //        await _prescriptionRepository.AddDetails(model);
-        //        var status = true;
-        //        return Ok(status);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        var status = false;
-        //        return BadRequest(status);
-        //    }
-
-        //}
-
-        ////[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        //// GET: api/Prescribtion/5
-        //[HttpGet("{id}", Name = "Get")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        //// POST: api/Prescribtion
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-
-        //// PUT: api/Prescribtion/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-
-        //// DELETE: api/ApiWithActions/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
-        // GET: api/Prescribtion
-
+      
     }
 } 

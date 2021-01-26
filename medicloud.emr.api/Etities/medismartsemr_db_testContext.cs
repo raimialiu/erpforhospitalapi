@@ -15,7 +15,7 @@ namespace medicloud.emr.api.Etities
         {
         }
 
-        public virtual DbSet<EmrproblemsCondition> EmrproblemsCondition { get; set; }
+        public virtual DbSet<ImmunizationBrand> ImmunizationBrand { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -28,14 +28,14 @@ namespace medicloud.emr.api.Etities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<EmrproblemsCondition>(entity =>
+            modelBuilder.Entity<ImmunizationBrand>(entity =>
             {
-                entity.ToTable("EMRProblemsCondition");
+                entity.HasKey(e => e.Brandid)
+                    .HasName("PK_EMRImmunizationBrands");
 
-                entity.Property(e => e.Description)
-                    .HasColumnName("description")
-                    .HasMaxLength(500)
-                    .IsUnicode(false);
+                entity.ToTable("Immunization_Brand");
+
+                entity.Property(e => e.Brandid).HasColumnName("brandid");
 
                 entity.Property(e => e.Encodedby).HasColumnName("encodedby");
 
@@ -43,17 +43,9 @@ namespace medicloud.emr.api.Etities
                     .HasColumnName("encodeddate")
                     .HasColumnType("datetime");
 
+                entity.Property(e => e.Immunizationid).HasColumnName("immunizationid");
+
                 entity.Property(e => e.Isactive).HasColumnName("isactive");
-
-                entity.Property(e => e.Lastchangeby).HasColumnName("lastchangeby");
-
-                entity.Property(e => e.Lastchangedate)
-                    .HasColumnName("lastchangedate")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
-
-                entity.Property(e => e.Sequenceno).HasColumnName("sequenceno");
             });
 
             OnModelCreatingPartial(modelBuilder);
