@@ -35,6 +35,6 @@ namespace medicloud.emr.api.Entities
         public int? Brandid { get; set; }
         public bool? Vaccinegivenbyoutsider { get; set; }
         public DateTime? Duedate { get; set; }
-        public string Cancellationremark { get; set; }
+        public string Cancellationremarks { get; set; }
     }
 }
