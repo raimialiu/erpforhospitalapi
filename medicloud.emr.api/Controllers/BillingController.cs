@@ -1,9 +1,12 @@
-﻿using medicloud.emr.api.DTOs;
+﻿using Dapper;
+using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Entities;
 using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,9 +17,16 @@ namespace medicloud.emr.api.Controllers
     public class BillingController : ControllerBase
     {
         private readonly IBillingRepository _billingRepository;
-        public BillingController(IBillingRepository billingRepository)
+        private SqlConnection _conn;
+        private IConfiguration _config;
+
+        public BillingController(IBillingRepository billingRepository, IConfiguration _config)
         {
+            this._config = _config;
             _billingRepository = billingRepository;
+            string connectionString = _config["ConnectionStrings:lagoonDB"];
+            _conn = new SqlConnection(connectionString);
+            _conn.Open();
         }
 
         [HttpGet("GetPatientTarrifByPayor")]
@@ -60,13 +70,28 @@ namespace medicloud.emr.api.Controllers
 
         }
         
+        [Route("GetPatientBillingInvoiceHistory")]
         [HttpGet]
-        public async Task<IActionResult> GetPatientBillingInvoiceHistory(int accountId, string patientId, int? encounterId)
+        public async Task<IActionResult> GetPatientBillingInvoiceHistory([FromQuery]int accountId, [FromQuery]string patientId, [FromQuery]int? encounterId)
         {
-          
-             var bills = await _billingRepository.GetPatientEncounterBill(accountId, patientId, encounterId);
+            if(encounterId.HasValue)
+            {
+                var patientBillingHistory = _conn.Query($"select a.*, b.serviceid, b.servicename, b.servicecategoryid, c.servicecategoryname, " +
+                $"c.servicecategorydesc from Billing_Invoice a join ServiceCode b on a.servicecode = b.serviceid join servicecategory " +
+                $"c on b.servicecategoryid = c.servicecategoryid where a.patientid = '{patientId}' and a.providerid = {accountId} and encounterid = {encounterId}");
+                //   var bills = await _billingRepository.GetPatientEncounterBill(accountId, patientId, encounterId);
 
-             return Ok(bills);
+                return Ok(patientBillingHistory);
+            }
+
+
+
+            var patientBillingViewHistory = _conn.Query($"select a.*, b.serviceid, b.servicename, b.servicecategoryid, c.servicecategoryname, " +
+                $"c.servicecategorydesc from Billing_Invoice a join ServiceCode b on a.servicecode = b.serviceid join servicecategory " +
+                $"c on b.servicecategoryid = c.servicecategoryid where a.patientid = '{patientId}' and a.providerid = {accountId}");
+          //   var bills = await _billingRepository.GetPatientEncounterBill(accountId, patientId, encounterId);
+
+             return Ok(patientBillingViewHistory);
           
         }
 

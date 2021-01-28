@@ -15,7 +15,7 @@
 //        {
 //        }
 
-//        public virtual DbSet<ImmunizationDetails> ImmunizationDetails { get; set; }
+//        public virtual DbSet<ConsultationPrescriptionDetails> ConsultationPrescriptionDetails { get; set; }
 
 //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //        {
@@ -28,24 +28,24 @@
 
 //        protected override void OnModelCreating(ModelBuilder modelBuilder)
 //        {
-//            modelBuilder.Entity<ImmunizationDetails>(entity =>
+//            modelBuilder.Entity<ConsultationPrescriptionDetails>(entity =>
 //            {
-//                entity.ToTable("immunization_details");
+//                entity.ToTable("Consultation_PrescriptionDetails");
 
-//                entity.Property(e => e.Adversereaction).HasColumnName("adversereaction");
-
-//                entity.Property(e => e.Batchno).HasColumnName("batchno");
-
-//                entity.Property(e => e.Brandid).HasColumnName("brandid");
-
-//                entity.Property(e => e.Cancellationremarks)
-//                    .HasColumnName("cancellationremarks")
-//                    .HasMaxLength(500)
+//                entity.Property(e => e.Comments)
+//                    .HasColumnName("comments")
+//                    .HasMaxLength(1000)
 //                    .IsUnicode(false);
 
-//                entity.Property(e => e.Duedate)
-//                    .HasColumnName("duedate")
-//                    .HasColumnType("datetime");
+//                entity.Property(e => e.Doctorid).HasColumnName("doctorid");
+
+//                entity.Property(e => e.Dose).HasColumnName("dose");
+
+//                entity.Property(e => e.Doseformid).HasColumnName("doseformid");
+
+//                entity.Property(e => e.Dosetime).HasColumnName("dosetime");
+
+//                entity.Property(e => e.Durationtype).HasColumnName("durationtype");
 
 //                entity.Property(e => e.Encodedby).HasColumnName("encodedby");
 
@@ -53,36 +53,46 @@
 //                    .HasColumnName("encodeddate")
 //                    .HasColumnType("datetime");
 
-//                entity.Property(e => e.Encounterid).HasColumnName("encounterid");
+//                entity.Property(e => e.EncounterId).HasColumnName("encounterId");
 
-//                entity.Property(e => e.Givenby).HasColumnName("givenby");
+//                entity.Property(e => e.Formularyid).HasColumnName("formularyid");
 
-//                entity.Property(e => e.Givendatetime)
-//                    .HasColumnName("givendatetime")
-//                    .HasColumnType("datetime");
+//                entity.Property(e => e.Frequencyid).HasColumnName("frequencyid");
 
-//                entity.Property(e => e.Immunizationid).HasColumnName("immunizationid");
+//                entity.Property(e => e.Genericid).HasColumnName("genericid");
 
-//                entity.Property(e => e.Impression)
-//                    .HasColumnName("impression")
-//                    .HasMaxLength(500)
+//                entity.Property(e => e.Icdcode)
+//                    .HasColumnName("ICDCode")
+//                    .HasMaxLength(200)
 //                    .IsUnicode(false);
 
 //                entity.Property(e => e.Isactive).HasColumnName("isactive");
 
-//                entity.Property(e => e.Isbillable).HasColumnName("isbillable");
+//                entity.Property(e => e.Isapprovedrequired).HasColumnName("isapprovedrequired");
+
+//                entity.Property(e => e.Iscapitated).HasColumnName("iscapitated");
+
+//                entity.Property(e => e.Isexcluded).HasColumnName("isexcluded");
+
+//                entity.Property(e => e.Issubstitutenotallowed).HasColumnName("issubstitutenotallowed");
+
+//                entity.Property(e => e.Isvariabledose).HasColumnName("isvariabledose");
+
+//                entity.Property(e => e.Isvoid).HasColumnName("isvoid");
+
+//                entity.Property(e => e.ItemId).HasColumnName("itemId");
 
 //                entity.Property(e => e.Lastchangeby).HasColumnName("lastchangeby");
 
-//                entity.Property(e => e.Lastchangeddate)
-//                    .HasColumnName("lastchangeddate")
+//                entity.Property(e => e.Lastchangedate)
+//                    .HasColumnName("lastchangedate")
 //                    .HasColumnType("datetime");
 
 //                entity.Property(e => e.Locationid).HasColumnName("locationid");
 
-//                entity.Property(e => e.LotNo)
-//                    .HasColumnName("lotNo")
-//                    .HasMaxLength(50)
+//                entity.Property(e => e.Medicationinstructions)
+//                    .HasColumnName("medicationinstructions")
+//                    .HasMaxLength(1000)
 //                    .IsUnicode(false);
 
 //                entity.Property(e => e.Patientid)
@@ -90,22 +100,43 @@
 //                    .HasMaxLength(50)
 //                    .IsUnicode(false);
 
-//                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
+//                entity.Property(e => e.Preauthorizationno)
+//                    .HasColumnName("preauthorizationno")
+//                    .HasMaxLength(20)
+//                    .IsUnicode(false);
 
-//                entity.Property(e => e.Qtygiven).HasColumnName("qtygiven");
-
-//                entity.Property(e => e.Rejectedbypatient).HasColumnName("rejectedbypatient");
-
-//                entity.Property(e => e.Remarks)
-//                    .HasColumnName("remarks")
+//                entity.Property(e => e.PrescriptionDetail)
+//                    .HasColumnName("prescriptionDetail")
 //                    .HasMaxLength(1000)
 //                    .IsUnicode(false);
 
-//                entity.Property(e => e.Scheduleid).HasColumnName("scheduleid");
+//                entity.Property(e => e.Prescriptionid).HasColumnName("prescriptionid");
 
-//                entity.Property(e => e.Vaccinegivenbyoutsider).HasColumnName("vaccinegivenbyoutsider");
+//                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
 
-//                entity.Property(e => e.VisinfoGiven).HasColumnName("VISInfoGiven");
+//                entity.Property(e => e.Qty).HasColumnName("qty");
+
+//                entity.Property(e => e.Refill).HasColumnName("refill");
+
+//                entity.Property(e => e.Routeid).HasColumnName("routeid");
+
+//                entity.Property(e => e.Startdate)
+//                    .HasColumnName("startdate")
+//                    .HasColumnType("datetime");
+
+//                entity.Property(e => e.Statusid).HasColumnName("statusid");
+
+//                entity.Property(e => e.Strength)
+//                    .HasColumnName("strength")
+//                    .HasMaxLength(500)
+//                    .IsUnicode(false);
+
+//                entity.Property(e => e.Strengthvalue)
+//                    .HasColumnName("strengthvalue")
+//                    .HasMaxLength(100)
+//                    .IsUnicode(false);
+
+//                entity.Property(e => e.Unitid).HasColumnName("unitid");
 //            });
 
 //            OnModelCreatingPartial(modelBuilder);
