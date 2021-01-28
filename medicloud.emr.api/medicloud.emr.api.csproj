@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-
+    <Compile Remove="Controllers\VitalController.cs" />
+    <Compile Remove="Services\MRPRepository.cs" />
   </ItemGroup>
 
   <ItemGroup>

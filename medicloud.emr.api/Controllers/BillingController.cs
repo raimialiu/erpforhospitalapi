@@ -44,6 +44,76 @@ namespace medicloud.emr.api.Controllers
 
         }
         
+        [HttpGet("GetPatientDrugTarriff")]
+        public async Task<IActionResult> GetPatientDrugTarriff(int accountId, string patientId, int drugid, int locationId)
+        {
+            try
+            {
+                var patienttariff = await _billingRepository.getPatientDrugTarriff(accountId, patientId, drugid, locationId);
+
+                PatientTariffByPayorResponse response = new PatientTariffByPayorResponse()
+                {
+                    TariffAmount = patienttariff.Item3,
+                    ResponseMessage = patienttariff.Item2,
+                    Status = patienttariff.Item1
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+        
+        [HttpGet("GetDrugTarriffByDrugId")]
+        public async Task<IActionResult> GetDrugTarriffByDrugId(int accountId, int tariffId, int drugid, int locationId)
+        {
+            try
+            {
+                var patienttariff = await _billingRepository.getDrugTarrifByDrugId(accountId, tariffId, drugid, locationId);
+
+                PatientTariffByPayorResponse response = new PatientTariffByPayorResponse()
+                {
+                    TariffAmount = patienttariff.Item3,
+                    ResponseMessage = patienttariff.Item2,
+                    Status = patienttariff.Item1
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+        
+        [HttpGet("GetTarrifByServiceCode")]
+        public async Task<IActionResult> GetTarrifByServiceCode(int accountId, int tariffid, int servicecode, int locationId)
+        {
+            try
+            {
+                //patientId = "1011302952"; servicecode = 145; accountId = 1;
+
+                var patienttariff = await _billingRepository.getTarrifByServiceCode(accountId, tariffid, servicecode, locationId);
+
+                PatientTariffByPayorResponse response = new PatientTariffByPayorResponse()
+                {
+                    TariffAmount = patienttariff.Item3,
+                    ResponseMessage = patienttariff.Item2,
+                    Status = patienttariff.Item1
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+        
         [HttpGet("GetPatientEncounterBill")]
         public async Task<IActionResult> GetPatientEncounterBill(int accountId, string patientId, int? encounterId)
         {
@@ -149,6 +219,22 @@ namespace medicloud.emr.api.Controllers
             }
 
         }
+        
+        [HttpPost("AddBillingInvoice")]
+        public async Task<IActionResult> AddBillingInvoice(BillingInvoice billingInvoice)
+        {
+            try
+            {
+                await _billingRepository.AddBillInvoice(billingInvoice);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
 
         [HttpPost("AddPrivatePatientConsultationBillingInvoice")]
         public async Task<IActionResult> AddPrivatePatientConsultationBillingInvoice (BillingInvoice billingInvoice)
@@ -208,6 +294,21 @@ namespace medicloud.emr.api.Controllers
                     return Ok(false);
                 }
 
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+        
+        [HttpGet("PatientBillPayment")]
+        public async Task<IActionResult> PatientBillPayment(int accountId, int encounterid, string patientid, decimal amountPaid, int locationid)
+        {
+            try
+            {
+                await _billingRepository.ClearPatientEncounterBill(accountId, encounterid, patientid, amountPaid, locationid);
+                return Ok();
             }
             catch (Exception ex)
             {
