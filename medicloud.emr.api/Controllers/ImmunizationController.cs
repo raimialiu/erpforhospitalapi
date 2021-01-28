@@ -166,6 +166,12 @@ namespace medicloud.emr.api.Controllers
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
 
+        [Route("allnurse")]
+        [HttpGet]
+        public async Task<IActionResult> AllNurse()
+        {
+            return Ok(await _ctx.ApplicationUser.ToListAsync());
+        }
         [Route("DeleteImmunizationDetails/{id}")]
         [HttpDelete]
         public async Task<IActionResult> DeleteImmunizationDetails([FromRoute] long id)
