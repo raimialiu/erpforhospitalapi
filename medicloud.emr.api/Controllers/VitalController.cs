@@ -25,7 +25,7 @@ namespace medicloud.emr.api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProblem()
         {
-            return Ok(await _ctx.EmrProblems.ToListAsync());
+            return Ok(await _ctx.EmrProblems.Take(500).ToListAsync());
         }
 
         [Route("GetAllProblemByKeyword/{keyword}")]
@@ -44,10 +44,11 @@ namespace medicloud.emr.api.Controllers
 
         [Route("TodaysProblem")]
         [HttpGet]
-        public async Task<IActionResult> TodaysProblem()
+        public async Task<IActionResult> TodaysProblem([FromQuery] string patientid)
         {
-            var _today = DateTime.Now.ToShortDateString();
-            return Ok(await _ctx.ConsultationComplaintsB.Where(x=>x.Dateadded.Value.ToShortDateString() == DateTime.Now.ToShortDateString()).ToListAsync());
+            var _today = DateTime.Now.ToLongDateString();
+           //return Ok(await _ctx.ConsultationComplaintsB.Where(x=>x.Dateadded.Value.ToShortDateString() == _today && x.Patientid == patientid).ToListAsync());
+            return Ok(await _ctx.ConsultationComplaintsB.FromSqlRaw($"select  * from consultation_complaints where cast(dateadded as date) = cast(getdate() as date) and patientid = '{patientid}'").ToListAsync());
         }
 
         [Route("SaveConsultationFavourites")]
