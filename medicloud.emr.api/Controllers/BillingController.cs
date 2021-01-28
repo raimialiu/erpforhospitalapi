@@ -60,6 +60,16 @@ namespace medicloud.emr.api.Controllers
 
         }
         
+        [HttpGet]
+        public async Task<IActionResult> GetPatientBillingInvoiceHistory(int accountId, string patientId, int? encounterId)
+        {
+          
+             var bills = await _billingRepository.GetPatientEncounterBill(accountId, patientId, encounterId);
+
+             return Ok(bills);
+          
+        }
+
         [HttpGet("GetTariffs")]
         public async Task<IActionResult> GetTariffs(int accountId)
         {
