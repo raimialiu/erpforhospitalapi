@@ -50,7 +50,7 @@ namespace medicloud.emr.api.Controllers
             catch (Exception ex)
             {
                 var status = false;
-                return BadRequest(status);
+                return BadRequest(ex.Message);
             }
 
         }

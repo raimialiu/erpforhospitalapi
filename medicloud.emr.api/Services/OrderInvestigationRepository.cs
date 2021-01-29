@@ -32,27 +32,8 @@ namespace medicloud.emr.api.Services
 
         public async Task AddConsultationOrder(AddConsultationOrderDto model)
         {
-            model.consultationOrder.EncodedDate = DateTime.Now;
-            model.consultationOrder.ordertypeid = null;
-            model.consultationOrder.ordercategoryid = null;
-            var conOrder = await _context.ConsultationOrders.AddAsync(model.consultationOrder);
-            await _context.SaveChangesAsync();
-
             // add bill
-
             List<int> insertedBillId = new List<int>();
-
-            foreach (var item in model.consultationOrderDetails)
-            {
-                item.investigationdate = item.investigationdate.Value.AddHours(1);
-                item.investigationdate = new DateTime(item.investigationdate.Value.Year, item.investigationdate.Value.Month, item.investigationdate.Value.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-                item.encounterid = model.consultationOrder.EncounterId;
-                item.patientid = model.consultationOrder.Patientid;
-                item.orderId = conOrder.Entity.Id;
-            }
-
-            await _context.ConsultationOrderDetails.AddRangeAsync(model.consultationOrderDetails);
-            await _context.SaveChangesAsync();
 
             foreach (var item in model.consultationOrderDetails)
             {
@@ -69,14 +50,41 @@ namespace medicloud.emr.api.Services
                 try
                 {
                     var inserted = await _billingRepository.AddBillInvoice(billingInvoice);
-                    insertedBillId.Add(inserted);
+                    if(!inserted.Item1)
+                    {
+                        throw new Exception(inserted.Item2);
+                    }
+                    insertedBillId.Add((int)inserted.Item3);
                 }
-                catch
+                catch (Exception ex)
                 {
                     /// delete all inserted billing_Invoice
+                    throw new Exception(ex.Message);
                 }
-                
+
             }
+
+            model.consultationOrder.EncodedDate = DateTime.Now;
+            model.consultationOrder.ordertypeid = null;
+            model.consultationOrder.ordercategoryid = null;
+            var conOrder = await _context.ConsultationOrders.AddAsync(model.consultationOrder);
+            await _context.SaveChangesAsync();
+
+           
+
+            foreach (var item in model.consultationOrderDetails)
+            {
+                item.investigationdate = item.investigationdate.Value.AddHours(1);
+                item.investigationdate = new DateTime(item.investigationdate.Value.Year, item.investigationdate.Value.Month, item.investigationdate.Value.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+                item.encounterid = model.consultationOrder.EncounterId;
+                item.patientid = model.consultationOrder.Patientid;
+                item.orderId = conOrder.Entity.Id;
+            }
+
+            await _context.ConsultationOrderDetails.AddRangeAsync(model.consultationOrderDetails);
+            await _context.SaveChangesAsync();
+
+           
         }
 
 

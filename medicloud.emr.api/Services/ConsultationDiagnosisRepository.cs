@@ -190,7 +190,7 @@ namespace medicloud.emr.api.Services
         public async Task AddConsultationDiagnosis(ConsultationDiagnosis model)
         {
             model.dateadded = DateTime.Now;
-            model.Onsetdate.Value.AddHours(1);
+            model.Onsetdate = model.Onsetdate.Value.AddHours(1);
             model.Onsetdate = new DateTime(model.Onsetdate.Value.Year, model.Onsetdate.Value.Month, model.Onsetdate.Value.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             await _context.ConsultationDiagnosis.AddAsync(model);
             await _context.SaveChangesAsync();

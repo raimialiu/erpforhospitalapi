@@ -568,14 +568,14 @@ namespace medicloud.emr.api.Data
 
                 entity.HasKey(e => e.Id);
 
-                entity.Property(e => e.ProviderID).HasColumnName("ProviderID");
+                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
 
-                entity.Property(e => e.encodedby).HasColumnName("encodedby");
-                entity.Property(e => e.encodeddate).HasColumnName("encodeddate");
-                entity.Property(e => e.sequenceno).HasColumnName("sequenceno");
-                entity.Property(e => e.lastchangeddate).HasColumnName("lastchangeddate");
-                entity.Property(e => e.lastchangeby).HasColumnName("lastchangeby");
-                entity.Property(e => e.description).HasColumnName("description");
+                entity.Property(e => e.Encodedby).HasColumnName("encodedby");
+                entity.Property(e => e.Encodeddate).HasColumnName("encodeddate");
+                entity.Property(e => e.Sequenceno).HasColumnName("sequenceno");
+                entity.Property(e => e.Lastchangeddate).HasColumnName("lastchangeddate");
+                entity.Property(e => e.Lastchangeby).HasColumnName("lastchangeby");
+                entity.Property(e => e.Description).HasColumnName("description");
             });
 
             modelBuilder.Entity<BillingReceipt>(entity =>
@@ -5710,7 +5710,7 @@ namespace medicloud.emr.api.Data
 
             modelBuilder.Entity<Plan>(entity =>
             {
-                entity.ToTable("plan");
+                entity.ToTable("plans");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
@@ -6648,6 +6648,10 @@ namespace medicloud.emr.api.Data
                 
                 entity.Property(e => e.IsCheckedOut)
                     .HasColumnName("ischeckedout")
+                    .HasColumnType("bit");
+                
+                entity.Property(e => e.IsActive)
+                    .HasColumnName("IsActive")
                     .HasColumnType("bit");
 
             });
