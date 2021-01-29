@@ -9,7 +9,7 @@ namespace medicloud.emr.api.Entities
         {
             CheckIn = new HashSet<CheckIn>();
             DiagSampleOplabMain = new HashSet<DiagSampleOplabMain>();
-            DiagnosisProblems = new HashSet<DiagnosisProblems>();
+            //DiagnosisProblems = new HashSet<DiagnosisProblems>();
             //EmrFrequencyDetail = new HashSet<EmrFrequencyDetail>();
             //EmrVitalSignTypes = new HashSet<EmrVitalSignTypes>();
             //EmrVitalUnitMaster = new HashSet<EmrVitalUnitMaster>();
@@ -34,7 +34,7 @@ namespace medicloud.emr.api.Entities
         //public virtual ICollection<ChiefComplain> ChiefComplain { get; set; }
         //public virtual ICollection<DiagEntrySite> DiagEntrySite { get; set; }
         public virtual ICollection<DiagSampleOplabMain> DiagSampleOplabMain { get; set; }
-        public virtual ICollection<DiagnosisProblems> DiagnosisProblems { get; set; }
+        //public virtual ICollection<DiagnosisProblems> DiagnosisProblems { get; set; }
         //public virtual ICollection<EmrFrequencyDetail> EmrFrequencyDetail { get; set; }
         //public virtual ICollection<EmrVitalSignTypes> EmrVitalSignTypes { get; set; }
         //public virtual ICollection<EmrVitalUnitMaster> EmrVitalUnitMaster { get; set; }

@@ -49,7 +49,7 @@ namespace medicloud.emr.api.Services
         
         public async Task<List<DiagnosisProblems>> GetDiagnosisProblemList(int accountId)
         {
-            var diagtypes = await _context.DiagnosisProblems.Where(o => o.ProviderID == accountId).OrderBy(p => p.description).ToListAsync();
+            var diagtypes = await _context.DiagnosisProblems.Where(o => o.ProviderId == accountId).OrderBy(p => p.Description).ToListAsync();
             return diagtypes;
         }
 
