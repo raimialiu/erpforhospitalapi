@@ -57,11 +57,10 @@ namespace medicloud.emr.api
                 //                                      "http://localhost", "http://test.medicloud.ng/lagoonhisdev" })
                 //.AllowAnyMethod().AllowAnyHeader()) ; ;
                 // new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" }
+                                                 
             });
 
-            //swaggerSettings = new SwaggerSettings();
-
-            //Configuration.Bind(nameof(SwaggerSettings), swaggerSettings);
+          
 
             services.AddSwaggerGen(c =>
             {

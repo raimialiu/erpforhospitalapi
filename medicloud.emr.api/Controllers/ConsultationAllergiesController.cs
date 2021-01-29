@@ -115,7 +115,7 @@ namespace medicloud.emr.api.Controllers
         {
             var AlleryHistory = _context.consultation_allergy
                 .Include(p => p.Drug)
-                .Where(a => a.patientid == PatientId && a.isactive == Active)
+                .Where(a => a.patientid == PatientId && a.isactive == Active && a.drugId != null)
                 .Select(g => new ConsultationAllergyDM
                 {
                     DrugName = g.Drug.Name,
@@ -143,6 +143,29 @@ namespace medicloud.emr.api.Controllers
                 .Select(g => new ConsultationAllergyDM
                 {
                     DrugName = g.Drug.Name,
+                    remarks = g.remarks,
+                    reaction = g.reaction,
+                    patientid = g.patientid,
+                    encodeddate = g.encodeddate,
+                    AllergyName = g.AllergyMaster.description
+                })
+                .ToList();
+
+            if (AlleryHistory == null)
+            {
+                return NotFound();
+            }
+            return Ok(AlleryHistory);
+        }
+         // GET api/user/firstname/lastname/address
+        [HttpGet("{PatientId}/{Active}/{FromDate}/{ToDate}/{OtherAllergy}")]
+        public IActionResult GetPatientHistoryOtherAllergy(string PatientId, Boolean Active,DateTime FromDate, DateTime ToDate, string OtherAllergy)
+        {
+            var AlleryHistory = _context.consultation_allergy
+                .Include(p => p.AllergyMaster)
+                .Where(a => a.patientid == PatientId && a.isactive == Active && a.encodeddate > FromDate && a.encodeddate < ToDate && a.allergyid != null)
+                .Select(g => new ConsultationAllergyDM
+                {
                     remarks = g.remarks,
                     reaction = g.reaction,
                     patientid = g.patientid,
