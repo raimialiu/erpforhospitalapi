@@ -7,6 +7,21 @@ namespace medicloud.emr.api.DTOs
 {
     public class PharmacyManagementPrescriptionDetailsDTO
     {
+        public PharmacyManagementPrescriptionDetailsDTO()
+        {
+        }
+
+        public PharmacyManagementPrescriptionDetailsDTO(string drugName, string prescriptionDetail, int prescriptionQuantity, int issuedQuantity, int dispensedQuantity, int paNo, string status)
+        {
+            DrugName = drugName;
+            PrescriptionDetail = prescriptionDetail;
+            PrescriptionQuantity = prescriptionQuantity;
+            IssuedQuantity = issuedQuantity;
+            DispensedQuantity = dispensedQuantity;
+            PaNo = paNo;
+            this.status = status;
+        }
+
         public string DrugName { get; set; }
         public string PrescriptionDetail { get; set; }
         public int PrescriptionQuantity { get; set; }
@@ -18,6 +33,27 @@ namespace medicloud.emr.api.DTOs
 
     public class PharmacyManagementDTO
     {
+        public PharmacyManagementDTO()
+        {
+        }
+
+        public PharmacyManagementDTO(string facility, int? pescriptionNo, DateTime? prescriptionDate, string patientName, int? age, string gender, string planType, string company, int? alert, string doctorName, string seenByDoctor, string store, List<PharmacyManagementPrescriptionDetailsDTO> prescriptionDetails)
+        {
+            Facility = facility;
+            PescriptionNo = pescriptionNo;
+            PrescriptionDate = prescriptionDate;
+            PatientName = patientName;
+            Age = age;
+            Gender = gender;
+            PlanType = planType;
+            Company = company;
+            Alert = alert;
+            DoctorName = doctorName;
+            SeenByDoctor = seenByDoctor;
+            Store = store;
+            PrescriptionDetails = prescriptionDetails;
+        }
+
         public string Facility { get; set; }
         public int? PescriptionNo { get; set; }
         public DateTime? PrescriptionDate { get; set; }

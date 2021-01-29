@@ -38,7 +38,7 @@ namespace medicloud.emr.api.Entities
             //public virtual OrderPriority Orderpriority { get; set; }
             public virtual Patient Patient { get; set; }
             public virtual AccountManager Provider { get; set; }
-        public virtual List<ConsultationPrescriptionDetails> ConsultationPrescriptionDetails { get; set; }
+        public virtual ICollection<ConsultationPrescriptionDetails> ConsultationPrescriptionDetails { get; set; }
     }
     }
 

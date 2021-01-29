@@ -19,5 +19,6 @@ namespace medicloud.emr.api.Entities
         public DateTime? lastchangedate { get; set; }
         public DateTime? encodeddate { get; set; }
 
+        
     }
 }

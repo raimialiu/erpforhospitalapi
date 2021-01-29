@@ -30,20 +30,26 @@ namespace medicloud.emr.api.Controllers
         [HttpGet, Route("GetPrescriptionList")]
         public async Task<IActionResult> GetPrescriptionList()
         {
-            var list = await _context.ConsultationPrescription.ToListAsync();
-            return Ok(list);
-            //var prescriptionList = await  _pharmacyManagementRepository.getPrescriptionsList();
+
+
+            //var prescriptionList = await _pharmacyManagementRepository.getPrescriptionsList();
             //return Ok(prescriptionList);
 
-            //try
-            //{
-            //    var prescriptionList = await _pharmacyManagementRepository.getPrescriptionsList();
-            //    return Ok(prescriptionList);
-            //}
-            //catch (Exception ex)
-            //{
-            //    return BadRequest();
-            //}
+            //var prescriptionList = await _pharmacyManagementRepository.getPrescriptionsList();
+            //return Ok(prescriptionList);
+
+
+            try
+            {
+                var prescriptionList = await _pharmacyManagementRepository.getPrescriptionsList();
+                return Ok(prescriptionList);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                return BadRequest();
+            }
         }
     }
 }

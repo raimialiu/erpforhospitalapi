@@ -3100,7 +3100,16 @@ namespace medicloud.emr.api.Data
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Unitid).HasColumnName("unitid");
+                entity.HasOne(e => e.DrugGeneric)
+                   .WithMany(dg => dg.ConsultationPrescriptionDetails)
+                   .HasForeignKey(e => e.Genericid)
+                   .HasConstraintName("FK_Consultation_PrescriptionDetailsDrugGeneric");
+
+                entity.HasOne(e => e.ConsultationPrescription)
+                    .WithMany(pd=> pd.ConsultationPrescriptionDetails)
+                    .HasForeignKey(e=> e.Prescriptionid)
+                    .HasConstraintName("FK_Consultation_PrescriptionDetailsConsultation_Prescription");
+
             });
 
             modelBuilder.Entity<ConsultationProblem>(entity =>

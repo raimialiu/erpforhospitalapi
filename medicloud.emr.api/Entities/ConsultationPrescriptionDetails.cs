@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace medicloud.emr.api.Entities
 {
-    //[Table("Consultation_PrescriptionDetails")]
- 
+    [Table("Consultation_PrescriptionDetails")]
+
     public partial class ConsultationPrescriptionDetails
     {
         public int Id { get; set; }
@@ -31,7 +31,7 @@ namespace medicloud.emr.api.Entities
         public int? Locationid { get; set; }
         public int? ProviderId { get; set; }
         public string Patientid { get; set; }
-        public int? Genericid { get; set; }
+        public int Genericid { get; set; }
         public string Strength { get; set; }
         public DateTime? Startdate { get; set; }
         public int? Refill { get; set; }
@@ -49,6 +49,9 @@ namespace medicloud.emr.api.Entities
         public int? Doctorid { get; set; }
         public int? Dosetime { get; set; }
         public string Preauthorizationno { get; set; }
+
+        public virtual ConsultationPrescription ConsultationPrescription { get; set; }
+        public virtual DrugGeneric DrugGeneric { get; set; }
     }
 }
 
