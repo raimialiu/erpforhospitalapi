@@ -264,7 +264,9 @@ namespace medicloud.emr.api.Controllers
         [HttpGet, Route("GetPrescriptionFavouritesByDoctorid")]
         public async Task<IActionResult> GetPrescriptionFavouritesByDoctorid([FromQuery] long doctorid)
         {
-            return Ok(await _ctx.consultationPrescriptionFavorites.Where(x => x.DoctorId.Value == doctorid).ToListAsync());
+            var result = await _ctx.consultationPrescriptionFavorites.Include(x => x.drug).Where(x => x.DoctorId == doctorid).ToListAsync();
+            //return Ok(await _ctx.consultationPrescriptionFavorites.FromSqlRaw($"select * from consultation_prescription_favorites a join drug b on a.brandid = b.id where a.doctorid= {doctorid}").ToListAsync());
+            return Ok(result);
         }
 
         [HttpGet, Route("GetPrescriptionByDoctorid")]

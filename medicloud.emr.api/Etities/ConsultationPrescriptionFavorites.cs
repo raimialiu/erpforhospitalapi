@@ -1,4 +1,5 @@
-﻿using System;
+﻿using medicloud.emr.api.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,5 +20,8 @@ namespace medicloud.emr.api.Etities
         public int? EncounterId { get; set; }
         public string Patientid { get; set; }
         public int? brandid { get; set; }
+
+        [ForeignKey("brandid")]
+        public Drug drug { get; set; }
     }
 }
