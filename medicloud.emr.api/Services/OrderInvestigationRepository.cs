@@ -22,9 +22,11 @@ namespace medicloud.emr.api.Services
     public class OrderInvestigationRepository : IOrderInvestigationRepository
     {
         private readonly DataContext _context;
-        public OrderInvestigationRepository(DataContext context)
+        private readonly IBillingRepository _billingRepository;
+        public OrderInvestigationRepository(DataContext context, IBillingRepository billingRepository)
         {
             _context = context;
+            _billingRepository = billingRepository;
         }
 
 
@@ -35,6 +37,10 @@ namespace medicloud.emr.api.Services
             model.consultationOrder.ordercategoryid = null;
             var conOrder = await _context.ConsultationOrders.AddAsync(model.consultationOrder);
             await _context.SaveChangesAsync();
+
+            // add bill
+
+            List<int> insertedBillId = new List<int>();
 
             foreach (var item in model.consultationOrderDetails)
             {
@@ -47,6 +53,30 @@ namespace medicloud.emr.api.Services
 
             await _context.ConsultationOrderDetails.AddRangeAsync(model.consultationOrderDetails);
             await _context.SaveChangesAsync();
+
+            foreach (var item in model.consultationOrderDetails)
+            {
+                BillingInvoice billingInvoice = new BillingInvoice()
+                {
+                    patientid = model.consultationOrder.Patientid,
+                    encounterId = model.consultationOrder.EncounterId,
+                    servicecode = item.serviceId.ToString(),
+                    unit = (int?)int.Parse(item.unit),
+                    locationid = model.consultationOrder.Locationid,
+                    ProviderID = model.consultationOrder.ProviderId,
+
+                };
+                try
+                {
+                    var inserted = await _billingRepository.AddBillInvoice(billingInvoice);
+                    insertedBillId.Add(inserted);
+                }
+                catch
+                {
+                    /// delete all inserted billing_Invoice
+                }
+                
+            }
         }
 
 
