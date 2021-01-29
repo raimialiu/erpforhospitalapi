@@ -5,11 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace medicloud.emr.api.Entities
 {
-    [Table("Consultation_PrescriptionDetails")]
+    //[Table("Consultation_PrescriptionDetails")]
+ 
     public partial class ConsultationPrescriptionDetails
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int? EncounterId { get; set; }
         public int? Frequencyid { get; set; }
@@ -38,18 +37,18 @@ namespace medicloud.emr.api.Entities
         public int? Refill { get; set; }
         public int? Statusid { get; set; }
         public int? Lastchangeby { get; set; }
-        public DateTime? Lastchangedate { get; set; }        
+        public DateTime? Lastchangedate { get; set; }
         public int? Prescriptionid { get; set; }
         public int? Qty { get; set; }
         public string PrescriptionDetail { get; set; }
-        public int? Strengthvalue { get; set; }
+        public string Strengthvalue { get; set; }
         public int? Dose { get; set; }
-        public TimeSpan? Dosetime { get; set; }
         public int? Durationtype { get; set; }
         public string Medicationinstructions { get; set; }
-        public int? doctorid { get; set; }
-        public virtual DrugGeneric DrugGeneric { get; set; }
-        //public virtual StatusMaster Status { get; set; }
-
+        public int? Formularyid { get; set; }
+        public int? Doctorid { get; set; }
+        public int? Dosetime { get; set; }
+        public string Preauthorizationno { get; set; }
     }
 }
+
