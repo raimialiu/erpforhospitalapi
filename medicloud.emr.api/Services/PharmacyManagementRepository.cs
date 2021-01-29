@@ -51,9 +51,9 @@ namespace medicloud.emr.api.Services
 
         public async Task<List<PharmacyManagementDTO>> getPrescriptionsList()
         {
-            var details = new List<PharmacyManagementPrescriptionDetails>();
+            var details = new List<PharmacyManagementPrescriptionDetailsDTO>();
             details.Add(
-               new PharmacyManagementPrescriptionDetails
+               new PharmacyManagementPrescriptionDetailsDTO
                {
                    DrugName = "drugname",
                    PrescriptionDetail = "detail",
