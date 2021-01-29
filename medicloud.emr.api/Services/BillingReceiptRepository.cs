@@ -7,5 +7,11 @@ namespace medicloud.emr.api.Services
 {
     public class BillingReceiptRepository
     {
+        public BillingReceiptRepository()
+        {
+
+        }
+
+
     }
 }

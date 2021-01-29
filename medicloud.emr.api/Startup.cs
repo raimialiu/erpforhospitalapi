@@ -65,16 +65,10 @@ namespace medicloud.emr.api
                 options.AddPolicy(corsPolicy,
                                   builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
-                                                    //.WithOrigins(new[] { "http://localhost:4200", "http://test.medicloud.ng/lagoonhis", "http://localhost:58213",
-                                                    //                                      "https://hnlhisdev.azurewebsites.net",
-                                                    //                                      "http://localhost", "http://test.medicloud.ng/lagoonhisdev" })
-                                                    //.AllowAnyMethod().AllowAnyHeader()) ; ;
-                // new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" }
+                                                 
             });
 
-            //swaggerSettings = new SwaggerSettings();
-
-            //Configuration.Bind(nameof(SwaggerSettings), swaggerSettings);
+          
 
             services.AddSwaggerGen(c =>
             {
