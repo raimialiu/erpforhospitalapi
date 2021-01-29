@@ -39,7 +39,37 @@ namespace medicloud.emr.api.Controllers
       }
 
     }
-
+    [HttpGet("GetPatientDiagnosisSoapHistory")]
+    public async Task<IActionResult> getPatientDiagnosisSoapHistory(string patientid)
+    {
+      try
+      {
+        var soapDiagnosisHistory = await _DiagnosisSoapRepository.getDiagnosisSoapHistory(patientid);
+        //var status = true;
+        return Ok(soapDiagnosisHistory);
+      }
+      catch (Exception ex)
+      {
+        var status = false;
+        return BadRequest(status);
+      }
+    }
+    [HttpGet("GetFilterSoapHistory")]
+    public async Task<IActionResult> filterSoapHistory(string patientid, DateTime startDate, DateTime endDate)
+    {
+      
+      try
+      {
+        var filterSoapHistory = await _DiagnosisSoapRepository.filterSoapHistory(patientid, startDate, endDate);
+        //var status = true;
+        return Ok(filterSoapHistory);
+      }
+      catch (Exception ex)
+      {
+        var status = false;
+        return BadRequest(status);
+      }
+    }
     [HttpPost("CreateDiagnosisSoap")]
     public async Task<IActionResult> CreateDiagnosisSoap(DiagnosisSoap model)
     {

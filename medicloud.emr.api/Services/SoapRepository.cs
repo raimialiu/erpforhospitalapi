@@ -10,6 +10,8 @@ namespace medicloud.emr.api.Services
    public interface ISoapRepository
   {
     Task<List<DiagnosisSoap>> getDiagnosisSoap(string patientid, int ecounterid);
+    Task<List<DiagnosisSoap>> getDiagnosisSoapHistory(string patientid);
+    Task<List<DiagnosisSoap>> filterSoapHistory(string patientid, DateTime startDate, DateTime endDate);
     Task AddDiagnosisSoap(DiagnosisSoap model);
     Task RemoveFromDiagnosisSoap(string patientId, int encounterId);
     Task UpdateDiagnosisSoap(string patientId, int encounterId, string subjective, string objective, string assessment, string plans);
@@ -28,6 +30,14 @@ namespace medicloud.emr.api.Services
       model.Dateadded = DateTime.Now;
       var result = _context.DiagnosisSoap.Add(model);
       await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<DiagnosisSoap>> getDiagnosisSoapHistory(string patientid)
+    {
+      var result = await _context.DiagnosisSoap.Where(c => c.Patientid == patientid)
+                     .OrderByDescending(c => c.Dateadded)
+                    .ToListAsync();
+      return result;
     }
 
     public async Task<List<DiagnosisSoap>> getDiagnosisSoap(string patientid, int ecounterid)
@@ -62,5 +72,14 @@ namespace medicloud.emr.api.Services
         _context.Update(diagnosisSoap);
         await _context.SaveChangesAsync();
       }
+    public async Task<List<DiagnosisSoap>> filterSoapHistory(string patientid, DateTime startDate, DateTime endDate)
+    {
+     
+      var result = await _context.DiagnosisSoap.Where(c => c.Patientid == patientid && c.Dateadded.Value.Date >= startDate.Date && c.Dateadded.Value.Date <= endDate)
+                         .OrderByDescending(c => c.Dateadded)
+                   .ToListAsync();
+
+      return result;
     }
+  }
 }
