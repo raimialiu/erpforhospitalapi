@@ -38,7 +38,7 @@ namespace medicloud.emr.api.Entities
         public int? Refill { get; set; }
         public int? Statusid { get; set; }
         public int? Lastchangeby { get; set; }
-        public DateTime? Lastchangedate { get; set; }
+        public DateTime? Lastchangedate { get; set; }        
         public int? Prescriptionid { get; set; }
         public int? Qty { get; set; }
         public string PrescriptionDetail { get; set; }
@@ -48,5 +48,8 @@ namespace medicloud.emr.api.Entities
         public int? Durationtype { get; set; }
         public string Medicationinstructions { get; set; }
         public int? doctorid { get; set; }
+        public virtual DrugGeneric DrugGeneric { get; set; }
+        //public virtual StatusMaster Status { get; set; }
+
     }
 }

@@ -129,6 +129,7 @@ namespace medicloud.emr.api
             services.AddScoped<IOrderInvestigationRepository, OrderInvestigationRepository>();
             services.AddScoped<IBillingRepository, BillingRepository>();
             services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+            //services.AddScoped<IPharmacyManagementRepository, PharmacyManagementRepository>();
 
             services.AddScoped<ISoapRepository, SoapRepository>();
             services.AddScoped<IVitalSignsRepository, VitalSignsRepository>();
@@ -138,6 +139,7 @@ namespace medicloud.emr.api
                         options.UseSqlServer(Configuration.GetConnectionString(connectionString), sqlServerOptionsAction: action=>
                         {
                             action.EnableRetryOnFailure();
+                            action.CommandTimeout(300);
                         }));
         }
 
