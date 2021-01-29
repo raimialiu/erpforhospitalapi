@@ -10,6 +10,7 @@ namespace medicloud.emr.api.Services
   public interface IVitalSignsRepository
   {
     Task<List<ConsultationVitals>> getConsultationVitals(string patientid, int ecounterid);
+    Task<List<ConsultationVitals>> getConsultationVitalsHistory(string patientid);
     Task AddConsultationVitals(ConsultationVitals model);
     Task RemoveFromConsultationVitals(string patientId, int encounterId, int Id);
     Task UpdateVitalSigns(ConsultationVitals model);
@@ -26,6 +27,7 @@ namespace medicloud.emr.api.Services
 
     public async Task AddConsultationVitals(ConsultationVitals model)
     {
+      model.Vitalentrydate = DateTime.Now;
       model.Encodeddate = DateTime.Now;
       var result = _context.ConsultationVitals.Add(model);
       await _context.SaveChangesAsync();
@@ -34,6 +36,15 @@ namespace medicloud.emr.api.Services
     public async Task<List<ConsultationVitals>> getConsultationVitals(string patientid, int encounterid)
     {
       var result = await _context.ConsultationVitals.Where(c => c.Patientid == patientid && c.EncounterId == encounterid)
+                  .ToListAsync();
+
+      return result;
+    }
+
+    public async Task<List<ConsultationVitals>> getConsultationVitalsHistory(string patientid)
+    {
+      var result = await _context.ConsultationVitals.Where(c => c.Patientid == patientid)
+                  .OrderByDescending(s => s.Encodeddate)
                   .ToListAsync();
 
       return result;
