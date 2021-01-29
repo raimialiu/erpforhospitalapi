@@ -172,6 +172,16 @@ namespace medicloud.emr.api.Controllers
         {
             return Ok(await _ctx.ApplicationUser.ToListAsync());
         }
+
+        [Route("SavePescription")]
+        [HttpPost]
+        public async Task<IActionResult> SavePescription([FromBody] ConsultationPrescriptionDetails dto)
+        {
+            //dto. = DateTime.Now;
+            _ctx.ConsultationPrescriptionDetails.Add(dto);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
+
         [Route("DeleteImmunizationDetails/{id}")]
         [HttpDelete]
         public async Task<IActionResult> DeleteImmunizationDetails([FromRoute] long id)
