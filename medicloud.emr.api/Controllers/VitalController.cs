@@ -157,10 +157,11 @@ namespace medicloud.emr.api.Controllers
         [HttpGet]
         public async Task<IActionResult> ConsultationComplainByDateRange([FromQuery]string startDate, [FromQuery]string endDate)
         {
-            string _start = DateTime.Parse(startDate).ToString("mm-dd-yyyy");
-            string  _end = DateTime.Parse(endDate).ToString("mm-dd-yyyy");
+            //string _start = DateTime.Parse(startDate).ToString("mm-dd-yyyy");
+            //string  _end = DateTime.Parse(endDate).ToString("mm-dd-yyyy");
             //var complaints = await _ctx.ConsultationComplaints.Where(x => x.Dateadded.Value == _start && x.Dateadded.Value <= _end).ToListAsync();
-            var complaints = await _ctx.ConsultationComplaints.FromSqlRaw($"select * from consultation_complaints where dateadded between '{startDate}' and '{endDate}'").ToListAsync();
+            // var complaints = await _ctx.ConsultationComplaints.FromSqlRaw($"select * from consultation_complaints where dateadded between '{startDate}' and '{endDate}'").ToListAsync();
+            var complaints = await _ctx.ConsultationComplaints.FromSqlRaw($"select top 10 * from consultation_complaints where ( cast(dateadded as date) between cast('{startDate}' as date) and cast('{endDate}' as date) OR  cast(dateadded as date) >= cast('{startDate}' as date) and  cast(dateadded as date) <= cast('{endDate}' as date))").ToListAsync();
             // select * from consultation_complaints where dateadded between
 
             return Ok(complaints);
