@@ -25,7 +25,7 @@ namespace medicloud.emr.api.Services
         Task<(decimal, int)> GetBillingInvoiceOutstanding(int billId, int accountId, decimal billAmount);
         Task<(bool, string, decimal?)> getTarrifByServiceCode(int accountId, int tariffid, int servicecode, int locationId);
         Task AddConsulttionAndRegBillInvoice(BillingInvoice billingInvoice);
-        Task<int> AddBillInvoice(BillingInvoice billingInvoice);
+        Task<(bool, string, int?)> AddBillInvoice(BillingInvoice billingInvoice);
         Task ClearPatientEncounterBill(int accountId, int encounterId, string patientId, decimal amountPaid, int locationid);
         Task<(bool, string, decimal?)> getPatientDrugTarriff(int accountId, string patientId, int drugid, int locationId);
         Task<(bool, string, decimal?)> getDrugTarrifByDrugId(int accountId, int tariffid, int drugid, int locationId);
@@ -175,39 +175,39 @@ namespace medicloud.emr.api.Services
 
             if (int.Parse(patient.Plantype) == 32 || int.Parse(patient.Plantype) == 430)
             {
-                var tariffServiceCode = await (from r in _context.TariffServiceCode
-                                               join s in _context.ServiceCode on r.serviceid equals s.serviceid
-                                               where s.servicename.Contains("Registration") && r.tariffid == 38
-                                               select new
-                                               {
-                                                   r.tariffamount,
-                                                   r.premiumtariffamount,
-                                                   serviceName = s.servicename,
-                                                   s.serviceid,
-                                                   r.tariffid
-                                               }).ToListAsync();
+                //var tariffServiceCode = await (from r in _context.TariffServiceCode
+                //                               join s in _context.ServiceCode on r.serviceid equals s.serviceid
+                //                               where s.servicename.Contains("Registration") && r.tariffid == 38
+                //                               select new
+                //                               {
+                //                                   r.tariffamount,
+                //                                   r.premiumtariffamount,
+                //                                   serviceName = s.servicename,
+                //                                   s.serviceid,
+                //                                   r.tariffid
+                //                               }).ToListAsync();
 
-                var registration = tariffServiceCode.Where(e => e.serviceid == 3209).FirstOrDefault();
-                //var registrationTariff = await getPatientTarrifByPayor((int)billingInvoice.ProviderID, billingInvoice.patientid, 3209, (int)billingInvoice.locationid);
+                //var registration = tariffServiceCode.Where(e => e.serviceid == 3209).FirstOrDefault();
+                var registrationTariff = await getPatientTarrifByPayor((int)billingInvoice.ProviderID, billingInvoice.patientid, 3209, (int)billingInvoice.locationid);
 
                 var location = await _context.Location.Where(l => l.Locationid == billingInvoice.locationid && l.AccountID == billingInvoice.ProviderID).FirstOrDefaultAsync();
 
                 if (location.ispremium)
                 {
-                    billingInvoice.billamount = registration.premiumtariffamount;
-                    billingInvoice.amounttopay = registration.premiumtariffamount;
+                    billingInvoice.billamount = registrationTariff.Item3;
+                    billingInvoice.amounttopay = registrationTariff.Item3;
                 }
                 else
                 {
-                    billingInvoice.billamount = registration.tariffamount;
-                    billingInvoice.amounttopay = registration.tariffamount;
+                    billingInvoice.billamount = registrationTariff.Item3;
+                    billingInvoice.amounttopay = registrationTariff.Item3;
                 }
 
                 //billingInvoice.billamount = registrationTariff.Item3;
                 //billingInvoice.amounttopay = registrationTariff.Item3;
 
 
-                billingInvoice.plantypeid = int.Parse(patient.Plantype);
+                billingInvoice.plantypeid = null;// int.Parse(patient.Plantype);
                 billingInvoice.tariffid = 38;
                 billingInvoice.servicecode = 3209.ToString();
                 billingInvoice.unit = 1;
@@ -270,7 +270,7 @@ namespace medicloud.emr.api.Services
                 //billingInvoice.billamount = registrationTariff.Item3;
                 //billingInvoice.amounttopay = registrationTariff.Item3;
 
-                billingInvoice.plantypeid = int.Parse(patient.Plantype);
+                billingInvoice.plantypeid = null;// int.Parse(patient.Plantype);
                 billingInvoice.tariffid = 38;
                 billingInvoice.servicecode = 137.ToString();
                 billingInvoice.unit = 1;
@@ -297,7 +297,7 @@ namespace medicloud.emr.api.Services
         
         public async Task AddConsulttionAndRegBillInvoice(BillingInvoice billingInvoice)
         {
-            var encounterCheck = _checkInRepository.GetPatientLatestEncounter(billingInvoice.patientid, (int)billingInvoice.ProviderID);
+            var encounterCheck = await _checkInRepository.GetPatientLatestEncounter(billingInvoice.patientid, (int)billingInvoice.ProviderID);
 
             if (encounterCheck == null)
             {
@@ -309,7 +309,8 @@ namespace medicloud.emr.api.Services
                     IsCheckedIn = false,
                     IsCheckedOut = false,
                     Locationid = (int)billingInvoice.locationid,
-                    Patientid = billingInvoice.patientid
+                    Patientid = billingInvoice.patientid,
+                    IsActive = false
                 };
 
                 var _checkIn = await _context.AddAsync(checkIn);
@@ -317,32 +318,70 @@ namespace medicloud.emr.api.Services
 
                 billingInvoice.encounterId = _checkIn.Entity.Encounterid;
             }
+            else
+            {
+                billingInvoice.encounterId = encounterCheck.EncounterId;
+            }
 
+            
             billingInvoice.dateadded = DateTime.Now;
             
             _context.BillingInvoice.Add(billingInvoice);
             await _context.SaveChangesAsync();
         }
         
-        public async Task<int> AddBillInvoice(BillingInvoice billingInvoice)
+        public async Task<(bool, string, int?)> AddBillInvoice(BillingInvoice billingInvoice)
         {
             if(billingInvoice.encounterId == null || billingInvoice.encounterId <= 0)
             {
-                throw new Exception("Please pass in encounterid");
+                var currentEncounter = await _checkInRepository.GetPatientLatestEncounter(billingInvoice.patientid, (int)billingInvoice.ProviderID);
+
+                if (currentEncounter == null)
+                {
+                    CheckIn checkIn = new CheckIn
+                    {
+                        ProviderId = (int)billingInvoice.ProviderID,
+                        CheckInDate = DateTime.Now,
+                        CheckOutDate = null,
+                        IsCheckedIn = false,
+                        IsCheckedOut = false,
+                        Locationid = (int)billingInvoice.locationid,
+                        Patientid = billingInvoice.patientid,
+                        IsActive = false
+                    };
+
+                    var _checkIn = await _context.AddAsync(checkIn);
+                    //await _context.SaveChangesAsync();
+
+                    billingInvoice.encounterId = _checkIn.Entity.Encounterid;
+                }
+                else
+                {
+                    billingInvoice.encounterId = currentEncounter.EncounterId;
+                }
+
+                return (false, "Please pass in encounterid", null);
             }
 
             var patient = await _context.Patient.Where(p => p.Patientid == billingInvoice.patientid && p.ProviderId == billingInvoice.ProviderID).FirstOrDefaultAsync();
 
             var tariffplan = await _context.TarriffPlan.Where(t => t.planid == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
+            var plan = await _context.Plan.Where(t => t.Id == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
 
             var invoiceamount = await getTarrifByServiceCode((int)billingInvoice.ProviderID, (int)tariffplan.tariffid, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
+
+            if (!invoiceamount.Item1)
+            {
+                return (false, "tariff not found for this service requested", null);
+            }
 
             if(billingInvoice.unit == null || billingInvoice.unit == 0)
             {
                 billingInvoice.unit = 1;
             }
+
             billingInvoice.dateadded = DateTime.Now;
-            billingInvoice.plantypeid = null;//tariffplan != null ? tariffplan.planid : null;
+            billingInvoice.plantypeid = //plan != null ? (int?)plan.Id : null;
             billingInvoice.payortypeid = !string.IsNullOrEmpty(patient.Payor) ? (int?)int.Parse(patient.Payor) : null;
             billingInvoice.tariffid = tariffplan != null ? tariffplan.tariffid : null;
             billingInvoice.billamount = invoiceamount.Item3 * billingInvoice.unit;
@@ -351,7 +390,7 @@ namespace medicloud.emr.api.Services
             
             var billId = _context.BillingInvoice.Add(billingInvoice);
             await _context.SaveChangesAsync();
-            return billId.Entity.billid;
+            return (true, "success", billId.Entity.billid);
         }
 
 

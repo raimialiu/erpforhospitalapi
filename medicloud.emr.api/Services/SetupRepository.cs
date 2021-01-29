@@ -37,7 +37,7 @@ namespace medicloud.emr.api.Services
 
         public async Task<List<OrderType>> GetOrderTypeList(int accountId)
         {
-            var ordertypes = await _context.OrderType.Where(o => o.ProviderID == accountId).OrderBy(p => p.Ordername).ToListAsync();
+            var ordertypes = await _context.OrderType.Where(o => o.ProviderID == accountId && o.Ordertypeid == 2 || o.Ordertypeid == 7).OrderBy(p => p.Ordername).ToListAsync();
             return ordertypes;
         }
         
