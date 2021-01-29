@@ -18,6 +18,7 @@ namespace medicloud.emr.api.Entities
         public virtual Location Location { get; set; }
         public bool IsCheckedIn { get; set; }
         public bool IsCheckedOut { get; set; }
+        public bool IsActive { get; set; }
         public DateTime CheckInDate { get; set; }
         public DateTime? CheckOutDate { get; set; }
     }

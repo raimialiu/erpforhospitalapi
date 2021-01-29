@@ -5709,7 +5709,7 @@ namespace medicloud.emr.api.Data
 
             modelBuilder.Entity<Plan>(entity =>
             {
-                entity.ToTable("plan");
+                entity.ToTable("plans");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
@@ -6647,6 +6647,10 @@ namespace medicloud.emr.api.Data
                 
                 entity.Property(e => e.IsCheckedOut)
                     .HasColumnName("ischeckedout")
+                    .HasColumnType("bit");
+                
+                entity.Property(e => e.IsActive)
+                    .HasColumnName("IsActive")
                     .HasColumnType("bit");
 
             });
