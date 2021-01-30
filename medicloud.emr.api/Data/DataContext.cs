@@ -78,7 +78,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ConsultationProcedure> ConsultationProcedure { get; set; }
         public virtual DbSet<ConsultationRadiology> ConsultationRadiology { get; set; }
         public virtual DbSet<ConsultationUtilization> ConsultationUtilization { get; set; }
-        //public virtual DbSet<StatusMaster> StatusMaster { get; set; }
+        public virtual DbSet<StatusMaster> StatusMaster { get; set; }
 
         public virtual DbSet<Country> Country { get; set; }
         public virtual DbSet<Cptcategory> Cptcategory { get; set; }
@@ -3109,7 +3109,17 @@ namespace medicloud.emr.api.Data
                     .WithMany(pd=> pd.ConsultationPrescriptionDetails)
                     .HasForeignKey(e=> e.Prescriptionid)
                     .HasConstraintName("FK_Consultation_PrescriptionDetailsConsultation_Prescription");
+                entity.HasOne(e => e.Status)
+                    .WithMany(s => s.ConsultationPrescriptionDetails)
+                    .HasForeignKey(e => e.Statusid)
+                    .HasConstraintName("FK_Consultation_PrescriptionDetailsStatusMaster");
 
+            });
+
+            modelBuilder.Entity<StatusMaster>(entity =>
+            {
+                entity.HasKey(e => e.Statusid);
+                entity.ToTable("StatusMaster");
             });
 
             modelBuilder.Entity<ConsultationProblem>(entity =>

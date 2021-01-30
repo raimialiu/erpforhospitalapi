@@ -52,6 +52,10 @@ namespace medicloud.emr.api.Entities
 
         public virtual ConsultationPrescription ConsultationPrescription { get; set; }
         public virtual DrugGeneric DrugGeneric { get; set; }
+
+        public virtual StatusMaster Status { get; set; }
+
+
     }
 }
 
