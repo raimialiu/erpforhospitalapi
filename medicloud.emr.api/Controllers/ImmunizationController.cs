@@ -32,8 +32,8 @@ namespace medicloud.emr.api.Controllers
         [HttpGet]
         public async Task<IActionResult> AllImunizationSchedule()
         {
-           //var all =await _conn.QueryAsync("select * from Immunization_Schedule a join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid");
-          var all = await _conn.QueryAsync("select a.*, b.immunizationname, b.isactive,b.cptcode, b.encodeddate, c.duedate, c.givendatetime, c.remarks, c.batchno, c.brandid, c.givenby from Immunization_Schedule a join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid join immunization_details c on a.scheduleid = c.scheduleid");
+           var all =await _conn.QueryAsync("select * from Immunization_Schedule a join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid");
+         // var all = await _conn.QueryAsync("select a.*, b.immunizationname, b.isactive,b.cptcode, b.encodeddate, c.duedate, c.givendatetime, c.remarks, c.batchno, c.brandid, c.givenby from Immunization_Schedule a join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid join immunization_details c on a.scheduleid = c.scheduleid");
 
             return Ok(all);
         }
