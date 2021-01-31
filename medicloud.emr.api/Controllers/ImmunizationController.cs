@@ -170,7 +170,7 @@ namespace medicloud.emr.api.Controllers
         [HttpGet]
         public async Task<IActionResult> AllNurse()
         {
-            return Ok(await _ctx.ApplicationUser.ToListAsync());
+            return Ok(await _ctx.ApplicationUser.Where(x=>x.departmentid.Value ==12).ToListAsync());
         }
 
         [Route("SavePescription")]
