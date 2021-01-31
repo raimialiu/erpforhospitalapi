@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace medicloud.emr.api.Controllers
 {
+    [BindProperties]
     public class PrescriptionListFilterModel : QueryListParameters
     {
-        public string Facility { get; set; }
-        public DateTime Date { get; set; }
-        public int VisitType { get; set; }
-        public int StatusId { get; set; } 
+        public int LocationId { get; set; }
+        public DateTime Date { get; set; }= new DateTime(1753, 1, 1);
+        //public int VisitType { get; set; }        
         public int ProviderId { get; set; }
     }
 
@@ -37,13 +37,13 @@ namespace medicloud.emr.api.Controllers
 
 
         [HttpGet, Route("GetPrescriptionList")]
-        public async Task<IActionResult> GetPrescriptionList([FromQuery] PrescriptionListParameters prescriptionListParameters)
+        public async Task<IActionResult> GetPrescriptionList([FromQuery] PrescriptionListFilterModel prescriptionListFilterModel)
         {
             try
             {
-                //var prescriptionList = await _pharmacyManagementRepository.getPrescriptionsList();
+               
                 var count = _context.ConsultationPrescription.Count();
-                var prescriptionList = new PagedList<PharmacyManagementDTO>(await _pharmacyManagementRepository.getPrescriptionsList(prescriptionListParameters), count, prescriptionListParameters.PageNumber, prescriptionListParameters.PageSize);
+                var prescriptionList = new PagedList<PharmacyManagementDTO>(await _pharmacyManagementRepository.getConsultationPrescriptionsList(prescriptionListFilterModel), count, prescriptionListFilterModel.PageNumber, prescriptionListFilterModel.PageSize);
                 var metadata = new
                 {
                     prescriptionList.TotalCount,
@@ -70,7 +70,7 @@ namespace medicloud.emr.api.Controllers
         {
             try
             {
-                var prescriptionList = await _pharmacyManagementRepository.getPrescriptionByPrescriptionId(prescriptionid);
+                var prescriptionList = await _pharmacyManagementRepository.getConsultationPrescriptionByPrescriptionId(prescriptionid);
                 return Ok(prescriptionList);
             }
             catch (Exception ex)
@@ -81,28 +81,7 @@ namespace medicloud.emr.api.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("GetPatientPrescriptionList/{patientid}")]
-        public async Task<IActionResult> GetPrescriptionList(int patientid)
-        {
-
-            
-                try
-                {
-
-                var patientPrescriptionList = await _pharmacyManagementRepository.getPatientPrescriptionsList(patientid.ToString());
-                //var patientPrescriptionList = await _pharmacyManagementRepository.getPatientPrescriptionsListAll(patientid.ToString());
-                return Ok(patientPrescriptionList);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine(ex.StackTrace);
-                    return BadRequest();
-                }
-            
-           
-        }
+        
 
         [HttpGet]
         [Route("GetPrescriptionDetailsList")]
@@ -134,7 +113,7 @@ namespace medicloud.emr.api.Controllers
                 try {
                     //if (_pharmacyManagementRepository.ConsultationPrescriptionExists(prescriptionid))
                     //{
-                        await _pharmacyManagementRepository.removePrescriptionDetailsItem(prescriptionid);
+                        await _pharmacyManagementRepository.removeConsultationPrescriptionDetailsItem(prescriptionid);
                         return NoContent();
                     //}
                     //else return BadRequest("invalid prescriptionid");

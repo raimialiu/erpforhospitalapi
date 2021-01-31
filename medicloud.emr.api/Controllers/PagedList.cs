@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace medicloud.emr.api.Controllers
 {
+    //this class is used to enable pagination with metadata
     public class PagedList<T> : List<T>
     {
         public int CurrentPage { get; private set; }
