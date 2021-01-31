@@ -11,7 +11,7 @@ namespace medicloud.emr.api.Services
 {
     public interface IOrderInvestigationRepository
     {
-        Task AddConsultationOrder(AddConsultationOrderDto model);
+        Task<(bool, string)> AddConsultationOrder(AddConsultationOrderDto model);
         Task AddConsultationOrderFavourites(ConsultationOrderFavorites model);
         Task DeleteConsultationOrder(int accountId, int consultationOrderId);
         Task<List<ConsultationOrderFavouriteDto>> GetConsultationOrdersFavourites(int accountId, int doctorId, string searchword);
@@ -30,61 +30,98 @@ namespace medicloud.emr.api.Services
         }
 
 
-        public async Task AddConsultationOrder(AddConsultationOrderDto model)
+        public async Task<(bool, string)> AddConsultationOrder(AddConsultationOrderDto model)
         {
             // add bill
             List<int> insertedBillId = new List<int>();
+            int orderId = 0;
 
-            foreach (var item in model.consultationOrderDetails)
+            try
             {
-                BillingInvoice billingInvoice = new BillingInvoice()
+                foreach (var item in model.consultationOrderDetails)
                 {
-                    patientid = model.consultationOrder.Patientid,
-                    encounterId = model.consultationOrder.EncounterId,
-                    servicecode = item.serviceId.ToString(),
-                    unit = (int?)int.Parse(item.unit),
-                    locationid = model.consultationOrder.Locationid,
-                    ProviderID = model.consultationOrder.ProviderId,
-
-                };
-                try
-                {
-                    var inserted = await _billingRepository.AddBillInvoice(billingInvoice);
-                    if(!inserted.Item1)
+                    BillingInvoice billingInvoice = new BillingInvoice()
                     {
-                        throw new Exception(inserted.Item2);
+                        patientid = model.consultationOrder.Patientid,
+                        encounterId = model.consultationOrder.EncounterId,
+                        servicecode = item.serviceId.ToString(),
+                        unit = (int?)int.Parse(item.unit),
+                        locationid = model.consultationOrder.Locationid,
+                        ProviderID = model.consultationOrder.ProviderId,
+                        diagnosisid = item.DiagnosisId
+
+
+                    };
+                    try
+                    {
+                        var inserted = await _billingRepository.AddBillInvoice(billingInvoice);
+                        if (!inserted.Item1)
+                        {
+                            return (inserted.Item1, inserted.Item2);
+                        }
+                        insertedBillId.Add((int)inserted.Item3);
+
+                        item.InvoiceId = inserted.Item3;
                     }
-                    insertedBillId.Add((int)inserted.Item3);
+                    catch (Exception ex)
+                    {
+                        foreach (var billid in insertedBillId)
+                        {
+                            var bill = await _context.BillingInvoice.Where(y => y.billid == billid).FirstOrDefaultAsync();
+                            _context.BillingInvoice.Remove(bill);
+                        }
+                        /// delete all inserted billing_Invoice
+                        throw new Exception(ex.Message);
+                    }
+
                 }
-                catch (Exception ex)
+
+                model.consultationOrder.EncodedDate = DateTime.Now;
+                model.consultationOrder.ordertypeid = null;
+                model.consultationOrder.ordercategoryid = null;
+                var conOrder = await _context.ConsultationOrders.AddAsync(model.consultationOrder);
+                await _context.SaveChangesAsync();
+                orderId = conOrder.Entity.Id;
+
+                foreach (var item in model.consultationOrderDetails)
                 {
-                    /// delete all inserted billing_Invoice
-                    throw new Exception(ex.Message);
+                    item.investigationdate = item.investigationdate != null ? item.investigationdate.Value.AddHours(1) : DateTime.Now;
+                    item.investigationdate = new DateTime(item.investigationdate.Value.Year, item.investigationdate.Value.Month, item.investigationdate.Value.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+
+                    item.investigationdate = item.investigationdate;
+                    item.investigationdate = new DateTime(item.investigationdate.Value.Year, item.investigationdate.Value.Month, item.investigationdate.Value.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+                    item.encounterid = model.consultationOrder.EncounterId;
+                    item.patientid = model.consultationOrder.Patientid;
+                    item.orderId = conOrder.Entity.Id;
+                    item.InvoiceId = insertedBillId[0];
+
+                    await _context.ConsultationOrderDetails.AddRangeAsync(item);
                 }
 
+                await _context.SaveChangesAsync();
+                return (true, "success!");
             }
-
-            model.consultationOrder.EncodedDate = DateTime.Now;
-            model.consultationOrder.ordertypeid = null;
-            model.consultationOrder.ordercategoryid = null;
-            var conOrder = await _context.ConsultationOrders.AddAsync(model.consultationOrder);
-            await _context.SaveChangesAsync();
-
-           
-
-            foreach (var item in model.consultationOrderDetails)
+            catch(Exception ex) 
             {
-                item.investigationdate = item.investigationdate.Value.AddHours(1);
-                item.investigationdate = new DateTime(item.investigationdate.Value.Year, item.investigationdate.Value.Month, item.investigationdate.Value.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-                item.encounterid = model.consultationOrder.EncounterId;
-                item.patientid = model.consultationOrder.Patientid;
-                item.orderId = conOrder.Entity.Id;
+                if (orderId > 0)
+                {
+                    var order = await _context.ConsultationOrders.Where(e => e.Id == orderId && e.ProviderId == model.consultationOrder.ProviderId).FirstOrDefaultAsync();
+                    _context.ConsultationOrders.Remove(order);
+                }
+
+                if (insertedBillId.Count() > 0)
+                {
+                    foreach (var billid in insertedBillId)
+                    {
+                        var bill = await _context.BillingInvoice.Where(y => y.billid == billid).FirstOrDefaultAsync();
+                        _context.BillingInvoice.Remove(bill);
+                    }
+                }
+
+                return (false, ex.Message);
+                
             }
 
-            await _context.ConsultationOrderDetails.AddRangeAsync(model.consultationOrderDetails);
-            await _context.SaveChangesAsync();
-
-           
         }
 
 

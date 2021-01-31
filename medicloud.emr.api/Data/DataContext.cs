@@ -747,6 +747,8 @@ namespace medicloud.emr.api.Data
                 entity.Property(e => e.ProviderID).HasColumnName("ProviderID");
                 entity.Property(e => e.locationid).HasColumnName("locationid");
                 entity.Property(e => e.dateadded).HasColumnName("dateadded");
+                entity.Property(e => e.diagnosisid).HasColumnName("diagnosisid");
+                entity.Property(e => e.ishmoclaim).HasColumnName("ishmoclaim");
             });
             
             modelBuilder.Entity<ConsultationOrderDetails>(entity =>
