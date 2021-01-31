@@ -47,7 +47,6 @@ namespace medicloud.emr.api.Services
 
       return result;
     }
-
     public async Task RemoveFromDiagnosisSoap(string patientId, int encounterId)
     {
       var result = await _context.DiagnosisSoap.Where(c => c.Patientid == patientId && c.Encounterid == encounterId).FirstOrDefaultAsync();
@@ -75,7 +74,7 @@ namespace medicloud.emr.api.Services
     public async Task<List<DiagnosisSoap>> filterSoapHistory(string patientid, DateTime startDate, DateTime endDate)
     {
      
-      var result = await _context.DiagnosisSoap.Where(c => c.Patientid == patientid && c.Dateadded.Value.Date >= startDate.Date && c.Dateadded.Value.Date <= endDate)
+      var result = await _context.DiagnosisSoap.Where(c => c.Patientid == patientid && c.Dateadded >= startDate.Date && c.Dateadded <= endDate)
                          .OrderByDescending(c => c.Dateadded)
                    .ToListAsync();
 

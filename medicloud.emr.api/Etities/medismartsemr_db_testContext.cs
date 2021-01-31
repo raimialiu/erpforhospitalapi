@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 ﻿//using System;
 //using Microsoft.EntityFrameworkCore;
 //using Microsoft.EntityFrameworkCore.Metadata;
@@ -55,7 +54,7 @@
 //        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 //    }
 //}
-=======
+
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -112,4 +111,4 @@ namespace medicloud.emr.api.Etities
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
->>>>>>> Stashed changes
+
