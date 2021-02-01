@@ -32,7 +32,7 @@ namespace medicloud.emr.api.DTOs
         public string Facility { get; set; }
         public int? Prescno { get; set; }
         public DateTime? Prescdate { get; set; }
-        public int Regno { get; set; }
+        public UInt32 Regno { get; set; }
         public string Patientname { get; set; }
         public string Plantype { get; set; }
         public string Agegender { get; set; }

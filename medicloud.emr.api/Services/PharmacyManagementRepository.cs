@@ -51,13 +51,12 @@ namespace medicloud.emr.api.Services
 
             if (prescriptionListFilterModel.Date != prescriptionListFilterModel.defaultDate)
             {
-                preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
-              .Where(p =>
-              (p.Prescriptiondate == prescriptionListFilterModel.Date) ||
+               preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+              .Where(p => (p.Patientid != null) && (
+              ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
               (p.Locationid == prescriptionListFilterModel.LocationId) ||
-              (p.ProviderId == prescriptionListFilterModel.ProviderId)
-              )
-              //.Include(p => p.Patient).ThenInclude(pt=>pt.PlanType)
+              (p.ProviderId == prescriptionListFilterModel.ProviderId))) 
+              )              
               .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
               .Take(prescriptionListFilterModel.PageSize)
              .Select(presc => new PharmacyManagementDTO
@@ -66,15 +65,16 @@ namespace medicloud.emr.api.Services
                  Prescno = presc.Prescriptionid,
                  Prescdate = presc.Prescriptiondate,
                  Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
-                 //Agegender = CalculateAge((DateTime)presc.Patient.Dob) + "/Yrs" + presc.Patient.Gender.Gendername,
-                 //Regno = Int16.Parse(presc.Patientid),
-                 //PlanType = presc.Patient.PlanType.planname,
+                 Agegender = CalculateAge((DateTime)presc.Patient.Dob) + "/Yrs" + presc.Patient.Gender.Gendername,
+                 Regno = UInt32.Parse(presc.Patientid),
+                 //Plantype = _context.PlanType.Where(pl=>pl.planid==Int32.Parse(presc.Patient.Plantype)).Select(pl=>pl.planname).FirstOrDefault(),
+                 //Plantype = _context.PlanType.FromSqlInterpolated($"SELECT planname from PlanType where planid = {presc.Patient.Plantype}").FirstOrDefault().ToString(),
                  Company = presc.Patient.Spons.Sponsortype,
                  Alert = 0,
                  Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                  Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
-
                  Store = presc.Indentstore.Departmentname
+
 
              })).ToListAsync();
 
@@ -108,9 +108,9 @@ namespace medicloud.emr.api.Services
                 //date filtering wasn't selected
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
                     
-                  .Where(p =>
+                  .Where(p => (p.Patientid != null) &&(
                   (p.Locationid == prescriptionListFilterModel.LocationId) ||
-                  (p.ProviderId == prescriptionListFilterModel.ProviderId)                   
+                  (p.ProviderId == prescriptionListFilterModel.ProviderId) )                  
                   )
                   .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                   .Take(prescriptionListFilterModel.PageSize)
@@ -120,10 +120,9 @@ namespace medicloud.emr.api.Services
                      Prescno = presc.Prescriptionid,
                      Prescdate = presc.Prescriptiondate,
                      Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
-                     //Agegender = CalculateAge((DateTime)presc.Patient.Dob) + "/Yrs" + presc.Patient.Gender.Gendername,
-                     //Regno = Int16.Parse(presc.Patientid),
+                     Agegender = (CalculateAge((DateTime)presc.Patient.Dob)).ToString()+ "/Yrs" + presc.Patient.Gender.Gendername,
+                     Regno = UInt32.Parse(presc.Patientid),
                      //PlanType = presc.Patient.PlanType.planname,
-
                      Company = presc.Patient.Spons.Sponsortype,
                      Alert = 0,
                      Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
