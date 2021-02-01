@@ -239,15 +239,15 @@ namespace medicloud.emr.api.Controllers
         }
 
 
-        [Route("addDiagnosis")]
-        [HttpPost]
-        public async Task<IActionResult> AddDiagnosis([FromBody] Diagnosis body)
-        {
-            _ctx.Diagnosis.Add(body);
-            var result = await _ctx.SaveChangesAsync();
+        //[Route("addDiagnosis")]
+        //[HttpPost]
+        //public async Task<IActionResult> AddDiagnosis([FromBody] Diagnosis body)
+        //{
+        //    _ctx.Diagnosis.Add(body);
+        //    var result = await _ctx.SaveChangesAsync();
 
-            return Ok(result > 0);
-        }
+        //    return Ok(result > 0);
+        //}
 
 
         //[Route("UpdateDiagnosis/{id}")]
@@ -283,61 +283,61 @@ namespace medicloud.emr.api.Controllers
         //    return Ok(await _ctx.Diagnosis.SingleOrDefaultAsync(x => x.Id == id));
         //}
 
-        [Route("allDiagnosis")]
-        [HttpGet]
-        public async Task<IActionResult> allDiagnosis()
-        {
-            return Ok(await _ctx.Diagnosis.ToListAsync());
-        }
+        //[Route("allDiagnosis")]
+        //[HttpGet]
+        //public async Task<IActionResult> allDiagnosis()
+        //{
+        //    return Ok(await _ctx.Diagnosis.ToListAsync());
+        //}
 
-        [Route("createChiefComplain")]
-        [HttpPost]
-        public async Task<IActionResult> CreateChiefComplain([FromBody] ChiefComplain body)
-        {
-            _ctx.ChiefComplain.Add(body);
-            var result = await _ctx.SaveChangesAsync();
+        //[Route("createChiefComplain")]
+        //[HttpPost]
+        //public async Task<IActionResult> CreateChiefComplain([FromBody] ChiefComplain body)
+        //{
+        //    _ctx.ChiefComplain.Add(body);
+        //    var result = await _ctx.SaveChangesAsync();
 
-            return Ok(result > 0);
-        }
+        //    return Ok(result > 0);
+        //}
 
-        [Route("UpdateChiefComplain/{id}")]
-        [HttpPut]
-        public async Task<IActionResult> UpdateChiefComplain([FromRoute]long id, [FromBody]ChiefComplain body)
-        {
-            var oldChiefComplaint = await _ctx.ChiefComplain.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
-            if (oldChiefComplaint == null) return BadRequest(false);
+        //[Route("UpdateChiefComplain/{id}")]
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateChiefComplain([FromRoute]long id, [FromBody]ChiefComplain body)
+        //{
+        //    var oldChiefComplaint = await _ctx.ChiefComplain.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
+        //    if (oldChiefComplaint == null) return BadRequest(false);
 
-            _ctx.Entry<ChiefComplain>(body).State = EntityState.Modified;
-            _ctx.Entry<ChiefComplain>(body).Property(x => x.Id).IsModified = false;
-            var result = await _ctx.SaveChangesAsync();
-            return Ok(result > 0);
-        }
+        //    _ctx.Entry<ChiefComplain>(body).State = EntityState.Modified;
+        //    _ctx.Entry<ChiefComplain>(body).Property(x => x.Id).IsModified = false;
+        //    var result = await _ctx.SaveChangesAsync();
+        //    return Ok(result > 0);
+        //}
 
-        [Route("DeleteChiefComplain/{id}")]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteChiefComplain([FromRoute] long id)
-        {
-            var oldChiefComplaint = await _ctx.ChiefComplain.SingleOrDefaultAsync(x => x.Id == id);
-            if (oldChiefComplaint == null) return BadRequest(false);
+        //[Route("DeleteChiefComplain/{id}")]
+        //[HttpDelete]
+        //public async Task<IActionResult> DeleteChiefComplain([FromRoute] long id)
+        //{
+        //    var oldChiefComplaint = await _ctx.ChiefComplain.SingleOrDefaultAsync(x => x.Id == id);
+        //    if (oldChiefComplaint == null) return BadRequest(false);
 
-            _ctx.ChiefComplain.Remove(oldChiefComplaint);
+        //    _ctx.ChiefComplain.Remove(oldChiefComplaint);
             
-            var result = await _ctx.SaveChangesAsync();
-            return Ok(result > 0);
-        }
+        //    var result = await _ctx.SaveChangesAsync();
+        //    return Ok(result > 0);
+        //}
 
-        [Route("allChiefComplain")]
-        [HttpGet]
-        public async Task<IActionResult> GetAllChiefComplaint()
-        {
-            return Ok(await _ctx.ChiefComplain.ToListAsync());
-        }
+        //[Route("allChiefComplain")]
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllChiefComplaint()
+        //{
+        //    return Ok(await _ctx.ChiefComplain.ToListAsync());
+        //}
 
-        [Route("GetChiefComplain/{id}")]
-        [HttpGet]
-        public async Task<IActionResult> GetChiefComplaint([FromRoute]long id)
-        {
-            return Ok(await _ctx.ChiefComplain.SingleOrDefaultAsync(x => x.Id == id));
-        }
+        //[Route("GetChiefComplain/{id}")]
+        //[HttpGet]
+        //public async Task<IActionResult> GetChiefComplaint([FromRoute]long id)
+        //{
+        //    return Ok(await _ctx.ChiefComplain.SingleOrDefaultAsync(x => x.Id == id));
+        //}
     }
 }

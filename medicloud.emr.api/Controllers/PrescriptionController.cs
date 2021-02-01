@@ -55,11 +55,11 @@ namespace medicloud.emr.api.Controllers
 
 
         [HttpGet, Route("GetStore")]
-        public async Task<IActionResult> GetStore([FromQuery]int locationid, [FromQuery]int departmentid)
+        public async Task<IActionResult> GetStore([FromQuery]int locationid)
         {
             try
             {
-                var getorder = await _prescriptionRepository.GetStore(locationid, departmentid);
+                var getorder = await _prescriptionRepository.GetStore(locationid);
                 return Ok(getorder);
             }
             catch (Exception ex)
