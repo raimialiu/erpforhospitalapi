@@ -14,7 +14,7 @@ namespace medicloud.emr.api.Services
     {
         Task<List<Drug>> GetDrugs(int formularyid, int genericid);
 
-        Task<List<Store>> GetStore(int locationid, int departmentid);
+        Task<List<Store>> GetStore(int locationid);
         Task<List<OrderPriority>> GetOrderPriority(int locationid);
 
                           Task<List<DrugGeneric>> GetDrugGeneric();
@@ -61,10 +61,9 @@ namespace medicloud.emr.api.Services
             return druglist;
         }
 
-        public async Task<List<Store>> GetStore(int locationid, int departmentid)
+        public async Task<List<Store>> GetStore(int locationid)
         {
-            var druglist = await _context.Store.Where(p => p.Locationid == locationid
-                && p.DepartmentId == departmentid)
+            var druglist = await _context.Store.Where(p => p.Locationid == locationid && p.ispharmacystore == 1)
                 .Select(r => new Store
                 {
                     Departmentname = r.Departmentname,

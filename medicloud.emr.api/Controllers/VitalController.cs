@@ -336,6 +336,11 @@ namespace medicloud.emr.api.Controllers
         //    if (oldChiefComplaint == null) return BadRequest(false);
 
         //    _ctx.ChiefComplain.Remove(oldChiefComplaint);
+            
+        //    var result = await _ctx.SaveChangesAsync();
+        //    return Ok(result > 0);
+        //}
+        //    _ctx.ChiefComplain.Remove(oldChiefComplaint);
 
         //    var result = await _ctx.SaveChangesAsync();
         //    return Ok(result > 0);
