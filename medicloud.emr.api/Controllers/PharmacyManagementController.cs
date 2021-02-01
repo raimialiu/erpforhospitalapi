@@ -22,6 +22,7 @@ namespace medicloud.emr.api.Controllers
         public DateTime Date { get; set; } = new DateTime(1753, 1, 1);
         //public int VisitType { get; set; }        
         public int? ProviderId { get; set; }
+        public int? StatusId { get; set; }
     }
 
     [Route("api/[controller]")]
@@ -153,6 +154,23 @@ namespace medicloud.emr.api.Controllers
 
             }
             
+        }
+
+
+        [HttpGet]
+        [Route("GetProvider")]
+        public async Task<IActionResult> GetProviders()
+        {
+            var providerList = await _pharmacyManagementRepository.GetProviders();
+            return Ok(providerList);
+        }
+
+        [HttpGet]
+        [Route("GetLocation")]
+        public async Task<IActionResult> GetLocations()
+        {
+            var locationList = await _pharmacyManagementRepository.GetLocations();
+            return Ok(locationList);
         }
 
     }
