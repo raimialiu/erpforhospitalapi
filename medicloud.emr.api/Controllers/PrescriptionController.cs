@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace medicloud.emr.api.Controllers
 {
     [Route("api/[controller]")]
-
+    [ApiController]
     public class PrescriptionController : ControllerBase
     {
 
