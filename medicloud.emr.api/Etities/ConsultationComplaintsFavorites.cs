@@ -12,7 +12,7 @@ namespace medicloud.emr.api.Etities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Favoriteid { get; set; }
         public int? Doctorid { get; set; }
-        //public int? Problemid { get; set; }
+        public int? problemid { get; set; }
         public int? ProviderId { get; set; }
         public int? Locationid { get; set; }
         public DateTime? Dateadded { get; set; }
