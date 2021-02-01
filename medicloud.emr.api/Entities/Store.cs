@@ -23,6 +23,7 @@ namespace medicloud.emr.api.Entities
         public bool? Isallowdisplayinotherstore { get; set; }
         public bool? Isconsumablestore { get; set; }
         public int? ProviderId { get; set; }
+        public int? ispharmacystore { get; set; }
 
         public virtual Location Location { get; set; }
         public virtual AccountManager Provider { get; set; }
