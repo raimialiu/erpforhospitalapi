@@ -1090,6 +1090,8 @@ namespace medicloud.emr.api.Data
 
             modelBuilder.Entity<PlanType>(x => {
                 x.HasKey(x => x.planid);
+
+                
             });
 
             modelBuilder.Entity<AppSetting>(entity =>
@@ -5578,6 +5580,7 @@ namespace medicloud.emr.api.Data
                     .WithMany(p => p.Patient)
                     .HasForeignKey(d => d.Stateid)
                     .HasConstraintName("State_Patient").IsRequired(false);
+              
             });
 
             modelBuilder.Entity<PatientMedicalHistory>(entity =>

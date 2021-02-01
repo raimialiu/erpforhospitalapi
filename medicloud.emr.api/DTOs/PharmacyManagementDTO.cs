@@ -11,7 +11,7 @@ namespace medicloud.emr.api.DTOs
         {
         }
 
-        public PharmacyManagementPrescriptionDetailsDTO(string drugName, string prescriptionDetail, int? prescriptionQuantity, int? issuedQuantity, int? dispensedQuantity, int? paNo, string status)
+        public PharmacyManagementPrescriptionDetailsDTO(string drugName, string prescriptionDetail, int prescriptionQuantity, int issuedQuantity, int dispensedQuantity, int paNo, string status)
         {
             DrugName = drugName;
             PrescriptionDetail = prescriptionDetail;
@@ -24,10 +24,10 @@ namespace medicloud.emr.api.DTOs
 
         public string DrugName { get; set; }
         public string PrescriptionDetail { get; set; }
-        public int? PrescriptionQuantity { get; set; }
-        public int? IssuedQuantity { get; set; }
-        public int? DispensedQuantity { get; set; }
-        public int? PaNo { get; set; }
+        public int PrescriptionQuantity { get; set; }
+        public int IssuedQuantity { get; set; }
+        public int DispensedQuantity { get; set; }
+        public int PaNo { get; set; }
         public string status { get; set; }
     }
 
@@ -71,5 +71,28 @@ namespace medicloud.emr.api.DTOs
 
     }
 
-    
+    public class PrescriptionListWithCount
+    {
+        public List<PharmacyManagementDTO> PrescriptionList { get; set; }
+        public int Count;
+
+        public PrescriptionListWithCount(List<PharmacyManagementDTO> preseciptionList, int count)
+        {
+            PrescriptionList = preseciptionList;
+            Count = count;
+        }
+    }
+    public class PrescriptionDetailsListWithCount
+    {
+        public List<PharmacyManagementPrescriptionDetailsDTO> PrescriptionDetailsList { get; set; }
+        public int Count;
+
+        public PrescriptionDetailsListWithCount(List<PharmacyManagementPrescriptionDetailsDTO> prescriptionDetailsList, int count)
+        {
+            PrescriptionDetailsList = prescriptionDetailsList;
+            Count = count;
+        }
+    }
+
+
 }

@@ -16,10 +16,12 @@ namespace medicloud.emr.api.Controllers
     [BindProperties]
     public class PrescriptionListFilterModel : QueryListParameters
     {
-        public int LocationId { get; set; }
-        public DateTime Date { get; set; }= new DateTime(1753, 1, 1);
+        //both defaultDate and Date must be equal, as this is the initial date value
+       public DateTime defaultDate = new DateTime(1753, 1, 1);
+        public int? LocationId { get; set; }
+        public DateTime Date { get; set; } = new DateTime(1753, 1, 1);
         //public int VisitType { get; set; }        
-        public int ProviderId { get; set; }
+        public int? ProviderId { get; set; }
     }
 
     [Route("api/[controller]")]
@@ -43,7 +45,8 @@ namespace medicloud.emr.api.Controllers
             {
                
                 var count = _context.ConsultationPrescription.Count();
-                var prescriptionList = new PagedList<PharmacyManagementDTO>(await _pharmacyManagementRepository.getConsultationPrescriptionsList(prescriptionListFilterModel), count, prescriptionListFilterModel.PageNumber, prescriptionListFilterModel.PageSize);
+                var prescriptionListWithCount = await _pharmacyManagementRepository.getConsultationPrescriptionsList(prescriptionListFilterModel);
+                var prescriptionList = new PagedList<PharmacyManagementDTO>(prescriptionListWithCount.PrescriptionList, prescriptionListWithCount.Count, prescriptionListFilterModel.PageNumber, prescriptionListFilterModel.PageSize);
                 var metadata = new
                 {
                     prescriptionList.TotalCount,
@@ -70,8 +73,33 @@ namespace medicloud.emr.api.Controllers
         {
             try
             {
+                //    if (_pharmacyManagementRepository.ConsultationPrescriptionExists(prescriptionid))
+                //    {
                 var prescriptionList = await _pharmacyManagementRepository.getConsultationPrescriptionByPrescriptionId(prescriptionid);
                 return Ok(prescriptionList);
+            //}
+            //    else return BadRequest("invalid prescriptionid");
+        }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                return BadRequest();
+            }
+        }
+
+        [HttpGet, Route("getPrescriptionDetailsByPrescriptionId/{prescriptionid}")]
+        public async Task<IActionResult> getPrescriptionDetailsByPrescriptionId(int prescriptionid)
+        {
+            try
+            {
+                //if (_pharmacyManagementRepository.ConsultationPrescriptionExists(prescriptionid))
+                //{
+                var prescriptionList = await _pharmacyManagementRepository.getConsultationPrescriptionsDetailsByPrescriptionId(prescriptionid);
+
+                return Ok(prescriptionList);
+                //}
+                //else return BadRequest("invalid prescriptionid");
             }
             catch (Exception ex)
             {
@@ -81,16 +109,14 @@ namespace medicloud.emr.api.Controllers
             }
         }
 
-        
 
         [HttpGet]
         [Route("GetPrescriptionDetailsList")]
         public async Task<IActionResult> GetPrescriptionDetailsList()
         {
-
+            
             try
-            {
-
+            {  //if there is need to use this controller, add paging
                 var PrescriptionDetailsList = await _context.ConsultationPrescriptionDetails.ToListAsync();
                 return Ok(PrescriptionDetailsList);
             }
@@ -106,23 +132,23 @@ namespace medicloud.emr.api.Controllers
 
         [HttpPut]
         [Route("RemovePrescriptionDetails/{prescriptionid}")]
-        public async Task<IActionResult> RemovePrescriptionDetails(int prescriptionid)
+        public async Task<IActionResult> RemovePrescriptionDetails(int prescriptionDetailsid)
         {
             
             {
                 try {
-                    //if (_pharmacyManagementRepository.ConsultationPrescriptionExists(prescriptionid))
+                    //if (_pharmacyManagementRepository.PrescriptionDetailsExist(prescriptionDetailsid))
                     //{
-                        await _pharmacyManagementRepository.removeConsultationPrescriptionDetailsItem(prescriptionid);
+                        await _pharmacyManagementRepository.removeConsultationPrescriptionDetailsItem(prescriptionDetailsid);
                         return NoContent();
                     //}
-                    //else return BadRequest("invalid prescriptionid");
+                    //else return BadRequest("invalid prescriptionDetailsid");
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     Console.WriteLine(ex.StackTrace);
-                    return BadRequest();
+                    return BadRequest("");
                 }
 
             }

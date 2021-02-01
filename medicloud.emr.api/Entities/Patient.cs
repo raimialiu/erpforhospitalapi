@@ -133,7 +133,8 @@ namespace medicloud.emr.api.Entities
         public virtual Referral Ref { get; set; }
         public virtual Sponsor Spons { get; set; }
         public virtual State State { get; set; }
-        public virtual ICollection<Admission> Admission { get; set; }
+
+       public virtual ICollection<Admission> Admission { get; set; }
         public virtual ICollection<AppointmentSchedule> AppointmentSchedule { get; set; }
         public virtual ICollection<Bill> Bill { get; set; }
         public virtual ICollection<BillPayable> BillPayable { get; set; }
@@ -162,5 +163,6 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<CheckIn> CheckIn { get; set; }
         public virtual ICollection<PatientQueue> PatientQueue { get; set; }
         public virtual ICollection<PaRequest> PaRequest { get; set; }
+
     }
 }
