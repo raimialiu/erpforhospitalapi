@@ -20,8 +20,9 @@ namespace medicloud.emr.api.Services
         
         Task<List<PharmacyManagementPrescriptionDetailsDTO>> getAllPrescriptionsDetails();
         Task<List<PharmacyManagementDTO>> getConsultationPrescriptionByPrescriptionId(int prescriptionId);
-       
+        Task<List<PrescriptionWithDetails>> TgetConsultationPrescriptionByPrescriptionId(int prescriptionId);
         Task<List<PharmacyManagementPrescriptionDetailsDTO>> getConsultationPrescriptionsDetailsByPrescriptionId(int prescriptionId);
+
         bool PrescriptionDetailsExist(int prescriptionDetailsId);
         bool ConsultationPrescriptionExists(int ConsultationPrescriptionId);
     }
@@ -238,6 +239,46 @@ namespace medicloud.emr.api.Services
 
                  Store = presc.Indentstore.Departmentname,
                  
+             })).ToListAsync();
+            return preseciptionList;
+        }
+
+        public async Task<List<PrescriptionWithDetails>> TgetConsultationPrescriptionByPrescriptionId(int prescriptionId)
+        {
+            var preseciptionList = new List<PrescriptionWithDetails>();
+            preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+            .Where(p => p.Prescriptionid == prescriptionId)
+             .Include(p => p.Patient)
+             .Select(presc => new PrescriptionWithDetails
+             {
+                 Facility = presc.Location.Locationname,
+                 PescriptionNo = presc.Prescriptionid,
+                 PrescriptionDate = presc.Prescriptiondate,
+                 PatientName = presc.Patient.Firstname + " " + presc.Patient.Lastname,
+                 Age = CalculateAge((DateTime)presc.Patient.Dob),
+
+                 Gender = presc.Patient.Gender.Gendername,
+                 //PlanType = _context.Plan.SingleOrDefault(pl => pl.Id == Int32.Parse(presc.Patient.Plantype)).Name,
+                 //PlanType = presc.Patient.PlanType.planname,
+                 Company = presc.Patient.Spons.Sponsortype,
+                 Alert = 0,
+                 DoctorName = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                 SeenByDoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+
+                 Store = presc.Indentstore.Departmentname,
+                 PrescriptionDetails = presc.ConsultationPrescriptionDetails.Select(pd => new PrescriptionDetailsDTO
+                 {
+                     DrugName = _context.DrugGeneric.Where(d => d.Genericid == pd.Genericid).Select(e => e.Genericname).FirstOrDefault(),                    
+                     PrescriptionDetail = pd.PrescriptionDetail,
+                     PrescriptionQuantity = (int)pd.Qty,
+                     IssuedQuantity = (int)pd.Qty,
+                     DispensedQuantity = (int)pd.Qty,
+                     PaNo = 0,
+                     //status = pd.Status.Status
+                     status = "status"
+                 }).ToList()
+
+
              })).ToListAsync();
             return preseciptionList;
         }
