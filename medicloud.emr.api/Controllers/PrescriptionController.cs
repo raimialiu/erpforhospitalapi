@@ -55,11 +55,11 @@ namespace medicloud.emr.api.Controllers
 
 
         [HttpGet, Route("GetStore")]
-        public async Task<IActionResult> GetStore(int locationid)
+        public async Task<IActionResult> GetStore([FromQuery]int locationid, [FromQuery]int departmentid)
         {
             try
             {
-                var getorder = await _prescriptionRepository.GetStore(locationid);
+                var getorder = await _prescriptionRepository.GetStore(locationid, departmentid);
                 return Ok(getorder);
             }
             catch (Exception ex)
@@ -92,6 +92,19 @@ namespace medicloud.emr.api.Controllers
         }
 
 
+        [Route("FilterDrugByFormulary")]
+        [HttpGet]
+        public async Task<IActionResult> FilterFormulary([FromQuery]long formularyid)
+        {
+            if(formularyid == 1)
+            {
+                var ok = await _ctx.Drug.Where(x => x.Classid.Value == 1272).ToListAsync();
+                return Ok(ok);
+            }
+            return Ok(await _ctx.Drug.Where(x => x.Classid.Value != 1272).ToListAsync());
+        }
+
+
         [Route("GetDrugBrandByGenericid")]
         [HttpGet]
         public async Task<IActionResult> GetDrugBrandByGenericID([FromQuery] long id)
@@ -102,7 +115,15 @@ namespace medicloud.emr.api.Controllers
 
                 if (genericBrand != null || genericBrand.Count > 0) return Ok(genericBrand);
             }
-          
+            // filter by formularyid
+            //_ctx.Drug.Where(x=>x.)
+
+            //if(formularyid == 1)
+            //{
+            //    var ok = await _ctx.Drug.Where(x => x.Classid.Value == 1272).ToListAsync();
+            //    return Ok(ok);
+            //}
+            
 
             return Ok(await _ctx.Drug.ToListAsync());
         }
