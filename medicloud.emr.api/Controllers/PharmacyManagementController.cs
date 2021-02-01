@@ -75,8 +75,7 @@ namespace medicloud.emr.api.Controllers
             {
                 //    if (_pharmacyManagementRepository.ConsultationPrescriptionExists(prescriptionid))
                 //    {
-                //var prescriptionList = await _pharmacyManagementRepository.getConsultationPrescriptionByPrescriptionId(prescriptionid);
-                var prescriptionList = await _pharmacyManagementRepository.TgetConsultationPrescriptionByPrescriptionId(prescriptionid);
+                var prescriptionList = await _pharmacyManagementRepository.getConsultationPrescriptionByPrescriptionId(prescriptionid);
                 return Ok(prescriptionList);
             //}
             //    else return BadRequest("invalid prescriptionid");
