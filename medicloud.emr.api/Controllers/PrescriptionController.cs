@@ -264,14 +264,26 @@ namespace medicloud.emr.api.Controllers
            return Ok(await _ctx.ConsultationPrescription.FromSqlRaw($"select * from Consultation_Prescription where patientid = '{patientid}' and dateadded between '{startDate}' and '{endDate}'").ToListAsync());
         }
 
-        [Route("SavePescription")]
+        [Route("SavePrescription")]
         [HttpPost]
-        public async Task<IActionResult> SavePescription([FromForm] ConsultationPrescriptionDetails dto)
+        public async Task<IActionResult> SaveDescription([FromBody]ConsultationPrescription dto)
         {
-            //dto. = DateTime.Now;
-            _ctx.ConsultationPrescriptionDetails.Add(dto);
-            return Ok(await _ctx.SaveChangesAsync() > 0);
+            _ctx.ConsultationPrescription.Add(dto);
+            var result = await _ctx.SaveChangesAsync() > 0;
+
+            if (result) return Ok(dto.Prescriptionid);
+
+            return BadRequest(false);
         }
+
+        //[Route("SavePescriptionDetails")]
+        //[HttpPost]
+        //public async Task<IActionResult> SavePescriptionDetails([FromForm] ConsultationPrescriptionDetails dto)
+        //{
+        //    //dto. = DateTime.Now;
+        //    _ctx.ConsultationPrescriptionDetails.Add(dto);
+        //    return Ok(await _ctx.SaveChangesAsync() > 0);
+        //}
         [Route("SaveToFavourites")]
         [HttpPost]
         public async Task<IActionResult> SaveToFavourites([FromBody]Etities.ConsultationPrescriptionFavorites dto)

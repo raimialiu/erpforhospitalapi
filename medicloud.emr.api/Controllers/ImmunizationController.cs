@@ -185,7 +185,7 @@ namespace medicloud.emr.api.Controllers
             return Ok(await _ctx.ApplicationUser.Where(x=>x.departmentid.Value ==12).ToListAsync());
         }
 
-        [Route("SavePescription")]
+        [Route("SavePescriptionDetails")]
         [HttpPost]
         public async Task<IActionResult> SavePescription([FromBody] ConsultationPrescriptionDetails dto)
         {

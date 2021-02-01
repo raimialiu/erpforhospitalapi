@@ -52,7 +52,7 @@ namespace medicloud.emr.api.Controllers
         {
             var _today = DateTime.Now.ToLongDateString();
             //return Ok(await _ctx.ConsultationComplaintsB.Where(x=>x.Dateadded.Value.ToShortDateString() == _today && x.Patientid == patientid).ToListAsync());
-            return Ok(await _ctx.ConsultationComplaintsB.FromSqlRaw($"select  * from consultation_complaints where cast(dateadded as date) = cast(getdate() as date) and patientid = '{patientid}'").ToListAsync());
+            return Ok(await _ctx.ConsultationComplaints.FromSqlRaw($"select  * from consultation_complaints where cast(dateadded as date) = cast(getdate() as date) and patientid = '{patientid}'").ToListAsync());
         }
 
         [Route("SaveConsultationFavourites")]
@@ -81,19 +81,19 @@ namespace medicloud.emr.api.Controllers
             //return Ok(await _ctx.SaveChangesAsync() > 0);
         }
 
-        [Route("UpdateComplaint")]
-        [HttpPut]
-        public async Task<IActionResult> UpdateComplaint([FromRoute]long complaintid, [FromBody] Etities.ConsultationComplaints dto)
-        {
-            var single = await _ctx.ConsultationComplaintsB.FirstOrDefaultAsync(x => x.Complaintid == complaintid);
-            if (single == null) return BadRequest(false);
+        //[Route("UpdateComplaint")]
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateComplaint([FromRoute]long complaintid, [FromBody] Etities.ConsultationComplaints dto)
+        //{
+        //    var single = await _ctx.ConsultationComplaints.FirstOrDefaultAsync(x => x.Complaintid == complaintid);
+        //    if (single == null) return BadRequest(false);
 
-            _ctx.Entry(dto).State = EntityState.Modified;
-            _ctx.Entry(dto).Property(x => x.Complaintid).IsModified = false;
+        //    _ctx.Entry(dto).State = EntityState.Modified;
+        //    _ctx.Entry(dto).Property(x => x.Complaintid).IsModified = false;
 
-            return Ok(await _ctx.SaveChangesAsync() > 0);
+        //    return Ok(await _ctx.SaveChangesAsync() > 0);
                  
-        }
+        //}
 
         [Route("SaveFreeForm")]
         [HttpPost]
@@ -158,14 +158,14 @@ namespace medicloud.emr.api.Controllers
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
 
-        [Route("SaveConsultationComplaints")]
-        [HttpPost]
-        public async Task<IActionResult> SaveConsultationComplaints([FromBody] Etities.ConsultationComplaints dto)
-        {
-            dto.Dateadded = DateTime.Now;
-            _ctx.ConsultationComplaints.Add(dto);
-            return Ok(await _ctx.SaveChangesAsync() > 0);
-        }
+        //[Route("SaveConsultationComplaints")]
+        //[HttpPost]
+        //public async Task<IActionResult> SaveConsultationComplaints([FromBody] Etities.ConsultationComplaints dto)
+        //{
+        //    dto.Dateadded = DateTime.Now;
+        //    _ctx.ConsultationComplaints.Add(dto);
+        //    return Ok(await _ctx.SaveChangesAsync() > 0);
+        //}
 
         [Route("LoadLastTenConsultationComplaints")]
         [HttpGet]
