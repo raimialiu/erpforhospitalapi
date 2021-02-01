@@ -268,7 +268,7 @@ namespace medicloud.emr.api.Controllers
                     ResponseMessage = result.Item2,
                     Status = result.Item1
                 };
-                return Ok();
+                return Ok(response);
             }
             catch (Exception ex)
             {
