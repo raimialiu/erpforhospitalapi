@@ -1,5 +1,3 @@
-using System.IO;
-using System.Text;
 using medicloud.emr.api.Data;
 using medicloud.emr.api.DataContextRepo;
 using medicloud.emr.api.DTOs;
@@ -9,15 +7,14 @@ using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace medicloud.emr.api
 {
@@ -46,16 +43,17 @@ namespace medicloud.emr.api
                 setupActions.ReturnHttpNotAcceptable = true;
                 //setupAction
             })//.AddXmlDataContractSerializerFormatters()
-            
+
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.IgnoreNullValues = true;
                 options.JsonSerializerOptions.WriteIndented = true;
-               
-                
+
+
                 // .SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
                 //options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            }).AddNewtonsoftJson(c => {
+            }).AddNewtonsoftJson(c =>
+            {
                 c.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 
             });
@@ -65,6 +63,11 @@ namespace medicloud.emr.api
                 options.AddPolicy(corsPolicy,
                                   builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
+                //.WithOrigins(new[] { "http://localhost:4200", "http://test.medicloud.ng/lagoonhis", "http://localhost:58213",
+                //                                      "https://hnlhisdev.azurewebsites.net",
+                //                                      "http://localhost", "http://test.medicloud.ng/lagoonhisdev" })
+                //.AllowAnyMethod().AllowAnyHeader()) ; ;
+                // new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" }
                                                  
             });
 
@@ -77,7 +80,7 @@ namespace medicloud.emr.api
                     Version = "v1",
                     Title = "Medisamrts Emr Api",
                     Description = "API to serve data to the medismart emr UI",
-                    
+
                 });
             });
 
@@ -126,10 +129,11 @@ namespace medicloud.emr.api
 
             services.AddScoped<ISoapRepository, SoapRepository>();
             services.AddScoped<IVitalSignsRepository, VitalSignsRepository>();
+            services.AddScoped<IMRPRepository, MRPRepository>();
 
             const string connectionString = "lagoonDB";
             services.AddDbContext<DataContext>(options =>
-                        options.UseSqlServer(Configuration.GetConnectionString(connectionString), sqlServerOptionsAction: action=>
+                        options.UseSqlServer(Configuration.GetConnectionString(connectionString), sqlServerOptionsAction: action =>
                         {
                             action.EnableRetryOnFailure();
                         }));
@@ -146,27 +150,17 @@ namespace medicloud.emr.api
             app.UseCors(corsPolicy);
             app.UseStatusCodePages("text/plain", "HTTP Error with {0} Status Code");
 
-            //app.UseStaticFiles(new StaticFileOptions()
-            //{
-            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
-            //    RequestPath = new PathString("/Uploads")
-            //});
-
-
-            
-
+          
             app.UseExceptionMiddleware();
 
             app.UseRouting();
 
-            
 
-           
             app.UseAuthentication();
-            
+
             app.UseAuthorization();
 
-           
+
 
             app.UseEndpoints(endpoints =>
             {

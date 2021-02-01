@@ -40,6 +40,21 @@ namespace medicloud.emr.api.Controllers
 
     }
 
+    [HttpGet("GetConsultationVitalsHistory")]
+    public async Task<IActionResult> getConsultationVitalsHistory(string patientid)
+    {
+      try
+      {
+        var vitalsHistory = await _VitalSignsRepository.getConsultationVitalsHistory(patientid);
+        return Ok(vitalsHistory);
+      }
+      catch (Exception ex)
+      {
+        var status = false;
+        return BadRequest(status);
+      }
+    }
+
     [HttpPost("CreateConsultationVitals")]
     public async Task<IActionResult> CreateConsultationVitals(ConsultationVitals model)
     {

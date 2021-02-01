@@ -1,30 +1,39 @@
-﻿using medicloud.emr.api.Data;
+﻿using Dapper;
+using medicloud.emr.api.Data;
 using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Entities;
 using medicloud.emr.api.Etities;
 using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace medicloud.emr.api.Controllers
 {
     [Route("api/[controller]")]
-
+    [ApiController]
     public class PrescriptionController : ControllerBase
     {
 
         private readonly IPrescriptionRepository _prescriptionRepository;
         private DataContext _ctx;
-        
+        private SqlConnection _conn;
+        private IConfiguration config;
 
-        public PrescriptionController(IPrescriptionRepository prescriptionRepository)
+
+        public PrescriptionController(IPrescriptionRepository prescriptionRepository,
+                IConfiguration config)
         {
             _prescriptionRepository = prescriptionRepository;
             _ctx = new DataContext();
+            this.config = config;
+            _conn = new SqlConnection(config.GetSection("ConnectionStrings:lagoonDB").Value);
+            _conn.Open();
             //_ct = new medismartsemr_db_testContext();
         }
 
@@ -211,7 +220,9 @@ namespace medicloud.emr.api.Controllers
         public async Task<IActionResult> LoadPrescriptionHistory([FromRoute] string patientid)
         {
             // await _ctx.Prescriptions.ToListAsync()
-            return Ok(await _ctx.ConsultationPrescriptionDetails.Where(x=>x.Patientid == patientid).OrderByDescending(x=>x.Id).Take(10).ToListAsync());
+            var all = await _conn.QueryAsync($"select a.*,b.drugcode, b.name from consultation_PrescriptionDetails a  left join Drug b on a.drugid = b.id where a.patientid = '{patientid}'");
+            //return Ok(await _ctx.ConsultationPrescriptionDetails.Where(x=>x.Patientid == patientid).OrderByDescending(x=>x.Id).Take(10).ToListAsync());
+            return Ok(all);
         }
 
         [Route("LoadPrescriptionHistoryByDoctorid/{doctorid}")]

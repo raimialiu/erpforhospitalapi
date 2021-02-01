@@ -260,9 +260,15 @@ namespace medicloud.emr.api.Controllers
         {
             try
             {
-                await _billingRepository.AddBillInvoice(billingInvoice);
+                var result = await _billingRepository.AddBillInvoice(billingInvoice);
 
-                return Ok();
+                PatientTariffByPayorResponse response = new PatientTariffByPayorResponse()
+                {
+                    TariffAmount = null,
+                    ResponseMessage = result.Item2,
+                    Status = result.Item1
+                };
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -337,12 +343,28 @@ namespace medicloud.emr.api.Controllers
 
         }
         
+
         [HttpGet("PatientBillPayment")]
         public async Task<IActionResult> PatientBillPayment(int accountId, int encounterid, string patientid, decimal amountPaid, int locationid)
         {
             try
             {
                 await _billingRepository.ClearPatientEncounterBill(accountId, encounterid, patientid, amountPaid, locationid);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+        
+        [HttpPost("PatientBillPaymentByPaNumber")]
+        public async Task<IActionResult> PatientBillPaymentByPaNumber(BillingInvoicePaymentByPaDto invoicePayment)
+        {
+            try
+            {
+                await _billingRepository.ClearPatientEncounterBillByPaCode(invoicePayment);
                 return Ok();
             }
             catch (Exception ex)

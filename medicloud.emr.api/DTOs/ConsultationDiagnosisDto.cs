@@ -40,7 +40,7 @@ namespace medicloud.emr.api.DTOs
         public int? conditionid1 { get; set; }
         public int? conditionid2 { get; set; }
         public int? conditionid3 { get; set; }
-        public int? isprovisional { get; set; }
+        public bool isprovisional { get; set; }
     }
 
     public class ConsultationDiagnosisDto
@@ -74,6 +74,6 @@ namespace medicloud.emr.api.DTOs
         public int? conditionid1 { get; set; }
         public int? conditionid2 { get; set; }
         public int? conditionid3 { get; set; }
-        public int? isprovisional { get; set; }
+        public bool isprovisional { get; set; }
     }
 }

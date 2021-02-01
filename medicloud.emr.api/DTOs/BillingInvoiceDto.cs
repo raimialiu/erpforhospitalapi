@@ -36,4 +36,15 @@ namespace medicloud.emr.api.DTOs
         public decimal? unitcharge { get; set; }
         public int? unit { get; set; }
     }
+
+    public class BillingInvoicePaymentByPaDto
+    {
+        public List<int> billid { get; set; }
+        public string patientid { get; set; }
+        public int? encounterId { get; set; }
+        public decimal? amountpaid { get; set; }
+        public string panumber { get; set; }
+        public int? ProviderID { get; set; }
+        public int? locationid { get; set; }
+    }
 }
