@@ -126,7 +126,7 @@ namespace medicloud.emr.api
             services.AddScoped<IOrderInvestigationRepository, OrderInvestigationRepository>();
             services.AddScoped<IBillingRepository, BillingRepository>();
             services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
-
+            services.AddSingleton<IVitalRepo, VitalRepo>();
             services.AddScoped<ISoapRepository, SoapRepository>();
             services.AddScoped<IVitalSignsRepository, VitalSignsRepository>();
             services.AddScoped<IMRPRepository, MRPRepository>();

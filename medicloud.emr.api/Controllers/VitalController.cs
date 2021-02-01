@@ -1,6 +1,7 @@
 ﻿using medicloud.emr.api.Data;
 using medicloud.emr.api.Entities;
 using medicloud.emr.api.Etities;
+using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,9 +16,11 @@ namespace medicloud.emr.api.Controllers
     public class VitalsController : ControllerBase
     {
         private DataContext _ctx;
-        public VitalsController()
+        private IVitalRepo _repo;
+        public VitalsController(IVitalRepo repo)
         {
             _ctx = new DataContext();
+            this._repo = repo;
         }
 
 
@@ -39,7 +42,7 @@ namespace medicloud.emr.api.Controllers
         [HttpGet]
         public async Task<IActionResult> AllProblemDuration()
         {
-            return Ok(await _ctx.EmrProblemDuration.ToListAsync());
+            return Ok(_repo.GetAllEmrproblemDuration());
         }
 
         [Route("TodaysProblem")]
@@ -65,11 +68,16 @@ namespace medicloud.emr.api.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteConsultationfavourites([FromRoute]long id)
         {
-            var single = await _ctx.ConsultationComplaintsFavorites.SingleOrDefaultAsync(x => x.Favoriteid == id);
-            if (single == null) return Ok(false);
+            //var single = await _ctx.ConsultationComplaintsFavorites.SingleOrDefaultAsync(x => x.Favoriteid == id);
+            //if (single == null) return Ok(false);
 
-            _ctx.ConsultationComplaintsFavorites.Remove(single);
-            return Ok(await _ctx.SaveChangesAsync() > 0);
+            var result = _repo.DeleteConsultationFavourites(id);
+
+            if (result == true) return Ok(result);
+           return BadRequest(false);
+
+            //_ctx.ConsultationComplaintsFavorites.Remove(single);
+            //return Ok(await _ctx.SaveChangesAsync() > 0);
         }
 
         [Route("SaveFreeForm")]
