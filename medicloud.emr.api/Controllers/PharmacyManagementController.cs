@@ -19,7 +19,7 @@ namespace medicloud.emr.api.Controllers
         //both defaultDate and Date must be equal, as this is the initial date value
        public DateTime defaultDate = new DateTime(1753, 1, 1);
         public int? LocationId { get; set; }
-        public DateTime Date { get; set; } = new DateTime(1753, 1, 1);
+        public DateTime? Date { get; set; } 
         //public int VisitType { get; set; }        
         public int? ProviderId { get; set; }
         public int? StatusId { get; set; }
@@ -76,7 +76,7 @@ namespace medicloud.emr.api.Controllers
             {
                 //    if (_pharmacyManagementRepository.ConsultationPrescriptionExists(prescriptionid))
                 //    {
-                var prescriptionList = await _pharmacyManagementRepository.getConsultationPrescriptionByPrescriptionId(prescriptionid);
+                var prescriptionList = _pharmacyManagementRepository.getConsultationPrescriptionByPrescriptionId(prescriptionid);
                 return Ok(prescriptionList);
             //}
             //    else return BadRequest("invalid prescriptionid");
@@ -170,6 +170,14 @@ namespace medicloud.emr.api.Controllers
         public async Task<IActionResult> GetLocations()
         {
             var locationList = await _pharmacyManagementRepository.GetLocations();
+            return Ok(locationList);
+        }
+
+        [HttpGet]
+        [Route("GetStatus")]
+        public async Task<IActionResult> GetStatus()
+        {
+            var locationList = await _pharmacyManagementRepository.GetStatus();
             return Ok(locationList);
         }
 

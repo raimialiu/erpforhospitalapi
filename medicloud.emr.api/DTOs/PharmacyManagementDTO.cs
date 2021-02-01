@@ -69,5 +69,23 @@ namespace medicloud.emr.api.DTOs
         }
     }
 
+    public class PrescriptionWithDetailsDTO
+    {
+        public string Facility { get; set; }
+        public int? Prescno { get; set; }
+        public DateTime? Prescdate { get; set; }
+        public UInt32 Regno { get; set; }
+        public string Patientname { get; set; }
+        public string Plantype { get; set; }
+        public string Agegender { get; set; }
+
+        public string Company { get; set; }
+        public int? Alert { get; set; }
+        public string Doctorname { get; set; }
+        public string Seenbydoctor { get; set; }
+
+        public string Store { get; set; }
+        public List<PrescriptionDetailsDTO> PrescriptionDetails { get; set; }
+    }
 
 }

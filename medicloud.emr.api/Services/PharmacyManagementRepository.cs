@@ -19,13 +19,14 @@ namespace medicloud.emr.api.Services
         Task<ConsultationPrescriptionDetails> removeConsultationPrescriptionDetailsItem(int prescriptionDetailsId);
 
         Task<List<PharmacyManagementPrescriptionDetailsDTO>> getAllPrescriptionsDetails();
-        Task<List<PharmacyManagementDTO>> getConsultationPrescriptionByPrescriptionId(int prescriptionId);
+        PharmacyManagementDTO getConsultationPrescriptionByPrescriptionId(int prescriptionId);
 
         Task<List<PharmacyManagementPrescriptionDetailsDTO>> getConsultationPrescriptionsDetailsByPrescriptionId(int prescriptionId);
         bool PrescriptionDetailsExist(int prescriptionDetailsId);
         bool ConsultationPrescriptionExists(int ConsultationPrescriptionId);
         Task<IEnumerable<ProviderDTO>> GetProviders();
         Task<IEnumerable<LocationDTO>> GetLocations();
+        Task<IEnumerable<OptionsDTO>> GetStatus();
     }
     public class PharmacyManagementRepository : IPharmacyManagementRepository
     {
@@ -45,18 +46,213 @@ namespace medicloud.emr.api.Services
 
         public async Task<PrescriptionListWithCount> getConsultationPrescriptionsList(PrescriptionListFilterModel prescriptionListFilterModel)
         {
-            var preseciptionList = new List<PharmacyManagementDTO>();
+            var preseciptionList = new List<PharmacyManagementDTO>();          
 
-            //if date filtering is selected
-
-            if (prescriptionListFilterModel.Date != prescriptionListFilterModel.defaultDate)
+            if (prescriptionListFilterModel.Date.HasValue && prescriptionListFilterModel.LocationId.HasValue && prescriptionListFilterModel.ProviderId.HasValue)
             {
-               preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
-              .Where(p => (p.Patientid != null) && (
-              ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
-              (p.Locationid == prescriptionListFilterModel.LocationId) ||
-              (p.ProviderId == prescriptionListFilterModel.ProviderId))) 
-              )              
+                preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+               .Where(p => (p.Patientid != null) && (
+               ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
+               (p.Locationid == prescriptionListFilterModel.LocationId) ||
+               (p.ProviderId == prescriptionListFilterModel.ProviderId)))
+               )
+               .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
+               .Take(prescriptionListFilterModel.PageSize)
+              .Select(presc => new PharmacyManagementDTO
+              {
+                  Facility = presc.Location.Locationname,
+                  Prescno = presc.Prescriptionid,
+                  Prescdate = presc.Prescriptiondate,
+                  Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
+                  Agegender = CalculateAge((DateTime)presc.Patient.Dob) + "/Yrs" + presc.Patient.Gender.Gendername,
+                  Regno = UInt32.Parse(presc.Patientid),
+                  //Plantype = _context.PlanType.Where(pl=>pl.planid==Int32.Parse(presc.Patient.Plantype)).Select(pl=>pl.planname).FirstOrDefault(),
+                  //Plantype = _context.PlanType.FromSqlInterpolated($"SELECT planname from PlanType where planid = {presc.Patient.Plantype}").FirstOrDefault().ToString(),
+                  Company = presc.Patient.Spons.Sponsortype,
+                  Alert = 0,
+                  Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                  Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                  Store = presc.Indentstore.Departmentname
+              })).OrderBy(p => p.Prescdate).ToListAsync();
+                int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND (locationid = {prescriptionListFilterModel.LocationId}  OR ProviderID = {prescriptionListFilterModel.ProviderId} OR prescriptiondate == {prescriptionListFilterModel.Date})").Count();
+                var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
+                return prescriptionListWithCount;
+            }               
+            else if (prescriptionListFilterModel.Date.HasValue && prescriptionListFilterModel.LocationId.HasValue && !prescriptionListFilterModel.ProviderId.HasValue)
+            {
+                preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+               .Where(p => (p.Patientid != null) && (
+               ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
+               (p.Locationid == prescriptionListFilterModel.LocationId)))
+               )
+               .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
+               .Take(prescriptionListFilterModel.PageSize)
+              .Select(presc => new PharmacyManagementDTO
+              {
+                  Facility = presc.Location.Locationname,
+                  Prescno = presc.Prescriptionid,
+                  Prescdate = presc.Prescriptiondate,
+                  Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
+                  Agegender = CalculateAge((DateTime)presc.Patient.Dob) + "/Yrs" + presc.Patient.Gender.Gendername,
+                  Regno = UInt32.Parse(presc.Patientid),
+                  //Plantype = _context.PlanType.Where(pl=>pl.planid==Int32.Parse(presc.Patient.Plantype)).Select(pl=>pl.planname).FirstOrDefault(),
+                  //Plantype = _context.PlanType.FromSqlInterpolated($"SELECT planname from PlanType where planid = {presc.Patient.Plantype}").FirstOrDefault().ToString(),
+                  Company = presc.Patient.Spons.Sponsortype,
+                  Alert = 0,
+                  Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                  Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                  Store = presc.Indentstore.Departmentname
+              })).OrderBy(p => p.Prescdate).ToListAsync();
+
+                int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND (locationid = {prescriptionListFilterModel.LocationId} OR prescriptiondate = {prescriptionListFilterModel.Date})").Count();
+                var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
+                return prescriptionListWithCount;
+            }
+            else if (prescriptionListFilterModel.Date.HasValue && prescriptionListFilterModel.ProviderId.HasValue && !prescriptionListFilterModel.LocationId.HasValue)
+            {
+                preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+               .Where(p => (p.Patientid != null) && (
+               ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
+               (p.ProviderId == prescriptionListFilterModel.ProviderId)))
+               )
+               .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
+               .Take(prescriptionListFilterModel.PageSize)
+              .Select(presc => new PharmacyManagementDTO
+              {
+                  Facility = presc.Location.Locationname,
+                  Prescno = presc.Prescriptionid,
+                  Prescdate = presc.Prescriptiondate,
+                  Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
+                  Agegender = CalculateAge((DateTime)presc.Patient.Dob) + "/Yrs" + presc.Patient.Gender.Gendername,
+                  Regno = UInt32.Parse(presc.Patientid),
+                  //Plantype = _context.PlanType.Where(pl=>pl.planid==Int32.Parse(presc.Patient.Plantype)).Select(pl=>pl.planname).FirstOrDefault(),
+                  //Plantype = _context.PlanType.FromSqlInterpolated($"SELECT planname from PlanType where planid = {presc.Patient.Plantype}").FirstOrDefault().ToString(),
+                  Company = presc.Patient.Spons.Sponsortype,
+                  Alert = 0,
+                  Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                  Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                  Store = presc.Indentstore.Departmentname
+              })).OrderBy(p => p.Prescdate).ToListAsync();
+
+                int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND (ProviderID = {prescriptionListFilterModel.ProviderId} OR prescriptiondate = {prescriptionListFilterModel.Date})").Count();
+                var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
+                return prescriptionListWithCount;
+            }
+            else if (!prescriptionListFilterModel.Date.HasValue && prescriptionListFilterModel.ProviderId.HasValue && prescriptionListFilterModel.LocationId.HasValue)
+            {
+                //date filtering wasn't selected but both providerid and location selected
+                preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+
+                  .Where(p => (p.Patientid != null) && (
+                  (p.Locationid == prescriptionListFilterModel.LocationId) ||
+                  (p.ProviderId == prescriptionListFilterModel.ProviderId))
+                  )
+                  .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
+                  .Take(prescriptionListFilterModel.PageSize)
+                 .Select(presc => new PharmacyManagementDTO
+                 {
+                     Facility = presc.Location.Locationname,
+                     Prescno = presc.Prescriptionid,
+                     Prescdate = presc.Prescriptiondate,
+                     Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
+                     Agegender = (CalculateAge((DateTime)presc.Patient.Dob)).ToString() + "/Yrs" + presc.Patient.Gender.Gendername,
+                     Regno = UInt32.Parse(presc.Patientid),
+                     //PlanType = presc.Patient.PlanType.planname,
+                     Company = presc.Patient.Spons.Sponsortype,
+                     Alert = 0,
+                     Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                     Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                     Store = presc.Indentstore.Departmentname
+                 })).ToListAsync();
+                int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND (locationid = {prescriptionListFilterModel.LocationId}  OR ProviderID = {prescriptionListFilterModel.ProviderId})").Count();
+                var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
+                return prescriptionListWithCount;
+            }
+            else if (!prescriptionListFilterModel.Date.HasValue && !prescriptionListFilterModel.ProviderId.HasValue && prescriptionListFilterModel.LocationId.HasValue)
+            {
+                //date filtering wasn't selected but both providerid and location selected
+                preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+
+                  .Where(p => (p.Patientid != null) && (
+                  (p.Locationid == prescriptionListFilterModel.LocationId)))
+                  .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
+                  .Take(prescriptionListFilterModel.PageSize)
+                 .Select(presc => new PharmacyManagementDTO
+                 {
+                     Facility = presc.Location.Locationname,
+                     Prescno = presc.Prescriptionid,
+                     Prescdate = presc.Prescriptiondate,
+                     Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
+                     Agegender = (CalculateAge((DateTime)presc.Patient.Dob)).ToString() + "/Yrs" + presc.Patient.Gender.Gendername,
+                     Regno = UInt32.Parse(presc.Patientid),
+                     //PlanType = presc.Patient.PlanType.planname,
+                     Company = presc.Patient.Spons.Sponsortype,
+                     Alert = 0,
+                     Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                     Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                     Store = presc.Indentstore.Departmentname
+                 })).ToListAsync();
+                int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND locationid = {prescriptionListFilterModel.LocationId}").Count();
+                var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
+                return prescriptionListWithCount;
+            }
+            else if (!prescriptionListFilterModel.Date.HasValue && prescriptionListFilterModel.ProviderId.HasValue && !prescriptionListFilterModel.LocationId.HasValue)
+            {
+                preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+               .Where(p => (p.Patientid != null) && (p.Locationid == prescriptionListFilterModel.LocationId))
+               .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
+               .Take(prescriptionListFilterModel.PageSize)
+              .Select(presc => new PharmacyManagementDTO
+              {
+                  Facility = presc.Location.Locationname,
+                  Prescno = presc.Prescriptionid,
+                  Prescdate = presc.Prescriptiondate,
+                  Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
+                  Agegender = CalculateAge((DateTime)presc.Patient.Dob) + "/Yrs" + presc.Patient.Gender.Gendername,
+                  Regno = UInt32.Parse(presc.Patientid),
+                  //Plantype = _context.PlanType.Where(pl=>pl.planid==Int32.Parse(presc.Patient.Plantype)).Select(pl=>pl.planname).FirstOrDefault(),
+                  //Plantype = _context.PlanType.FromSqlInterpolated($"SELECT planname from PlanType where planid = {presc.Patient.Plantype}").FirstOrDefault().ToString(),
+                  Company = presc.Patient.Spons.Sponsortype,
+                  Alert = 0,
+                  Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                  Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                  Store = presc.Indentstore.Departmentname
+              })).OrderBy(p => p.Prescdate).ToListAsync();
+
+                int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE patientid is not null  AND ProviderID = {prescriptionListFilterModel.ProviderId}").Count();
+                var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
+                return prescriptionListWithCount;
+            }
+            else if (prescriptionListFilterModel.Date.HasValue && !prescriptionListFilterModel.LocationId.HasValue && !prescriptionListFilterModel.ProviderId.HasValue)
+            {
+                preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+               .Where(p => (p.Patientid != null) && (p.Prescriptiondate == prescriptionListFilterModel.Date))
+               .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
+               .Take(prescriptionListFilterModel.PageSize)
+              .Select(presc => new PharmacyManagementDTO
+              {
+                  Facility = presc.Location.Locationname,
+                  Prescno = presc.Prescriptionid,
+                  Prescdate = presc.Prescriptiondate,
+                  Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
+                  Agegender = CalculateAge((DateTime)presc.Patient.Dob) + "/Yrs" + presc.Patient.Gender.Gendername,
+                  Regno = UInt32.Parse(presc.Patientid),
+                  //Plantype = _context.PlanType.Where(pl=>pl.planid==Int32.Parse(presc.Patient.Plantype)).Select(pl=>pl.planname).FirstOrDefault(),
+                  //Plantype = _context.PlanType.FromSqlInterpolated($"SELECT planname from PlanType where planid = {presc.Patient.Plantype}").FirstOrDefault().ToString(),
+                  Company = presc.Patient.Spons.Sponsortype,
+                  Alert = 0,
+                  Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                  Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                  Store = presc.Indentstore.Departmentname
+              })).OrderBy(p => p.Prescdate).ToListAsync();
+                int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND prescriptiondate = {prescriptionListFilterModel.Date}").Count();
+                var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
+                return prescriptionListWithCount;
+            }
+            else
+            {
+                preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+              .Where(p => p.Patientid != null )
               .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
               .Take(prescriptionListFilterModel.PageSize)
              .Select(presc => new PharmacyManagementDTO
@@ -67,98 +263,23 @@ namespace medicloud.emr.api.Services
                  Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
                  Agegender = CalculateAge((DateTime)presc.Patient.Dob) + "/Yrs" + presc.Patient.Gender.Gendername,
                  Regno = UInt32.Parse(presc.Patientid),
-                 //Plantype = _context.PlanType.Where(pl=>pl.planid==Int32.Parse(presc.Patient.Plantype)).Select(pl=>pl.planname).FirstOrDefault(),
-                 //Plantype = _context.PlanType.FromSqlInterpolated($"SELECT planname from PlanType where planid = {presc.Patient.Plantype}").FirstOrDefault().ToString(),
-                 Company = presc.Patient.Spons.Sponsortype,
+                  //Plantype = _context.PlanType.Where(pl=>pl.planid==Int32.Parse(presc.Patient.Plantype)).Select(pl=>pl.planname).FirstOrDefault(),
+                  //Plantype = _context.PlanType.FromSqlInterpolated($"SELECT planname from PlanType where planid = {presc.Patient.Plantype}").FirstOrDefault().ToString(),
+                  Company = presc.Patient.Spons.Sponsortype,
                  Alert = 0,
                  Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                  Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                  Store = presc.Indentstore.Departmentname
+             })).OrderBy(p => p.Prescdate).ToListAsync();
 
-
-             })).ToListAsync();
-
-                if (!prescriptionListFilterModel.LocationId.HasValue && !prescriptionListFilterModel.ProviderId.HasValue)
-                {
-                    int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE prescriptiondate = {prescriptionListFilterModel.Date}").Count();
-                    var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
-                    return prescriptionListWithCount;
-                }
-                else if (!prescriptionListFilterModel.LocationId.HasValue && prescriptionListFilterModel.ProviderId.HasValue)
-                {
-                    int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE ProviderID = {prescriptionListFilterModel.ProviderId} OR prescriptiondate = {prescriptionListFilterModel.Date}").Count();
-                    var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
-                    return prescriptionListWithCount;
-                }
-                else if (prescriptionListFilterModel.LocationId.HasValue && !prescriptionListFilterModel.ProviderId.HasValue)
-                {
-                    int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE locationid = {prescriptionListFilterModel.LocationId} OR prescriptiondate = {prescriptionListFilterModel.Date}").Count();
-                    var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
-                    return prescriptionListWithCount;
-                }
-                else
-                {
-                    int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE locationid = {prescriptionListFilterModel.LocationId}  OR ProviderID = {prescriptionListFilterModel.ProviderId} OR prescriptiondate == {prescriptionListFilterModel.Date}").Count();
-                    var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
-                    return prescriptionListWithCount;
-                }
+                int count = _context.ConsultationPrescription.Count();
+                var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
+                return prescriptionListWithCount;
             }
-            else
-            {
-                //date filtering wasn't selected
-                preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
-                    
-                  .Where(p => (p.Patientid != null) &&(
-                  (p.Locationid == prescriptionListFilterModel.LocationId) ||
-                  (p.ProviderId == prescriptionListFilterModel.ProviderId) )                  
-                  )
-                  .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
-                  .Take(prescriptionListFilterModel.PageSize)
-                 .Select(presc => new PharmacyManagementDTO
-                 {
-                     Facility = presc.Location.Locationname,
-                     Prescno = presc.Prescriptionid,
-                     Prescdate = presc.Prescriptiondate,
-                     Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
-                     Agegender = (CalculateAge((DateTime)presc.Patient.Dob)).ToString()+ "/Yrs" + presc.Patient.Gender.Gendername,
-                     Regno = UInt32.Parse(presc.Patientid),
-                     //PlanType = presc.Patient.PlanType.planname,
-                     Company = presc.Patient.Spons.Sponsortype,
-                     Alert = 0,
-                     Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
-                     Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
-
-                     Store = presc.Indentstore.Departmentname
-
-                 })).ToListAsync();
-
-                if (!prescriptionListFilterModel.LocationId.HasValue && !prescriptionListFilterModel.ProviderId.HasValue)
-                {
-                    int count = _context.ConsultationPrescription.Count();
-                    var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
-                    return prescriptionListWithCount;
-                }
-                else if (!prescriptionListFilterModel.LocationId.HasValue && prescriptionListFilterModel.ProviderId.HasValue)
-                {
-                    int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE ProviderID = {prescriptionListFilterModel.ProviderId}").Count();
-                    var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
-                    return prescriptionListWithCount;
-                }
-                else if (prescriptionListFilterModel.LocationId.HasValue && !prescriptionListFilterModel.ProviderId.HasValue)
-                {
-                    int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE locationid = {prescriptionListFilterModel.LocationId}").Count();
-                    var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
-                    return prescriptionListWithCount;
-                }
-                else
-                {
-                    int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE locationid = {prescriptionListFilterModel.LocationId}  OR ProviderID = {prescriptionListFilterModel.ProviderId}").Count();
-                    var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
-                    return prescriptionListWithCount;
-                }
+               
             }
 
-        }
+        
 
         public async Task<ConsultationPrescriptionDetails> removeConsultationPrescriptionDetailsItem(int prescriptionDetailsId)
         {
@@ -182,18 +303,16 @@ namespace medicloud.emr.api.Services
                        PAno = 0,
                        Status = s.Status.Status,
                        Instructions = s.Medicationinstructions,
-                   }).ToListAsync();
+                   }).OrderBy(p=>p.Name).ToListAsync();
             return list;
         }
 
         public async Task<List<PharmacyManagementPrescriptionDetailsDTO>> getConsultationPrescriptionsDetailsByPrescriptionId(int prescriptionId)
         {
             var list = await _context.ConsultationPrescriptionDetails.AsNoTracking()
-                 .Where(e => e.Prescriptionid.Equals(prescriptionId))
+                 .Where(e => e.Prescriptionid.Equals(prescriptionId) && e.Genericid!=null)
                     .Select(s => new PharmacyManagementPrescriptionDetailsDTO
-                    {
-
-                        Name = _context.DrugGeneric.Where(d => d.Genericid == s.Genericid).Select(e => e.Genericname).FirstOrDefault(),
+                    {                        Name = _context.DrugGeneric.Where(d => d.Genericid == s.Genericid).Select(e => e.Genericname).FirstOrDefault(),
                         Prescdetails = s.PrescriptionDetail,
                         Prescriptionquantity = (s.Qty).HasValue ? (int)s.Qty : 0,
                         Issuedquantity = (s.Qty).HasValue ? (int)s.Qty : 0,
@@ -201,7 +320,7 @@ namespace medicloud.emr.api.Services
                         PAno = 0,
                         Status = s.Status.Status,
                         Instructions = s.Medicationinstructions,
-                    }).ToListAsync();
+                    }).OrderBy(p => p.Name).ToListAsync();
             return list;
 
         }
@@ -216,10 +335,9 @@ namespace medicloud.emr.api.Services
             return _context.ConsultationPrescription.Any(e => e.Consultationid == ConsultationPrescriptionId);
         }
 
-        public async Task<List<PharmacyManagementDTO>> getConsultationPrescriptionByPrescriptionId(int prescriptionId)
+        public PharmacyManagementDTO getConsultationPrescriptionByPrescriptionId(int prescriptionId)
         {
-            var preseciptionList = new List<PharmacyManagementDTO>();
-            preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+            var preseciption = (_context.ConsultationPrescription.AsNoTracking()
             .Where(p => p.Prescriptionid == prescriptionId)
              .Include(p => p.Patient)
              .Select(presc => new PharmacyManagementDTO
@@ -228,19 +346,17 @@ namespace medicloud.emr.api.Services
                  Prescno = presc.Prescriptionid,
                  Prescdate = presc.Prescriptiondate,
                  Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
-                 //Agegender = CalculateAge((DateTime)presc.Patient.Dob) + "/Yrs" + presc.Patient.Gender.Gendername,
-                 //Regno = Int16.Parse(presc.Patientid),
+                 Agegender = (CalculateAge((DateTime)presc.Patient.Dob)).ToString() + "/Yrs" + presc.Patient.Gender.Gendername,
+                 Regno = UInt32.Parse(presc.Patientid),
                  //PlanType = _context.Plan.SingleOrDefault(pl => pl.Id == Int32.Parse(presc.Patient.Plantype)).Name,
                  //PlanType = presc.Patient.PlanType.planname,
                  Company = presc.Patient.Spons.Sponsortype,
                  Alert = 0,
                  Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                  Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
-
                  Store = presc.Indentstore.Departmentname,
-
-             })).ToListAsync();
-            return preseciptionList;
+             })).FirstOrDefault();
+            return preseciption;
         }
         public async Task<IEnumerable<LocationDTO>> GetLocations()
         {
@@ -251,14 +367,23 @@ namespace medicloud.emr.api.Services
 
         public async Task<IEnumerable<ProviderDTO>> GetProviders()
         {
-            var prov = await _context.Provider.Select(p => new ProviderDTO
+            var prov = await _context.ApplicationUser.Select(p => new ProviderDTO
             {
-                Id = p.Id,
-                Name = p.Name
+                Id = p.Appuserid,
+                Name = p.Lastname+" "+p.Firstname
             })
             .AsNoTracking().OrderBy(p => p.Name).ToListAsync();
             return prov;
+        }
 
+        public async Task<IEnumerable<OptionsDTO>> GetStatus()
+        {
+            var prov = await _context.StatusMaster.Select(s => new OptionsDTO
+            {
+                Id = s.Statusid,
+                Name = s.Status            })
+            .AsNoTracking().OrderBy(p => p.Name).ToListAsync();
+            return prov;
         }
 
     }
