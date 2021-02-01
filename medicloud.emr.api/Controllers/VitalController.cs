@@ -158,14 +158,14 @@ namespace medicloud.emr.api.Controllers
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
 
-        //[Route("SaveConsultationComplaints")]
-        //[HttpPost]
-        //public async Task<IActionResult> SaveConsultationComplaints([FromBody] Etities.ConsultationComplaints dto)
-        //{
-        //    dto.Dateadded = DateTime.Now;
-        //    _ctx.ConsultationComplaints.Add(dto);
-        //    return Ok(await _ctx.SaveChangesAsync() > 0);
-        //}
+        [Route("SaveConsultationComplaints")]
+        [HttpPost]
+        public async Task<IActionResult> SaveConsultationComplaints([FromBody] ConsultationComplaints dto)
+        {
+            dto.Dateadded = DateTime.Now;
+            _ctx.ConsultationComplaints.Add(dto);
+            return Ok(await _ctx.SaveChangesAsync() > 0);
+        }
 
         [Route("LoadLastTenConsultationComplaints")]
         [HttpGet]
