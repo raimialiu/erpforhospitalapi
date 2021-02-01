@@ -43,6 +43,7 @@ namespace medicloud.emr.api.Services
     public async Task<List<DiagnosisSoap>> getDiagnosisSoap(string patientid, int ecounterid)
     {
       var result = await _context.DiagnosisSoap.Where(c => c.Patientid == patientid && c.Encounterid == ecounterid)
+             .OrderByDescending(c => c.Dateadded)
                  .ToListAsync();
 
       return result;
@@ -73,7 +74,7 @@ namespace medicloud.emr.api.Services
       }
     public async Task<List<DiagnosisSoap>> filterSoapHistory(string patientid, DateTime startDate, DateTime endDate)
     {
-     
+   
       var result = await _context.DiagnosisSoap.Where(c => c.Patientid == patientid && c.Dateadded >= startDate.Date && c.Dateadded <= endDate)
                          .OrderByDescending(c => c.Dateadded)
                    .ToListAsync();
