@@ -469,7 +469,7 @@ namespace medicloud.emr.api.Services
             var tariffplan = await _context.TarriffPlan.Where(t => t.planid == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
             var plan = await _context.Plan.Where(t => t.Id == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
 
-            var invoiceamount = await getTarrifByServiceCode((int)billingInvoice.ProviderID, tariffplan != null ? (int)tariffplan.drugtariffid: 0, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
+            var invoiceamount = await getDrugTarrifByDrugId((int)billingInvoice.ProviderID, tariffplan != null ? (int)tariffplan.drugtariffid: 0, (int)billingInvoice.drugid, (int)billingInvoice.locationid);
 
             if (!invoiceamount.Item1)
             {
@@ -607,6 +607,8 @@ namespace medicloud.emr.api.Services
                 if (item.payortypeid != null)
                 {
                     item.payer = await _payerInsuranceRepository.GetPatientPayerInfo(item.payortypeid.ToString());
+
+                    item.payer.PayerType = await _context.Payer.Where(p => p.PayerId == item.payer.PayerId).Select(r => r.PayerType).FirstOrDefaultAsync();
                 }
 
                 if (item.sponsorid != null)
