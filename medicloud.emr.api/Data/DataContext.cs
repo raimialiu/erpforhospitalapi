@@ -65,7 +65,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ConsultationCheckslist> ConsultationCheckslist { get; set; }
         public virtual DbSet<Etities.ConsultationComplaints> ConsultationComplaints { get; set; }
         public virtual DbSet<Etities.ConsultationComplaintsFavorites> ConsultationComplaintsFavorites { get; set; }
-        public virtual DbSet<Etities.ConsultationComplaints> ConsultationComplaintsB { get; set; }
+        //public virtual DbSet<Etities.ConsultationComplaints> ConsultationComplaintsB { get; set; }
         public virtual DbSet<ConsultationDental> ConsultationDental { get; set; }
         public virtual DbSet<ConsultationDentalProcedure> ConsultationDentalProcedure { get; set; }
         public virtual DbSet<ConsultationDiagnosis> ConsultationDiagnosis { get; set; }
@@ -385,10 +385,12 @@ namespace medicloud.emr.api.Data
 
         entity.Property(e => e.UnitSalePrice).HasColumnType("money");
       });
-            
+
             modelBuilder.Entity<Etities.ConsultationComplaints>(e =>
             {
                 e.Property(e => e.Complaintid);
+                e.HasKey(x => x.Complaintid);
+
             });
 
             modelBuilder.Entity<AccessControl>(entity =>
@@ -2504,53 +2506,53 @@ namespace medicloud.emr.api.Data
                     .HasConstraintName("FK_ConsultationCheckslist_ConsultationCheckslist");
             });
 
-            modelBuilder.Entity<Entities.ConsultationComplaints>(entity =>
-            {
-                entity.HasKey(e => e.Txnkey);
+            //modelBuilder.Entity<Entities.ConsultationComplaints>(entity =>
+            //{
+            //    entity.HasKey(e => e.Txnkey);
 
-                entity.ToTable("Consultation_Complaints");
+            //    entity.ToTable("Consultation_Complaints");
 
-                entity.Property(e => e.Txnkey).HasColumnName("txnkey");
+            //    entity.Property(e => e.Txnkey).HasColumnName("txnkey");
 
-                entity.Property(e => e.Complaints)
-                    .HasColumnName("complaints")
-                    .HasMaxLength(250);
+            //    entity.Property(e => e.Complaints)
+            //        .HasColumnName("complaints")
+            //        .HasMaxLength(250);
 
-                entity.Property(e => e.Consultationid).HasColumnName("consultationid");
+            //    entity.Property(e => e.Consultationid).HasColumnName("consultationid");
 
-                entity.Property(e => e.Dateadded)
-                    .HasColumnName("dateadded")
-                    .HasColumnType("datetime");
+            //    entity.Property(e => e.Dateadded)
+            //        .HasColumnName("dateadded")
+            //        .HasColumnType("datetime");
 
-                entity.Property(e => e.Duration)
-                    .HasColumnName("duration")
-                    .HasMaxLength(50);
+            //    entity.Property(e => e.Duration)
+            //        .HasColumnName("duration")
+            //        .HasMaxLength(50);
 
-                entity.Property(e => e.Patientid)
-                    .HasColumnName("patientid")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+            //    entity.Property(e => e.Patientid)
+            //        .HasColumnName("patientid")
+            //        .HasMaxLength(50)
+            //        .IsUnicode(false);
 
-                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
+            //    entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
 
-                entity.HasOne(d => d.Consultation)
-                    .WithMany(p => p.ConsultationComplaints)
-                    .HasForeignKey(d => d.Consultationid)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_Consultation_Complaints_Consultation");
+            //    entity.HasOne(d => d.Consultation)
+            //        .WithMany(p => p.ConsultationComplaints)
+            //        .HasForeignKey(d => d.Consultationid)
+            //        .OnDelete(DeleteBehavior.Cascade)
+            //        .HasConstraintName("FK_Consultation_Complaints_Consultation");
 
-                entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.ConsultationComplaints)
-                    .HasForeignKey(d => d.Patientid)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_Consultation_Complaints_Patient");
+            //    entity.HasOne(d => d.Patient)
+            //        .WithMany(p => p.ConsultationComplaints)
+            //        .HasForeignKey(d => d.Patientid)
+            //        .OnDelete(DeleteBehavior.Cascade)
+            //        .HasConstraintName("FK_Consultation_Complaints_Patient");
 
-                entity.HasOne(d => d.Provider)
-                    .WithMany(p => p.ConsultationComplaints)
-                    .HasForeignKey(d => d.ProviderId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_Consultation_Complaints_AccountManager");
-            });
+            //    entity.HasOne(d => d.Provider)
+            //        .WithMany(p => p.ConsultationComplaints)
+            //        .HasForeignKey(d => d.ProviderId)
+            //        .OnDelete(DeleteBehavior.Cascade)
+            //        .HasConstraintName("FK_Consultation_Complaints_AccountManager");
+            //});
 
             modelBuilder.Entity<ConsultationDental>(entity =>
             {
