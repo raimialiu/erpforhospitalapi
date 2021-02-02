@@ -39,11 +39,13 @@ namespace medicloud.emr.api.Services
         private readonly DataContext _context;
         private readonly IPayerInsuranceRepository _payerInsuranceRepository;
         private readonly ICheckInRepository _checkInRepository;
-        public BillingRepository(DataContext context, IPayerInsuranceRepository payerInsuranceRepository, ICheckInRepository checkInRepository)
+        private readonly IMRPRepository _mRPRepository;
+        public BillingRepository(DataContext context, IPayerInsuranceRepository payerInsuranceRepository, IMRPRepository mRPRepository, ICheckInRepository checkInRepository)
         {
             _context = context;
             _payerInsuranceRepository = payerInsuranceRepository;
             _checkInRepository = checkInRepository;
+            _mRPRepository = mRPRepository;
         }
 
 
@@ -132,14 +134,37 @@ namespace medicloud.emr.api.Services
         
         public async Task<(bool, string, decimal?)> getPatientDrugTarriff (int accountId, string patientId, int drugid, int locationId)
         {
-            var patientPlantype = await _context.Patient.Where(p => p.Patientid == patientId && p.ProviderId == accountId).Select(r => r.Plantype).FirstOrDefaultAsync();
+            var patient = await _context.Patient.Where(p => p.Patientid == patientId && p.ProviderId == accountId).FirstOrDefaultAsync();
 
-            if (string.IsNullOrEmpty(patientPlantype))
+            var patientPayer = await _payerInsuranceRepository.GetPatientPayerInfo(patient.Payor);
+
+            if (patientPayer != null)
+            {
+                if (patientPayer.AccountCatId == 2)
+                {
+                    var latestPrice = await _mRPRepository.getLatestPrice(drugid);
+
+                    if (latestPrice != null )
+                    {
+                        return (true, "success", latestPrice.UnitCost);
+                    }
+                    else
+                    {
+                        return (false, "failed! latest price was not retreived", null);
+                    }
+
+                }
+            }
+
+            
+            
+
+            if (string.IsNullOrEmpty(patient.Plantype))
             {
                 return (false, "plan type not available for this patient", null);
             }
 
-            var tariffplan = await _context.TarriffPlan.Where(t => t.planid == int.Parse(patientPlantype)).FirstOrDefaultAsync();
+            var tariffplan = await _context.TarriffPlan.Where(t => t.planid == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
 
             if (tariffplan == null)
             {
@@ -399,6 +424,12 @@ namespace medicloud.emr.api.Services
             }
 
             var tariffplan = await _context.TarriffPlan.Where(t => t.planid == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
+
+            if (tariffplan == null )
+            {
+                return (false, "No tariff was found for this patient plan type", null);
+            }
+
             var plan = await _context.Plan.Where(t => t.Id == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
 
             var invoiceamount = await getTarrifByServiceCode((int)billingInvoice.ProviderID, tariffplan != null ? (int)tariffplan.tariffid: 0, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
@@ -469,7 +500,7 @@ namespace medicloud.emr.api.Services
             var tariffplan = await _context.TarriffPlan.Where(t => t.planid == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
             var plan = await _context.Plan.Where(t => t.Id == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
 
-            var invoiceamount = await getTarrifByServiceCode((int)billingInvoice.ProviderID, tariffplan != null ? (int)tariffplan.drugtariffid: 0, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
+            var invoiceamount = await getDrugTarrifByDrugId((int)billingInvoice.ProviderID, tariffplan != null ? (int)tariffplan.drugtariffid: 0, (int)billingInvoice.drugid, (int)billingInvoice.locationid);
 
             if (!invoiceamount.Item1)
             {
@@ -607,6 +638,8 @@ namespace medicloud.emr.api.Services
                 if (item.payortypeid != null)
                 {
                     item.payer = await _payerInsuranceRepository.GetPatientPayerInfo(item.payortypeid.ToString());
+
+                    item.payer.PayerType = await _context.Payer.Where(p => p.PayerId == item.payer.PayerId).Select(r => r.PayerType).FirstOrDefaultAsync();
                 }
 
                 if (item.sponsorid != null)
