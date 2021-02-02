@@ -33,6 +33,7 @@ namespace medicloud.emr.api.Entities
         public int? ProviderID { get; set; }
         public int? locationid { get; set; }
         public int? unit { get; set; }
+        public int? drugid { get; set; }
         public DateTime? dateadded { get; set; }
     }
 }

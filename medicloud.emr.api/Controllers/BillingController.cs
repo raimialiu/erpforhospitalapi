@@ -276,6 +276,28 @@ namespace medicloud.emr.api.Controllers
             }
 
         }
+        
+        [HttpPost("AddDrugBillingInvoice")]
+        public async Task<IActionResult> AddDrugBillingInvoice(BillingInvoice billingInvoice)
+        {
+            try
+            {
+                var result = await _billingRepository.AddDrugBillInvoice(billingInvoice);
+
+                PatientTariffByPayorResponse response = new PatientTariffByPayorResponse()
+                {
+                    TariffAmount = null,
+                    ResponseMessage = result.Item2,
+                    Status = result.Item1
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
 
         [HttpPost("AddPrivatePatientConsultationBillingInvoice")]
         public async Task<IActionResult> AddPrivatePatientConsultationBillingInvoice (BillingInvoice billingInvoice)
