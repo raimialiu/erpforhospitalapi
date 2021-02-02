@@ -144,21 +144,21 @@ namespace medicloud.emr.api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPatientBillingInvoiceHistory([FromQuery]int accountId, [FromQuery]string patientId, [FromQuery]int? encounterId)
         {
-            if(encounterId.HasValue)
-            {
-                var patientBillingHistory = _conn.Query($"select a.*, b.serviceid, b.servicename, b.servicecategoryid, c.servicecategoryname, " +
-                $"c.servicecategorydesc from Billing_Invoice a join ServiceCode b on a.servicecode = b.serviceid join servicecategory " +
-                $"c on b.servicecategoryid = c.servicecategoryid where a.patientid = '{patientId}' and a.providerid = {accountId} and encounterid = {encounterId}");
-                //   var bills = await _billingRepository.GetPatientEncounterBill(accountId, patientId, encounterId);
+            //if(encounterId.HasValue)
+            //{
+            //    var patientBillingHistory = _conn.Query($"select a.*, b.serviceid, b.servicename, b.servicecategoryid, c.servicecategoryname, " +
+            //    $"c.servicecategorydesc from Billing_Invoice a join ServiceCode b on a.servicecode = b.serviceid join servicecategory " +
+            //    $"c on b.servicecategoryid = c.servicecategoryid where a.patientid = '{patientId}' and a.providerid = {accountId} and encounterid = {encounterId}");
+            //    //   var bills = await _billingRepository.GetPatientEncounterBill(accountId, patientId, encounterId);
 
-                return Ok(patientBillingHistory);
-            }
+            //    return Ok(patientBillingHistory);
+            //}
 
 
 
-            var patientBillingViewHistory = _conn.Query($"select a.*, b.serviceid, b.servicename, b.servicecategoryid, c.servicecategoryname, " +
-                $"c.servicecategorydesc from Billing_Invoice a join ServiceCode b on a.servicecode = b.serviceid join servicecategory " +
-                $"c on b.servicecategoryid = c.servicecategoryid where a.patientid = '{patientId}' and a.providerid = {accountId}");
+            var patientBillingViewHistory = _conn.Query($"select a.*, b.serviceid, b.servicename, b.servicecategoryid, c.servicecategoryname, ck.checkindate,ck.encounterno,ck.encounterid checkinencounterid," +
+                $"c.servicecategorydesc from Billing_Invoice a join checkin ck on a.encounterid = ck.encounterid join ServiceCode b on a.servicecode = b.serviceid join servicecategory " +
+                $"c on b.servicecategoryid = c.servicecategoryid where a.patientid = '{patientId}' and a.providerid = {accountId} and  a.encounterid = {encounterId.Value}");
           //   var bills = await _billingRepository.GetPatientEncounterBill(accountId, patientId, encounterId);
 
              return Ok(patientBillingViewHistory);

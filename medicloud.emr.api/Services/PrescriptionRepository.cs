@@ -63,7 +63,7 @@ namespace medicloud.emr.api.Services
 
         public async Task<List<Store>> GetStore(int locationid)
         {
-            var druglist = await _context.Store.Where(p => p.Locationid == locationid)
+            var druglist = await _context.Store.Where(p => p.Locationid == locationid && p.ispharmacystore == 1)
                 .Select(r => new Store
                 {
                     Departmentname = r.Departmentname,

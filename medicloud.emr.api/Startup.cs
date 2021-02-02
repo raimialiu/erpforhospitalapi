@@ -125,7 +125,7 @@ namespace medicloud.emr.api
             services.AddScoped<IOrderInvestigationRepository, OrderInvestigationRepository>();
             services.AddScoped<IBillingRepository, BillingRepository>();
             services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
-
+            services.AddSingleton<IVitalRepo, VitalRepo>();
             services.AddScoped<ISoapRepository, SoapRepository>();
             services.AddScoped<IVitalSignsRepository, VitalSignsRepository>();
             services.AddScoped<IMRPRepository, MRPRepository>();
@@ -149,20 +149,10 @@ namespace medicloud.emr.api
             app.UseCors(corsPolicy);
             app.UseStatusCodePages("text/plain", "HTTP Error with {0} Status Code");
 
-            //app.UseStaticFiles(new StaticFileOptions()
-            //{
-            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
-            //    RequestPath = new PathString("/Uploads")
-            //});
-
-
-
-
+          
             app.UseExceptionMiddleware();
 
             app.UseRouting();
-
-
 
 
             app.UseAuthentication();

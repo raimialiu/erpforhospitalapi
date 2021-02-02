@@ -22,6 +22,7 @@ namespace medicloud.emr.api.Entities
         public string Passwordhash { get; set; } = "";
         public string Image { get; set; } = "";
         public int? Locationid { get; set; } =0;
+        public int? departmentid { get; set; }
 
         public virtual Location Location { get; set; }
         public virtual ICollection<BreakBlockSchedule> BreakBlockSchedule { get; set; }

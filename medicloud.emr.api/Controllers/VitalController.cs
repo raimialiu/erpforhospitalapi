@@ -1,12 +1,14 @@
 ﻿using medicloud.emr.api.Data;
 using medicloud.emr.api.Entities;
 using medicloud.emr.api.Etities;
+using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+//using medicloud.emr.api.Etities as a;
 
 namespace medicloud.emr.api.Controllers
 {
@@ -15,9 +17,11 @@ namespace medicloud.emr.api.Controllers
     public class VitalsController : ControllerBase
     {
         private DataContext _ctx;
-        public VitalsController()
+        private IVitalRepo _repo;
+        public VitalsController(IVitalRepo repo)
         {
             _ctx = new DataContext();
+            this._repo = repo;
         }
 
 
@@ -30,16 +34,16 @@ namespace medicloud.emr.api.Controllers
 
         [Route("GetAllProblemByKeyword/{keyword}")]
         [HttpGet]
-        public async Task<IActionResult> GetAllProblemByKeyword([FromRoute]string keyword)
+        public async Task<IActionResult> GetAllProblemByKeyword([FromRoute] string keyword)
         {
-            return Ok(await _ctx.EmrProblems.Where(x=>x.Description.Contains(keyword)).ToListAsync());
+            return Ok(await _ctx.EmrProblems.Where(x => x.Description.Contains(keyword)).ToListAsync());
         }
 
         [Route("AllProblemDuration")]
         [HttpGet]
         public async Task<IActionResult> AllProblemDuration()
         {
-            return Ok(await _ctx.EmrProblemDuration.ToListAsync());
+            return Ok(_repo.GetAllEmrproblemDuration());
         }
 
         [Route("TodaysProblem")]
@@ -47,8 +51,8 @@ namespace medicloud.emr.api.Controllers
         public async Task<IActionResult> TodaysProblem([FromQuery] string patientid)
         {
             var _today = DateTime.Now.ToLongDateString();
-           //return Ok(await _ctx.ConsultationComplaintsB.Where(x=>x.Dateadded.Value.ToShortDateString() == _today && x.Patientid == patientid).ToListAsync());
-            return Ok(await _ctx.ConsultationComplaintsB.FromSqlRaw($"select  * from consultation_complaints where cast(dateadded as date) = cast(getdate() as date) and patientid = '{patientid}'").ToListAsync());
+            //return Ok(await _ctx.ConsultationComplaintsB.Where(x=>x.Dateadded.Value.ToShortDateString() == _today && x.Patientid == patientid).ToListAsync());
+            return Ok(await _ctx.ConsultationComplaints.FromSqlRaw($"select  * from consultation_complaints where cast(dateadded as date) = cast(getdate() as date) and patientid = '{patientid}'").ToListAsync());
         }
 
         [Route("SaveConsultationFavourites")]
@@ -63,31 +67,50 @@ namespace medicloud.emr.api.Controllers
 
         [Route("DeleteConsultationFavourites/{id}")]
         [HttpPost]
-        public async Task<IActionResult> DeleteConsultationfavourites([FromRoute]long id)
+        public async Task<IActionResult> DeleteConsultationfavourites([FromRoute] long id)
         {
-            var single = await _ctx.ConsultationComplaintsFavorites.SingleOrDefaultAsync(x => x.Favoriteid == id);
-            if (single == null) return Ok(false);
+            //var single = await _ctx.ConsultationComplaintsFavorites.SingleOrDefaultAsync(x => x.Favoriteid == id);
+            //if (single == null) return Ok(false);
 
-            _ctx.ConsultationComplaintsFavorites.Remove(single);
-            return Ok(await _ctx.SaveChangesAsync() > 0);
+            var result = _repo.DeleteConsultationFavourites(id);
+
+            if (result == true) return Ok(result);
+            return BadRequest(false);
+
+            //_ctx.ConsultationComplaintsFavorites.Remove(single);
+            //return Ok(await _ctx.SaveChangesAsync() > 0);
         }
+
+        //[Route("UpdateComplaint")]
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateComplaint([FromRoute]long complaintid, [FromBody] Etities.ConsultationComplaints dto)
+        //{
+        //    var single = await _ctx.ConsultationComplaints.FirstOrDefaultAsync(x => x.Complaintid == complaintid);
+        //    if (single == null) return BadRequest(false);
+
+        //    _ctx.Entry(dto).State = EntityState.Modified;
+        //    _ctx.Entry(dto).Property(x => x.Complaintid).IsModified = false;
+
+        //    return Ok(await _ctx.SaveChangesAsync() > 0);
+                 
+        //}
 
         [Route("SaveFreeForm")]
         [HttpPost]
         public async Task<IActionResult> SaveFreeForm([FromBody] DiagnosisFreeFormDTO vl)
         {
-            foreach(DiagnosisFreeForm k in vl.values)
+            foreach (DiagnosisFreeForm k in vl.values)
             {
-               if(k != null)
+                if (k != null)
                 {
-                    if(k.Bodyarea != null || k.Textvalue != null)
-                     {
-                          k.Dateadded = DateTime.Now;
-                          _ctx.DiagnosisFreeForms.Add(k);
-                     }
+                    if (k.Bodyarea != null || k.Textvalue != null)
+                    {
+                        k.Dateadded = DateTime.Now;
+                        _ctx.DiagnosisFreeForms.Add(k);
+                    }
                 }
-                
-               
+
+
             }
 
             return Ok(await _ctx.SaveChangesAsync() > 0);
@@ -95,7 +118,7 @@ namespace medicloud.emr.api.Controllers
 
         [Route("LoadFreeFormByDateRange")]
         [HttpGet]
-        public async Task<IActionResult> LoadFreeFormByDateRange([FromQuery]string startDate, [FromQuery]string endDate)
+        public async Task<IActionResult> LoadFreeFormByDateRange([FromQuery] string startDate, [FromQuery] string endDate)
         {
             //DateTime start = DateTime.Parse(startDate);
             //DateTime end = DateTime.Parse(endDate);
@@ -126,7 +149,7 @@ namespace medicloud.emr.api.Controllers
 
         [Route("DeleteConsultationFavorites/{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteConsultationFavourites([FromRoute]long id, [FromQuery] int doctorid)
+        public async Task<IActionResult> DeleteConsultationFavourites([FromRoute] long id, [FromQuery] int doctorid)
         {
             var single = await _ctx.ConsultationComplaintsFavorites.SingleOrDefaultAsync(x => x.Favoriteid == id && x.Doctorid == doctorid);
             if (single == null) return BadRequest(false);
@@ -137,7 +160,7 @@ namespace medicloud.emr.api.Controllers
 
         [Route("SaveConsultationComplaints")]
         [HttpPost]
-        public async Task<IActionResult> SaveConsultationComplaints([FromBody]Etities.ConsultationComplaints dto)
+        public async Task<IActionResult> SaveConsultationComplaints([FromBody] ConsultationComplaints dto)
         {
             dto.Dateadded = DateTime.Now;
             _ctx.ConsultationComplaints.Add(dto);
@@ -148,19 +171,20 @@ namespace medicloud.emr.api.Controllers
         [HttpGet]
         public async Task<IActionResult> LoadLastTenConsultationComplaints()
         {
-            var lastTen =  _ctx.ConsultationComplaints.OrderByDescending(x => x.Complaintid).Take(10);
+            var lastTen = _ctx.ConsultationComplaints.OrderByDescending(x => x.Complaintid).Take(10);
 
             return Ok(lastTen);
         }
 
         [Route("ConsultationComplainByDateRange")]
         [HttpGet]
-        public async Task<IActionResult> ConsultationComplainByDateRange([FromQuery]string startDate, [FromQuery]string endDate)
+        public async Task<IActionResult> ConsultationComplainByDateRange([FromQuery] string startDate, [FromQuery] string endDate)
         {
-            string _start = DateTime.Parse(startDate).ToString("mm-dd-yyyy");
-            string  _end = DateTime.Parse(endDate).ToString("mm-dd-yyyy");
+            //string _start = DateTime.Parse(startDate).ToString("mm-dd-yyyy");
+            //string  _end = DateTime.Parse(endDate).ToString("mm-dd-yyyy");
             //var complaints = await _ctx.ConsultationComplaints.Where(x => x.Dateadded.Value == _start && x.Dateadded.Value <= _end).ToListAsync();
-            var complaints = await _ctx.ConsultationComplaints.FromSqlRaw($"select * from consultation_complaints where dateadded between '{startDate}' and '{endDate}'").ToListAsync();
+            // var complaints = await _ctx.ConsultationComplaints.FromSqlRaw($"select * from consultation_complaints where dateadded between '{startDate}' and '{endDate}'").ToListAsync();
+            var complaints = await _ctx.ConsultationComplaints.FromSqlRaw($"select top 10 * from consultation_complaints where ( cast(dateadded as date) between cast('{startDate}' as date) and cast('{endDate}' as date) OR  cast(dateadded as date) >= cast('{startDate}' as date) and  cast(dateadded as date) <= cast('{endDate}' as date))").ToListAsync();
             // select * from consultation_complaints where dateadded between
 
             return Ok(complaints);
@@ -168,10 +192,10 @@ namespace medicloud.emr.api.Controllers
 
         [Route("DeleteConsultationComplaint/{id}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteConsultationComplaint([FromRoute]long id, [FromQuery] string isChronic)
+        public async Task<IActionResult> DeleteConsultationComplaint([FromRoute] long id, [FromQuery] string isChronic)
         {
             Etities.ConsultationComplaints single = null;
-            if(Convert.ToInt32(isChronic) ==  0)
+            if (Convert.ToInt32(isChronic) == 0)
             {
                 single = await _ctx.ConsultationComplaints.SingleOrDefaultAsync(x => x.Complaintid == id);
             }
@@ -179,7 +203,7 @@ namespace medicloud.emr.api.Controllers
             {
                 single = await _ctx.ConsultationComplaints.SingleOrDefaultAsync(x => x.Complaintid == id && x.IsChronic == 1);
             }
-          
+
             if (single == null) return Ok(false);
 
             _ctx.ConsultationComplaints.Remove(single);
@@ -230,15 +254,15 @@ namespace medicloud.emr.api.Controllers
         }
 
 
-        [Route("addDiagnosis")]
-        [HttpPost]
-        public async Task<IActionResult> AddDiagnosis([FromBody] Diagnosis body)
-        {
-            _ctx.Diagnosis.Add(body);
-            var result = await _ctx.SaveChangesAsync();
+        //[Route("addDiagnosis")]
+        //[HttpPost]
+        //public async Task<IActionResult> AddDiagnosis([FromBody] Diagnosis body)
+        //{
+        //    _ctx.Diagnosis.Add(body);
+        //    var result = await _ctx.SaveChangesAsync();
 
-            return Ok(result > 0);
-        }
+        //    return Ok(result > 0);
+        //}
 
 
         //[Route("UpdateDiagnosis/{id}")]
@@ -274,61 +298,66 @@ namespace medicloud.emr.api.Controllers
         //    return Ok(await _ctx.Diagnosis.SingleOrDefaultAsync(x => x.Id == id));
         //}
 
-        [Route("allDiagnosis")]
-        [HttpGet]
-        public async Task<IActionResult> allDiagnosis()
-        {
-            return Ok(await _ctx.Diagnosis.ToListAsync());
-        }
+        //[Route("allDiagnosis")]
+        //[HttpGet]
+        //public async Task<IActionResult> allDiagnosis()
+        //{
+        //    return Ok(await _ctx.Diagnosis.ToListAsync());
+        //}
 
-        [Route("createChiefComplain")]
-        [HttpPost]
-        public async Task<IActionResult> CreateChiefComplain([FromBody] ChiefComplain body)
-        {
-            _ctx.ChiefComplain.Add(body);
-            var result = await _ctx.SaveChangesAsync();
+        //[Route("createChiefComplain")]
+        //[HttpPost]
+        //public async Task<IActionResult> CreateChiefComplain([FromBody] ChiefComplain body)
+        //{
+        //    _ctx.ChiefComplain.Add(body);
+        //    var result = await _ctx.SaveChangesAsync();
 
-            return Ok(result > 0);
-        }
+        //    return Ok(result > 0);
+        //}
 
-        [Route("UpdateChiefComplain/{id}")]
-        [HttpPut]
-        public async Task<IActionResult> UpdateChiefComplain([FromRoute]long id, [FromBody]ChiefComplain body)
-        {
-            var oldChiefComplaint = await _ctx.ChiefComplain.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
-            if (oldChiefComplaint == null) return BadRequest(false);
+        //[Route("UpdateChiefComplain/{id}")]
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateChiefComplain([FromRoute]long id, [FromBody]ChiefComplain body)
+        //{
+        //    var oldChiefComplaint = await _ctx.ChiefComplain.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
+        //    if (oldChiefComplaint == null) return BadRequest(false);
 
-            _ctx.Entry<ChiefComplain>(body).State = EntityState.Modified;
-            _ctx.Entry<ChiefComplain>(body).Property(x => x.Id).IsModified = false;
-            var result = await _ctx.SaveChangesAsync();
-            return Ok(result > 0);
-        }
+        //    _ctx.Entry<ChiefComplain>(body).State = EntityState.Modified;
+        //    _ctx.Entry<ChiefComplain>(body).Property(x => x.Id).IsModified = false;
+        //    var result = await _ctx.SaveChangesAsync();
+        //    return Ok(result > 0);
+        //}
 
-        [Route("DeleteChiefComplain/{id}")]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteChiefComplain([FromRoute] long id)
-        {
-            var oldChiefComplaint = await _ctx.ChiefComplain.SingleOrDefaultAsync(x => x.Id == id);
-            if (oldChiefComplaint == null) return BadRequest(false);
+        //[Route("DeleteChiefComplain/{id}")]
+        //[HttpDelete]
+        //public async Task<IActionResult> DeleteChiefComplain([FromRoute] long id)
+        //{
+        //    var oldChiefComplaint = await _ctx.ChiefComplain.SingleOrDefaultAsync(x => x.Id == id);
+        //    if (oldChiefComplaint == null) return BadRequest(false);
 
-            _ctx.ChiefComplain.Remove(oldChiefComplaint);
+        //    _ctx.ChiefComplain.Remove(oldChiefComplaint);
             
-            var result = await _ctx.SaveChangesAsync();
-            return Ok(result > 0);
-        }
+        //    var result = await _ctx.SaveChangesAsync();
+        //    return Ok(result > 0);
+        //}
+        //    _ctx.ChiefComplain.Remove(oldChiefComplaint);
 
-        [Route("allChiefComplain")]
-        [HttpGet]
-        public async Task<IActionResult> GetAllChiefComplaint()
-        {
-            return Ok(await _ctx.ChiefComplain.ToListAsync());
-        }
+        //    var result = await _ctx.SaveChangesAsync();
+        //    return Ok(result > 0);
+        //}
 
-        [Route("GetChiefComplain/{id}")]
-        [HttpGet]
-        public async Task<IActionResult> GetChiefComplaint([FromRoute]long id)
-        {
-            return Ok(await _ctx.ChiefComplain.SingleOrDefaultAsync(x => x.Id == id));
-        }
+        //[Route("allChiefComplain")]
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllChiefComplaint()
+        //{
+        //    return Ok(await _ctx.ChiefComplain.ToListAsync());
+        //}
+
+        //[Route("GetChiefComplain/{id}")]
+        //[HttpGet]
+        //public async Task<IActionResult> GetChiefComplaint([FromRoute]long id)
+        //{
+        //    return Ok(await _ctx.ChiefComplain.SingleOrDefaultAsync(x => x.Id == id));
+        //}
     }
 }
