@@ -30,31 +30,19 @@ namespace medicloud.emr.api.Services
       if (cost.UnitCost <= 20000 && cost.UnitCost != null)
       {
         cost.UnitCost = Convert.ToDecimal(cost.UnitCost * 2);
-        //return cost.UnitCost;
       }
       else if (cost.UnitCost > 20000 && cost.UnitCost <= 400000 && cost.UnitCost != null)
       {
         cost.UnitCost = (decimal)(cost.UnitCost * Convert.ToDecimal(1.5));
-        //return cost.UnitCost;
       }
       else if (cost.UnitCost > 400000 && cost.UnitCost != null)
       {
-        cost.UnitCost = (decimal)(cost.UnitCost * Convert.ToDecimal(1.3));
-      //  return cost.UnitCost;
+        cost.UnitCost = (decimal)(cost.UnitCost * Convert.ToDecimal(1.3));      
       }
+
      return cost;
     }
 
-    //public async Task MRP getMRP(int price)
-    //{
-    //  if (price <= 20000)
-    //  {
-    //    price = price * 2;
-    //    return price;
-    //  }
-
-
-    //}
   }
 
 }
