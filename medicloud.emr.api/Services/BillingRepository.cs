@@ -425,6 +425,46 @@ namespace medicloud.emr.api.Services
             return (true, "success", billId.Entity.billid);
         }
 
+
+        public async Task<PatientBillDto> GetPatientBillingInvoiceHistory(int accountId, string patientId, int? encounterId)
+        {
+            
+            var patient = await _context.Patient.Where(p => p.Patientid == patientId && p.ProviderId == accountId).FirstOrDefaultAsync();
+                       
+            var billingInvoice = await _context.BillingInvoice.Where(b => b.ProviderID == accountId && b.patientid == patientId)
+                .Select(r => new BillingInvoiceDto()
+                {
+                    billamount = r.billamount,
+                    billid = r.billid,
+                    discount = r.discount,
+                    encounterId = r.encounterId,
+                    locationid = r.locationid,
+                    patientid = r.patientid,
+                    ProviderID = r.ProviderID,
+                    servicecode = r.servicecode,
+
+                }).ToListAsync();
+
+            // item.Servicename = _context.ServiceCode.Where(p => p.serviceid == serviceId && p.ProviderID == accountId).Select(w => w.servicename).FirstOrDefault();
+            // retreive patient accountcategory
+            var patientAccountCategory = await _payerInsuranceRepository.GetPatientPayerInfo(patient.Payor);
+
+            PatientBillDto patientBillDto = new PatientBillDto()
+            {
+                //encounterid = encounterId,
+                patientAccountCategory = patientAccountCategory.AccountCategory != null ? patientAccountCategory.AccountCategory.Accountcattype : "",
+                //encounterdate = encounterDetails.CheckInDate,
+                patientname = patient.Lastname + " " + patient.Firstname,
+                totalbilledamount = (decimal)billingInvoice.Sum(e => e.billamount),
+                totaloutstanding = (decimal)billingInvoice.Sum(e => e.Outstanding),
+                invoices = billingInvoice,
+                billid = billingInvoice.Select(b => b.billid).FirstOrDefault()
+            };
+
+            return patientBillDto;
+
+        }
+
         public async Task<PatientBillDto> GetPatientEncounterBill (int accountId, string patientId, int? encounterId)
         {
             // get patient information

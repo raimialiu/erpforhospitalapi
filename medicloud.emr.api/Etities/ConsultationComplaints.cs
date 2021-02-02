@@ -27,7 +27,7 @@ namespace medicloud.emr.api.Etities
         public string Remarks { get; set; }
         public int? Lastchangeby { get; set; }
         public DateTime? Lastchangedate { get; set; }
-        public int? Side { get; set; }
+        public string Side { get; set; }
         public int? Onsetid { get; set; }
         public int? Qualityid { get; set; }
         public int? Qualityid1 { get; set; }

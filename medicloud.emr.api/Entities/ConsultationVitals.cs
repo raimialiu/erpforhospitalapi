@@ -22,32 +22,32 @@ namespace medicloud.emr.api
         public string Cancellationremarks { get; set; }
         public int? Valueid { get; set; }
         public int? Abnormal { get; set; }
-        public int? Temperature { get; set; }
-        public int? Respiration { get; set; }
-        public int? Pulse { get; set; }
-        public int? Height { get; set; }
-        public int? Weight { get; set; }
-        public int? Bpsystolic { get; set; }
-        public int? Bpdiastolic { get; set; }
-        public int? HeadCircumference { get; set; }
-        public int? MidArmCircumference { get; set; }
-        public int? Bmi { get; set; }
-        public int? Bsa { get; set; }
-        public int? FastingBloodSugar { get; set; }
-        public int? RandomBloodSugar { get; set; }
-        public int? UrinalysisSg { get; set; }
-        public int? UrinalysisPh { get; set; }
-        public int? UrinalysisLeu { get; set; }
-        public int? UrinalysisNit { get; set; }
-        public int? UrinalysisPro { get; set; }
-        public int? UrinalysisGlu { get; set; }
-        public int? UrinalysisKet { get; set; }
-        public int? UrinalysisUbg { get; set; }
-        public int? UrinalysisBil { get; set; }
-        public int? UrinalysisEry { get; set; }
-        public int? UrinalysisHb { get; set; }
-        public int? PainScore { get; set; }
-        public int? Spo2 { get; set; }
+        public string Temperature { get; set; }
+        public string Respiration { get; set; }
+        public string Pulse { get; set; }
+        public string Height { get; set; }
+        public string Weight { get; set; }
+        public string Bpsystolic { get; set; }
+        public string Bpdiastolic { get; set; }
+        public string HeadCircumference { get; set; }
+        public string MidArmCircumference { get; set; }
+        public string Bmi { get; set; }
+        public string Bsa { get; set; }
+        public string FastingBloodSugar { get; set; }
+        public string RandomBloodSugar { get; set; }
+        public string UrinalysisSg { get; set; }
+        public string UrinalysisPh { get; set; }
+        public string UrinalysisLeu { get; set; }
+        public string UrinalysisNit { get; set; }
+        public string UrinalysisPro { get; set; }
+        public string UrinalysisGlu { get; set; }
+        public string UrinalysisKet { get; set; }
+        public string UrinalysisUbg { get; set; }
+        public string UrinalysisBil { get; set; }
+        public string UrinalysisEry { get; set; }
+        public string UrinalysisHb { get; set; }
+        public string PainScore { get; set; }
+        public string Spo2 { get; set; }
         public string dizziness { get; set; }
         public string needhelpstanding { get; set; }
         public string Anyfall { get; set; }
