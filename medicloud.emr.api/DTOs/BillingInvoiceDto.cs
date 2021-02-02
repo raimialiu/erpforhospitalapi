@@ -36,6 +36,7 @@ namespace medicloud.emr.api.DTOs
         public DateTime? dateadded { get; set; }
         public decimal? unitcharge { get; set; }
         public int? unit { get; set; }
+        public int? drugid { get; set; }
         public PayerDto payer { get; set; }
         public Sponsor sponsor { get; set; }
     }
