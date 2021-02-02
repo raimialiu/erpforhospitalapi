@@ -392,6 +392,7 @@ namespace medicloud.emr.api.Data
                 e.HasKey(x => x.Complaintid);
 
             });
+
             modelBuilder.Entity<AccessControl>(entity =>
             {
                 entity.ToTable("access_control");
@@ -406,6 +407,20 @@ namespace medicloud.emr.api.Data
                 entity.Property(e => e.Modules).HasColumnName("modules");
 
                 entity.Property(e => e.Roles).HasColumnName("roles");
+            });
+            
+            modelBuilder.Entity<PatientPayorTypes>(entity =>
+            {
+                entity.ToTable("PatientPayorTypes");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Patientid).HasColumnName("patientid");
+                entity.Property(e => e.Payor).HasColumnName("payor");
+                entity.Property(e => e.accountcategory).HasColumnName("accountcategory");
+                entity.Property(e => e.sponsor).HasColumnName("sponsor");
+                entity.Property(e => e.plantype).HasColumnName("plantype");
+                entity.Property(e => e.accountid).HasColumnName("accountid");
             });
 
       modelBuilder.Entity<ConsultationVitals>(entity =>

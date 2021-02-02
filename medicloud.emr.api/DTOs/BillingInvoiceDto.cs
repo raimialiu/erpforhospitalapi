@@ -1,4 +1,5 @@
-﻿using System;
+﻿using medicloud.emr.api.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,6 +36,8 @@ namespace medicloud.emr.api.DTOs
         public DateTime? dateadded { get; set; }
         public decimal? unitcharge { get; set; }
         public int? unit { get; set; }
+        public PayerDto payer { get; set; }
+        public Sponsor sponsor { get; set; }
     }
 
     public class BillingInvoicePaymentByPaDto
