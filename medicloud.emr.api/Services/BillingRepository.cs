@@ -452,7 +452,7 @@ namespace medicloud.emr.api.Services
                 return (false, "Invalid Patient plantype", null);
             }
 
-            var tariffplan = await _context.TarriffPlan.Where(t => t.planid == plantype.planid).FirstOrDefaultAsync();
+            var tariffplan = await _context.TarriffPlan.Where(t => t.planid == plantype.plantypeid).FirstOrDefaultAsync();
 
             if (tariffplan == null )
             {
