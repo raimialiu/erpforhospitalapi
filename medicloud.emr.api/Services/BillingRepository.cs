@@ -445,7 +445,7 @@ namespace medicloud.emr.api.Services
             }
 
             billingInvoice.dateadded = DateTime.Now;
-            billingInvoice.plantypeid = //plan != null ? (int?)plan.Id : null;
+            billingInvoice.plantypeid = null;//plan != null ? (int?)plan.Id : null;
             billingInvoice.payortypeid = !string.IsNullOrEmpty(patient.Payor) ? (int?)int.Parse(patient.Payor) : null;
             billingInvoice.tariffid = tariffplan != null ? tariffplan.tariffid : null;
             billingInvoice.billamount = invoiceamount.Item3 * billingInvoice.unit;
@@ -513,7 +513,7 @@ namespace medicloud.emr.api.Services
             }
 
             billingInvoice.dateadded = DateTime.Now;
-            billingInvoice.plantypeid = //plan != null ? (int?)plan.Id : null;
+            billingInvoice.plantypeid = null; //plan != null ? (int?)plan.Id : null;
             billingInvoice.payortypeid = !string.IsNullOrEmpty(patient.Payor) ? (int?)int.Parse(patient.Payor) : null;
             billingInvoice.tariffid = tariffplan != null ? tariffplan.tariffid : null;
             billingInvoice.billamount = invoiceamount.Item3 * billingInvoice.unit;
@@ -627,7 +627,7 @@ namespace medicloud.emr.api.Services
                 }
                 
                 
-                if ( !string.IsNullOrEmpty(item.servicecode))
+                if ( item.drugid != null || item.drugid > 0)
                 {
                     serviceId = int.Parse(item.servicecode);
                     item.Servicename = _context.Drug.Where(p => p.Id == item.drugid && p.Providerid == accountId).Select(w => w.Name).FirstOrDefault();
