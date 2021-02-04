@@ -35,11 +35,11 @@ namespace medicloud.emr.api.Controllers
         }
         
         [HttpGet, Route("GetPatientPayerList")]
-        public async Task<IActionResult> GetPatientPayerList(string payerId, string patientid)
+        public async Task<IActionResult> GetPatientPayerList(string patientid)
         {
             try
             {
-                var result = await _payerInsuranceRepository.GetPatientPayerList(payerId, patientid);
+                var result = await _payerInsuranceRepository.GetPatientPayerList(patientid);
 
                 return Ok(result);
             }

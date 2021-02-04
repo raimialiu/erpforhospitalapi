@@ -11,7 +11,7 @@ namespace medicloud.emr.api.Services
     public interface IPayerInsuranceRepository
     {
         Task<PayerDto> GetPatientPayerInfo(string payerId);
-        Task<List<PatientPayorTypesDto>> GetPatientPayerList(string payerId, string patientid);
+        Task<List<PatientPayorTypesDto>> GetPatientPayerList(string patientid);
     }
 
     public class PayerInsuranceRepository : IPayerInsuranceRepository
@@ -55,27 +55,14 @@ namespace medicloud.emr.api.Services
             return result;
         }
 
-        public async Task<List<PatientPayorTypesDto>> GetPatientPayerList(string payerId, string patientid)
+        public async Task<List<PatientPayorTypesDto>> GetPatientPayerList(string patientid)
         {
-            var _payerId = 0;
-            try
-            {
-                _payerId = !string.IsNullOrEmpty(payerId) ? int.Parse(payerId) : 0;
-            }
-            catch
-            {
-                //PayerDto payerDto = new PayerDto
-                //{
-                //    PayerType = null,
-                //    dateadded = null,
-                //    AccountCatId = null,
-                //    AccountCategory = null
-
-                //};
-                return null;
-            }
-
+            
+            var patients = await _context.Patient.Where(p => p.Patientid == patientid).FirstOrDefaultAsync();
+            
             var patientPayorTypeslist = await _context.PatientPayorTypes.Where(p => p.Patientid == patientid).ToListAsync();
+
+            var patientPayorTypess = await _context.PatientPayorTypes.Where(p => p.Patientid == patientid).ToListAsync();
 
             var patientPayorTypes = await _context.PatientPayorTypes.Where(p => p.Patientid == patientid)
                 .Select(c => new PatientPayorTypesDto()
@@ -91,9 +78,9 @@ namespace medicloud.emr.api.Services
                 }).ToListAsync();
 
 
-            if (patientPayorTypes.Any(p => p.Payor != payerId ))
+            if (patientPayorTypes.Any(p => p.Payerid != int.Parse(patients.Payor) ))
             {
-                var result = await _context.Payer.Where(p => p.PayerId == _payerId)
+                var result = patients.Payor != null ?  await _context.Payer.Where(p => p.PayerId == int.Parse(patients.Payor)) 
                 .Select(c => new PatientPayorTypesDto()
                 {
                     sponsor = null,
@@ -104,7 +91,7 @@ namespace medicloud.emr.api.Services
                     accountcategory = c.accountcatid.ToString(),
                     //Patientid = c.Patientid,
                     PayerType = _context.Payer.Where(p => p.PayerId == c.PayerId).Select(p => p.PayerType).FirstOrDefault()
-                }).FirstOrDefaultAsync();
+                }).FirstOrDefaultAsync() : null;
 
                 if (result != null) patientPayorTypes.Add(result);
 
