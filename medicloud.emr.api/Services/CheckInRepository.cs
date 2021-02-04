@@ -30,6 +30,14 @@ namespace medicloud.emr.api.Services
 
         public async Task<(string, bool)> CreaateCheckIn(string patientId, int providerId, int locationId)
         {
+            var getPatientsAppointment = await _context.AppointmentSchedule.Where(a => a.PatientNumber == patientId && 
+                                                 a.ProviderID == providerId && a.Locationid == locationId && a.Starttime.Date == DateTime.Today.Date).ToListAsync();
+
+            if (getPatientsAppointment.Count() == 0)
+            {
+                return ("Patient cannot be checked-In because no appointment was found for the patient", false);
+            }
+
             var check = await _context.CheckIn.Where(e => e.Patientid == patientId && e.Locationid == locationId && e.ProviderId == providerId && e.CheckInDate.Date == DateTime.Today.Date /*&& e.IsCheckedOut == false*/).ToListAsync();
 
             if (check.Count == 0)
@@ -46,7 +54,7 @@ namespace medicloud.emr.api.Services
                     IsActive = true
                 };
 
-                await _context.AddAsync(checkIn);
+                var checkin = await _context.AddAsync(checkIn);
                 await _context.SaveChangesAsync();
 
                 // insert to patientQueue
@@ -63,6 +71,14 @@ namespace medicloud.emr.api.Services
                 };
 
                 await _context.AddAsync(patientQueue);
+                await _context.SaveChangesAsync();
+
+                foreach (var item in getPatientsAppointment)
+                {
+                    item.encounterid = checkin.Entity.Encounterid;
+                }
+
+                _context.AppointmentSchedule.UpdateRange(getPatientsAppointment);
                 await _context.SaveChangesAsync();
 
                 return ("Patient has been successfully checked-In", true);

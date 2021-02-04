@@ -27,6 +27,7 @@ namespace medicloud.emr.api.Entities
         public int? payerid { get; set; }
         public int? sponsid { get; set; }
         public int? accountcatid { get; set; }
+        public int? plantypeid { get; set; }
         public bool? isactive { get; set; }
 
 
