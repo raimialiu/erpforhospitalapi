@@ -130,52 +130,7 @@ namespace medicloud.emr.api.Controllers
 
 
         }
-
-        //[HttpPut]
-        //[Route("UpdatePrescriptionDetails/{id}")]
-        //public async Task<IActionResult> UpdatePrescriptionDetails(int id, [FromBody]PharmacyManagementPrescriptionDetailsDTO pharmacyManagementPrescriptionDetailsDTO)
-        //{
-
-        //    //var result = await _pharmacyManagementRepository.UpdateConsultationPrescriptionDetails(id, pharmacyManagementPrescriptionDetailsDTO);
-        //    //if (result == true)
-        //    //{
-        //    //    return NoContent();
-        //    //}
-        //    //else return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
-        //    if (pharmacyManagementPrescriptionDetailsDTO.Comments != null || 
-        //        pharmacyManagementPrescriptionDetailsDTO.StatusId != null || 
-        //        pharmacyManagementPrescriptionDetailsDTO.isActive != null) {
-        //        return BadRequest(); }
-        //    if(id != pharmacyManagementPrescriptionDetailsDTO.Id) { return BadRequest(); }
-        //    var details = await _context.ConsultationPrescriptionDetails.FindAsync(id);
-        //    if (details == null) { return NotFound(); }
-        //    if(pharmacyManagementPrescriptionDetailsDTO.Comments != null)
-        //    {
-        //        details.Comments = pharmacyManagementPrescriptionDetailsDTO.Comments;
-        //    }
-        //    if (pharmacyManagementPrescriptionDetailsDTO.isActive != null)
-        //    {
-        //        details.Isactive = pharmacyManagementPrescriptionDetailsDTO.isActive;
-        //    }
-        //    if (pharmacyManagementPrescriptionDetailsDTO.StatusId != null)
-        //    {
-        //        details.Statusid = pharmacyManagementPrescriptionDetailsDTO.StatusId;
-        //    }
-        //    try {
-        //        var update = await _context.SaveChangesAsync();
-        //        if (update >= 1)
-        //        {
-        //            return NoContent();
-        //        }
-        //        else return BadRequest();
-        //    }
-        //    catch (DbUpdateConcurrencyException) when (!_pharmacyManagementRepository.PrescriptionDetailsExist(id))
-        //    {
-        //        return NotFound();
-        //    }            
-
-        //}
-
+        
         [HttpPut]
         [Route("UpdatePrescriptionDetails/{id}")]
         public async Task<IActionResult> UpdatePrescriptionDetails(int id, [FromBody] PrescriptionDetailsUpdateDTO prescriptionDetailsUpdateDTO)

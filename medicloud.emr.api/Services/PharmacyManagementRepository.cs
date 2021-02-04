@@ -50,11 +50,11 @@ namespace medicloud.emr.api.Services
             if (prescriptionListFilterModel.Date.HasValue && prescriptionListFilterModel.LocationId.HasValue && prescriptionListFilterModel.ProviderId.HasValue)
             {
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
-               .Where(p => (p.Patientid != null) && (
-               ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
-               (p.Locationid == prescriptionListFilterModel.LocationId) ||
-               (p.ProviderId == prescriptionListFilterModel.ProviderId)))
-               )
+               .Where(p => (p.Patientid != null) && 
+                       (((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
+                       (p.Locationid == prescriptionListFilterModel.LocationId) ||
+                       (p.ProviderId == prescriptionListFilterModel.ProviderId))) && 
+                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -81,9 +81,9 @@ namespace medicloud.emr.api.Services
             {
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
                .Where(p => (p.Patientid != null) && (
-               ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
-               (p.Locationid == prescriptionListFilterModel.LocationId)))
-               )
+                       ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
+                       (p.Locationid == prescriptionListFilterModel.LocationId))) &&
+                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -111,9 +111,9 @@ namespace medicloud.emr.api.Services
             {
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
                .Where(p => (p.Patientid != null) && (
-               ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
-               (p.ProviderId == prescriptionListFilterModel.ProviderId)))
-               )
+                       ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
+                       (p.ProviderId == prescriptionListFilterModel.ProviderId))) &&
+                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -143,9 +143,9 @@ namespace medicloud.emr.api.Services
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
 
                   .Where(p => (p.Patientid != null) && (
-                  (p.Locationid == prescriptionListFilterModel.LocationId) ||
-                  (p.ProviderId == prescriptionListFilterModel.ProviderId))
-                  )
+                      (p.Locationid == prescriptionListFilterModel.LocationId) ||
+                      (p.ProviderId == prescriptionListFilterModel.ProviderId)) &&
+                      (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
                   .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                   .Take(prescriptionListFilterModel.PageSize)
                  .Select(presc => new PharmacyManagementDTO
@@ -169,11 +169,11 @@ namespace medicloud.emr.api.Services
             }
             else if (!prescriptionListFilterModel.Date.HasValue && !prescriptionListFilterModel.ProviderId.HasValue && prescriptionListFilterModel.LocationId.HasValue)
             {
-                //date filtering wasn't selected but both providerid and location selected
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
 
-                  .Where(p => (p.Patientid != null) && (
-                  (p.Locationid == prescriptionListFilterModel.LocationId)))
+                  .Where(p => (p.Patientid != null) && 
+                          ((p.Locationid == prescriptionListFilterModel.LocationId))
+                          && (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
                   .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                   .Take(prescriptionListFilterModel.PageSize)
                  .Select(presc => new PharmacyManagementDTO
@@ -198,7 +198,9 @@ namespace medicloud.emr.api.Services
             else if (!prescriptionListFilterModel.Date.HasValue && prescriptionListFilterModel.ProviderId.HasValue && !prescriptionListFilterModel.LocationId.HasValue)
             {
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
-               .Where(p => (p.Patientid != null) && (p.Locationid == prescriptionListFilterModel.LocationId))
+               .Where(p => (p.Patientid != null) && 
+                            (p.Locationid == prescriptionListFilterModel.LocationId) && 
+                            (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -225,7 +227,9 @@ namespace medicloud.emr.api.Services
             else if (prescriptionListFilterModel.Date.HasValue && !prescriptionListFilterModel.LocationId.HasValue && !prescriptionListFilterModel.ProviderId.HasValue)
             {
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
-               .Where(p => (p.Patientid != null) && (p.Prescriptiondate == prescriptionListFilterModel.Date))
+               .Where(p => (p.Patientid != null) &&
+                       (p.Prescriptiondate == prescriptionListFilterModel.Date) && 
+                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -251,7 +255,9 @@ namespace medicloud.emr.api.Services
             else
             {
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
-              .Where(p => p.Patientid != null )
+              .Where(p => p.Patientid != null && 
+                     ( _context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid))
+              )
               .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
               .Take(prescriptionListFilterModel.PageSize)
              .Select(presc => new PharmacyManagementDTO
@@ -281,28 +287,7 @@ namespace medicloud.emr.api.Services
 
 
         public async Task<bool> UpdateConsultationPrescriptionDetails(int id, PharmacyManagementPrescriptionDetailsDTO prescriptionDetailsDTO) {
-
-            //if (id != prescriptionDetailsDTO.Id) {
-            //    return false;
-            //}
-            //var prescriptionDetail = await _context.ConsultationPrescriptionDetails.FindAsync(id);
-            //if (prescriptionDetail == null){
-            //    return false;
-            //}
-            //prescriptionDetail.Isactive = prescriptionDetailsDTO.isActive;
-            //prescriptionDetail.Comments = prescriptionDetailsDTO.Comments;
-            //prescriptionDetail.Statusid = prescriptionDetailsDTO.StatusId;
-
-            //try
-            //{
-            //   var update= await _context.SaveChangesAsync();
-            //        if (update < 0) { return false; }
-            //        return true;
-            //    }
-            //catch (DbUpdateConcurrencyException) when (!PrescriptionDetailsExist(id))
-            //{
-            //    return false;
-            //}
+    
             if (id == prescriptionDetailsDTO.Id)
             {
                 var prescriptionDetail = await _context.ConsultationPrescriptionDetails.FindAsync(id);
