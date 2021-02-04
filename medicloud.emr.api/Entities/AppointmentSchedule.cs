@@ -24,6 +24,7 @@ namespace medicloud.emr.api.Entities
         public int? Statusid { get; set; }
         public int? Visittypeid { get; set; }
         public int? Reminderid { get; set; }
+        public int? encounterid { get; set; }
         public string PatientNumber { get; set; }
 
         public virtual Location Location { get; set; }
