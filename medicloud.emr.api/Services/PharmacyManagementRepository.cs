@@ -16,8 +16,7 @@ namespace medicloud.emr.api.Services
     {
 
         Task<PrescriptionListWithCount> getConsultationPrescriptionsList(PrescriptionListFilterModel prescriptionListFilterModel);
-        Task<ConsultationPrescriptionDetails> removeConsultationPrescriptionDetailsItem(int prescriptionDetailsId);
-
+        Task<bool> UpdateConsultationPrescriptionDetails(int id, PharmacyManagementPrescriptionDetailsDTO phar);
         Task<List<PharmacyManagementPrescriptionDetailsDTO>> getAllPrescriptionsDetails();
         PharmacyManagementDTO getConsultationPrescriptionByPrescriptionId(int prescriptionId);
 
@@ -279,30 +278,77 @@ namespace medicloud.emr.api.Services
                
             }
 
-        
 
-        public async Task<ConsultationPrescriptionDetails> removeConsultationPrescriptionDetailsItem(int prescriptionDetailsId)
-        {
-            var prescriptionDetail = _context.ConsultationPrescriptionDetails.Find(prescriptionDetailsId);
-            prescriptionDetail.Isactive = false;
-            await _context.SaveChangesAsync();
-            return prescriptionDetail;
+
+        public async Task<bool> UpdateConsultationPrescriptionDetails(int id, PharmacyManagementPrescriptionDetailsDTO prescriptionDetailsDTO) {
+
+            //if (id != prescriptionDetailsDTO.Id) {
+            //    return false;
+            //}
+            //var prescriptionDetail = await _context.ConsultationPrescriptionDetails.FindAsync(id);
+            //if (prescriptionDetail == null){
+            //    return false;
+            //}
+            //prescriptionDetail.Isactive = prescriptionDetailsDTO.isActive;
+            //prescriptionDetail.Comments = prescriptionDetailsDTO.Comments;
+            //prescriptionDetail.Statusid = prescriptionDetailsDTO.StatusId;
+
+            //try
+            //{
+            //   var update= await _context.SaveChangesAsync();
+            //        if (update < 0) { return false; }
+            //        return true;
+            //    }
+            //catch (DbUpdateConcurrencyException) when (!PrescriptionDetailsExist(id))
+            //{
+            //    return false;
+            //}
+            if (id == prescriptionDetailsDTO.Id)
+            {
+                var prescriptionDetail = await _context.ConsultationPrescriptionDetails.FindAsync(id);
+                if (prescriptionDetail == null)
+                {
+                    return false;
+                }
+                prescriptionDetail.Isactive = prescriptionDetailsDTO.isActive;
+                prescriptionDetail.Comments = prescriptionDetailsDTO.Comments;
+                prescriptionDetail.Statusid = prescriptionDetailsDTO.StatusId;
+
+                try
+                {
+                    _context.Entry(prescriptionDetail).State = EntityState.Modified;
+                    var update = await _context.SaveChangesAsync();
+                    if (update < 0) { return false; }
+                    return true;
+                }
+                catch (DbUpdateConcurrencyException) when (!PrescriptionDetailsExist(id))
+                {
+                    return false;
+                }
+            }
+            else return false;
+           
+
         }
-
+        
 
         public async Task<List<PharmacyManagementPrescriptionDetailsDTO>> getAllPrescriptionsDetails()
         {
             var list = await _context.ConsultationPrescriptionDetails.AsNoTracking()
                    .Select(s => new PharmacyManagementPrescriptionDetailsDTO
                    {
-                       Name = _context.DrugGeneric.Where(d => d.Genericid == s.Genericid).Select(e => e.Genericname).FirstOrDefault(),
+                       Name = _context.Drug.Where(d => d.Id == s.ItemId).Select(e => e.Name).FirstOrDefault(),
                        Prescdetails = s.PrescriptionDetail,
                        Prescriptionquantity = (s.Qty).HasValue ? (int)s.Qty : 0,
                        Issuedquantity = (s.Qty).HasValue ? (int)s.Qty : 0,
                        disensedQuantity = (s.Qty).HasValue ? (int)s.Qty : 0,
                        PAno = 0,
-                       Status = s.Status.Status,
+                       Status= s.Status.Status,
                        Instructions = s.Medicationinstructions,
+                       Id = s.Id,
+                       Comments = s.Comments,
+                       StatusId = s.Statusid,
+                       isActive = (bool)s.Isactive
                    }).OrderBy(p=>p.Name).ToListAsync();
             return list;
         }
@@ -310,9 +356,9 @@ namespace medicloud.emr.api.Services
         public async Task<List<PharmacyManagementPrescriptionDetailsDTO>> getConsultationPrescriptionsDetailsByPrescriptionId(int prescriptionId)
         {
             var list = await _context.ConsultationPrescriptionDetails.AsNoTracking()
-                 .Where(e => e.Prescriptionid.Equals(prescriptionId) && e.Genericid!=null)
+                 .Where(e => e.Prescriptionid.Equals(prescriptionId) && e.ItemId!=null)
                     .Select(s => new PharmacyManagementPrescriptionDetailsDTO
-                    {                        Name = _context.DrugGeneric.Where(d => d.Genericid == s.Genericid).Select(e => e.Genericname).FirstOrDefault(),
+                    {   Name = _context.Drug.Where(d => d.Id == s.ItemId).Select(e => e.Name).FirstOrDefault(),
                         Prescdetails = s.PrescriptionDetail,
                         Prescriptionquantity = (s.Qty).HasValue ? (int)s.Qty : 0,
                         Issuedquantity = (s.Qty).HasValue ? (int)s.Qty : 0,
@@ -320,6 +366,10 @@ namespace medicloud.emr.api.Services
                         PAno = 0,
                         Status = s.Status.Status,
                         Instructions = s.Medicationinstructions,
+                        Id = s.Id,
+                        StatusId =s.Statusid,
+                        Comments = s.Comments,
+                        isActive = (bool)s.Isactive
                     }).OrderBy(p => p.Name).ToListAsync();
             return list;
 
@@ -378,7 +428,9 @@ namespace medicloud.emr.api.Services
 
         public async Task<IEnumerable<OptionsDTO>> GetStatus()
         {
-            var prov = await _context.StatusMaster.Select(s => new OptionsDTO
+            var prov = await _context.StatusMaster
+                .Where(s=> s.Status =="pending" || s.Status=="dispensed" || s.Status=="partially dispensed")
+                .Select(s => new OptionsDTO
             {
                 Id = s.Statusid,
                 Name = s.Status            })

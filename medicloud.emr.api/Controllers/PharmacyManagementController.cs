@@ -131,31 +131,121 @@ namespace medicloud.emr.api.Controllers
 
         }
 
-        [HttpPut]
-        [Route("RemovePrescriptionDetails/{prescriptionid}")]
-        public async Task<IActionResult> RemovePrescriptionDetails(int prescriptionDetailsid)
-        {
-            
-            {
-                try {
-                    //if (_pharmacyManagementRepository.PrescriptionDetailsExist(prescriptionDetailsid))
-                    //{
-                        await _pharmacyManagementRepository.removeConsultationPrescriptionDetailsItem(prescriptionDetailsid);
-                        return NoContent();
-                    //}
-                    //else return BadRequest("invalid prescriptionDetailsid");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine(ex.StackTrace);
-                    return BadRequest("");
-                }
+        //[HttpPut]
+        //[Route("UpdatePrescriptionDetails/{id}")]
+        //public async Task<IActionResult> UpdatePrescriptionDetails(int id, [FromBody]PharmacyManagementPrescriptionDetailsDTO pharmacyManagementPrescriptionDetailsDTO)
+        //{
 
+        //    //var result = await _pharmacyManagementRepository.UpdateConsultationPrescriptionDetails(id, pharmacyManagementPrescriptionDetailsDTO);
+        //    //if (result == true)
+        //    //{
+        //    //    return NoContent();
+        //    //}
+        //    //else return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
+        //    if (pharmacyManagementPrescriptionDetailsDTO.Comments != null || 
+        //        pharmacyManagementPrescriptionDetailsDTO.StatusId != null || 
+        //        pharmacyManagementPrescriptionDetailsDTO.isActive != null) {
+        //        return BadRequest(); }
+        //    if(id != pharmacyManagementPrescriptionDetailsDTO.Id) { return BadRequest(); }
+        //    var details = await _context.ConsultationPrescriptionDetails.FindAsync(id);
+        //    if (details == null) { return NotFound(); }
+        //    if(pharmacyManagementPrescriptionDetailsDTO.Comments != null)
+        //    {
+        //        details.Comments = pharmacyManagementPrescriptionDetailsDTO.Comments;
+        //    }
+        //    if (pharmacyManagementPrescriptionDetailsDTO.isActive != null)
+        //    {
+        //        details.Isactive = pharmacyManagementPrescriptionDetailsDTO.isActive;
+        //    }
+        //    if (pharmacyManagementPrescriptionDetailsDTO.StatusId != null)
+        //    {
+        //        details.Statusid = pharmacyManagementPrescriptionDetailsDTO.StatusId;
+        //    }
+        //    try {
+        //        var update = await _context.SaveChangesAsync();
+        //        if (update >= 1)
+        //        {
+        //            return NoContent();
+        //        }
+        //        else return BadRequest();
+        //    }
+        //    catch (DbUpdateConcurrencyException) when (!_pharmacyManagementRepository.PrescriptionDetailsExist(id))
+        //    {
+        //        return NotFound();
+        //    }            
+
+        //}
+
+        [HttpPut]
+        [Route("UpdatePrescriptionDetails/{id}")]
+        public async Task<IActionResult> UpdatePrescriptionDetails(int id, [FromBody] PrescriptionDetailsUpdateDTO prescriptionDetailsUpdateDTO)
+        {
+
+            //var result = await _pharmacyManagementRepository.UpdateConsultationPrescriptionDetails(id, pharmacyManagementPrescriptionDetailsDTO);
+            //if (result == true)
+            //{
+            //    return NoContent();
+            //}
+            //else return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
+            if (prescriptionDetailsUpdateDTO.Statusid <0)
+            {
+                return BadRequest();
             }
-            
+            if (id != prescriptionDetailsUpdateDTO.Id) { return BadRequest(); }
+            var details = await _context.ConsultationPrescriptionDetails.FindAsync(id);
+            if (details == null) { return NotFound(); }
+                details.Statusid = prescriptionDetailsUpdateDTO.Statusid;            
+            try
+            {
+                var update = await _context.SaveChangesAsync();
+                if (update >= 1)
+                {
+                    return NoContent();
+                }
+                else return BadRequest(new ErrorResponse { ErrorMessage = "Previous StatusId is the same as update status Id" });
+            }
+            catch (DbUpdateConcurrencyException) when (!_pharmacyManagementRepository.PrescriptionDetailsExist(id))
+            {
+                return NotFound();
+            }
+
         }
 
+        [HttpPut]
+        [Route("RemovePrescriptionDetails/{id}")]
+        public async Task<IActionResult> RemovePrescriptionDetails(int id, [FromBody] PrescriptionDetailsRemoveDTO prescriptionDetailsRemoveDTO)
+        {
+
+            //var result = await _pharmacyManagementRepository.UpdateConsultationPrescriptionDetails(id, pharmacyManagementPrescriptionDetailsDTO);
+            //if (result == true)
+            //{
+            //    return NoContent();
+            //}
+            //else return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
+           
+            if (id != prescriptionDetailsRemoveDTO.Id) { return BadRequest(); }
+            var details = await _context.ConsultationPrescriptionDetails.FindAsync(id);
+            if (details == null) { return NotFound(); }
+            details.Isactive = false;
+            if (prescriptionDetailsRemoveDTO.Comment != null)
+            {
+                details.Comments = prescriptionDetailsRemoveDTO.Comment;             }
+           
+            try
+            {
+                var update = await _context.SaveChangesAsync();
+                if (update >= 1)
+                {
+                    return NoContent();
+                }
+                else return BadRequest();
+            }
+            catch (DbUpdateConcurrencyException) when (!_pharmacyManagementRepository.PrescriptionDetailsExist(id))
+            {
+                return NotFound();
+            }
+
+        }
 
         [HttpGet]
         [Route("GetProvider")]

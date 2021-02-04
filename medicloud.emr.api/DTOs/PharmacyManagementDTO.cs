@@ -13,13 +13,17 @@ namespace medicloud.emr.api.DTOs
 
  
         public string Name { get; set; }
+        public int Id { get; set; }
         public string Prescdetails { get; set; }
-        public int Prescriptionquantity { get; set; }
-        public int Issuedquantity { get; set; }
-        public int disensedQuantity { get; set; }
-        public int PAno { get; set; }
+        public int? Prescriptionquantity { get; set; }
+        public int? Issuedquantity { get; set; }
+        public int? disensedQuantity { get; set; }
+        public int? PAno { get; set; }
         public string Instructions { get; set; }
+        public int? StatusId { get; set; }
         public string Status { get; set; }
+        public bool? isActive { get; set; }
+        public string Comments { get; set; }
     }
 
     public class PharmacyManagementDTO
@@ -86,6 +90,17 @@ namespace medicloud.emr.api.DTOs
 
         public string Store { get; set; }
         public List<PrescriptionDetailsDTO> PrescriptionDetails { get; set; }
+    }
+
+    public class PrescriptionDetailsUpdateDTO
+    {
+        public int Id { get; set; }
+        public int Statusid { get; set; }
+    }
+    public class PrescriptionDetailsRemoveDTO
+    {
+        public int Id { get; set; }
+        public String Comment { get; set; }
     }
 
 }
