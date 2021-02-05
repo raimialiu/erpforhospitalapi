@@ -32,8 +32,9 @@ namespace medicloud.emr.api.Controllers
         [HttpGet]
         public async Task<IActionResult> AllImunizationSchedule()
         {
-           //var all =await _conn.QueryAsync("select * from Immunization_Schedule a join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid");
-          var all = await _conn.QueryAsync("select a.*, b.immunizationname, b.isactive,b.cptcode, b.encodeddate, c.duedate, c.givendatetime, c.remarks, c.batchno, c.brandid, c.givenby from Immunization_Schedule a join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid join immunization_details c on a.scheduleid = c.scheduleid");
+           var all =await _conn.QueryAsync("select * from Immunization_Schedule a join EmrImmunizationMaster b " +
+               "                            on a.immunizationid = b.Immunizationid");
+         // var all = await _conn.QueryAsync("select a.*, b.immunizationname, b.isactive,b.cptcode, b.encodeddate, c.duedate, c.givendatetime, c.remarks, c.batchno, c.brandid, c.givenby from Immunization_Schedule a join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid join immunization_details c on a.scheduleid = c.scheduleid");
 
             return Ok(all);
         }
@@ -70,11 +71,12 @@ namespace medicloud.emr.api.Controllers
             return Ok(await _ctx.SaveChangesAsync() > 0);
         }
 
-        [Route("immunizationsschdulebyscheduleid")]
+        [Route("GetImmunizationDetailsByPatientId/{patientid}")]
         [HttpGet]
-        public async Task<IActionResult> GetImmunizationScheduleByScheduleId([FromQuery]long scheduleid)
+        public async Task<IActionResult> GetImmunizationScheduleByScheduleId([FromRoute]string patientid, [FromQuery]long scheduleid)
         {
-            var all = await _conn.QueryAsync($"select * from Immunization_Schedule a join immunization_details b on a.scheduleid = b.scheduleid where a.scheduleid = {scheduleid}");
+            var all = await _conn.QueryAsync($"select b.* from Immunization_Schedule a join immunization_details b " +
+                $"                          on a.scheduleid = b.scheduleid where a.scheduleid = {scheduleid} and b.patientid = '{patientid}'");
             return Ok(all);
         }
 
@@ -183,7 +185,7 @@ namespace medicloud.emr.api.Controllers
             return Ok(await _ctx.ApplicationUser.Where(x=>x.departmentid.Value ==12).ToListAsync());
         }
 
-        [Route("SavePescription")]
+        [Route("SavePescriptionDetails")]
         [HttpPost]
         public async Task<IActionResult> SavePescription([FromBody] ConsultationPrescriptionDetails dto)
         {

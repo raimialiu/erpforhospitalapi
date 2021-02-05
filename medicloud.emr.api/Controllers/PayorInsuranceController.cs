@@ -33,6 +33,21 @@ namespace medicloud.emr.api.Controllers
                 return BadRequest();
             }
         }
+        
+        [HttpGet, Route("GetPatientPayerList")]
+        public async Task<IActionResult> GetPatientPayerList(string patientid)
+        {
+            try
+            {
+                var result = await _payerInsuranceRepository.GetPatientPayerList(patientid);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
 
         [Route("GetPatientHmoInformation")]
         [HttpGet]

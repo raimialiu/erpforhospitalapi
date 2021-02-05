@@ -55,7 +55,7 @@ namespace medicloud.emr.api.Controllers
 
 
         [HttpGet, Route("GetStore")]
-        public async Task<IActionResult> GetStore(int locationid)
+        public async Task<IActionResult> GetStore([FromQuery]int locationid)
         {
             try
             {
@@ -92,6 +92,19 @@ namespace medicloud.emr.api.Controllers
         }
 
 
+        [Route("FilterDrugByFormulary")]
+        [HttpGet]
+        public async Task<IActionResult> FilterFormulary([FromQuery]long formularyid)
+        {
+            if(formularyid == 1)
+            {
+                var ok = await _ctx.Drug.Where(x => x.Classid.Value == 1272).ToListAsync();
+                return Ok(ok);
+            }
+            return Ok(await _ctx.Drug.Where(x => x.Classid.Value != 1272).ToListAsync());
+        }
+
+
         [Route("GetDrugBrandByGenericid")]
         [HttpGet]
         public async Task<IActionResult> GetDrugBrandByGenericID([FromQuery] long id)
@@ -102,7 +115,15 @@ namespace medicloud.emr.api.Controllers
 
                 if (genericBrand != null || genericBrand.Count > 0) return Ok(genericBrand);
             }
-          
+            // filter by formularyid
+            //_ctx.Drug.Where(x=>x.)
+
+            //if(formularyid == 1)
+            //{
+            //    var ok = await _ctx.Drug.Where(x => x.Classid.Value == 1272).ToListAsync();
+            //    return Ok(ok);
+            //}
+            
 
             return Ok(await _ctx.Drug.ToListAsync());
         }
@@ -243,14 +264,26 @@ namespace medicloud.emr.api.Controllers
            return Ok(await _ctx.ConsultationPrescription.FromSqlRaw($"select * from Consultation_Prescription where patientid = '{patientid}' and dateadded between '{startDate}' and '{endDate}'").ToListAsync());
         }
 
-        [Route("SavePescription")]
+        [Route("SavePrescription")]
         [HttpPost]
-        public async Task<IActionResult> SavePescription([FromForm] ConsultationPrescriptionDetails dto)
+        public async Task<IActionResult> SaveDescription([FromBody]ConsultationPrescription dto)
         {
-            //dto. = DateTime.Now;
-            _ctx.ConsultationPrescriptionDetails.Add(dto);
-            return Ok(await _ctx.SaveChangesAsync() > 0);
+            _ctx.ConsultationPrescription.Add(dto);
+            var result = await _ctx.SaveChangesAsync() > 0;
+
+            if (result) return Ok(dto.Prescriptionid);
+
+            return BadRequest(false);
         }
+
+        //[Route("SavePescriptionDetails")]
+        //[HttpPost]
+        //public async Task<IActionResult> SavePescriptionDetails([FromForm] ConsultationPrescriptionDetails dto)
+        //{
+        //    //dto. = DateTime.Now;
+        //    _ctx.ConsultationPrescriptionDetails.Add(dto);
+        //    return Ok(await _ctx.SaveChangesAsync() > 0);
+        //}
         [Route("SaveToFavourites")]
         [HttpPost]
         public async Task<IActionResult> SaveToFavourites([FromBody]Etities.ConsultationPrescriptionFavorites dto)

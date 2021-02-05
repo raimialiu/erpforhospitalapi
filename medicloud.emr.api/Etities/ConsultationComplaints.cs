@@ -1,4 +1,5 @@
-﻿using System;
+﻿using medicloud.emr.api.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -48,6 +49,11 @@ namespace medicloud.emr.api.Etities
         public int? Durationid { get; set; }
         public string Durationtype { get; set; }
 
-       
+        
+        public virtual Consultation Consultation { get; set; }
+        public virtual Patient Patient { get; set; }
+        public virtual AccountManager Provider { get; set; }
+
+
     }
 }
