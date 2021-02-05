@@ -104,16 +104,13 @@ namespace medicloud.emr.api.DTOs
     }
 
     public class FullPrescriptionDetailsDTO
-    {
-      
+    {     
         public int Frequencyid { get; set; }
         public int Doseformid { get; set; }
         public int Routeid { get; set; }
         public int Unitid { get; set; }
         public string Icdcode { get; set; }
-        public string Comments { get; set; }
-        public bool EmrPrescription { get; set; }
-       
+        public bool EmrPrescription { get; set; }       
         public bool Isactive { get; set; }
         public int Itemid { get; set; }
        
@@ -138,6 +135,7 @@ namespace medicloud.emr.api.DTOs
         public int Doctorid { get; set; }
         public int Dosetime { get; set; }
        
+        
 
     }
 
