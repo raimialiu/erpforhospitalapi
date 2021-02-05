@@ -99,7 +99,12 @@ namespace medicloud.emr.api.Services
 
             if (location.ispremium)
             {
-                if (tariffServiceCode.premiumtariffamount == null) {
+                if (tariffServiceCode.premiumtariffamount == null && tariffServiceCode.tariffamount != null) {
+
+                    return (true, "Success", tariffServiceCode.tariffamount);
+                } 
+                
+                if (tariffServiceCode.premiumtariffamount == null && tariffServiceCode.tariffamount == null) {
 
                     return (false, "tariff not found for this service requested", null);
                 } 
