@@ -30,7 +30,7 @@ namespace medicloud.emr.api.Services
 
         public async Task<IEnumerable<LocationDTO>> GetLocations()
         {
-            return await _context.Location.Where(l => l.Locationid > 2)
+            return await _context.Location
                 .Select(l => new LocationDTO { Id = l.Locationid, Name = l.Locationname})
                 .AsNoTracking().OrderBy(p => p.Name).ToListAsync();
         }
