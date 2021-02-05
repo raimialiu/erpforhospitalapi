@@ -487,10 +487,31 @@ namespace medicloud.emr.api.Services
             billingInvoice.billamount = invoiceamount.Item3 * billingInvoice.unit;
             billingInvoice.amounttopay = invoiceamount.Item3 * billingInvoice.unit;
             billingInvoice.unitcharge = invoiceamount.Item3;
-            
+
             var billId = _context.BillingInvoice.Add(billingInvoice);
             await _context.SaveChangesAsync();
             return (true, "success", billId.Entity.billid);
+        }
+
+        public (bool, decimal?, decimal) SetNHISCopay (decimal? billamount, string payerid)
+        {
+            if (payerid != null && payerid == 2518.ToString())
+            {
+                // is NHIS patient
+
+                var currentBillAmount = billamount;
+                var decimalPercent = 90m / 100m;
+                var finalBillAmount = decimalPercent * billamount;
+
+                billamount = currentBillAmount - finalBillAmount;
+                var copay = 10m;
+
+                return (true, billamount, copay);
+            }
+            else
+            {
+                return (false, null, 0.00m);
+            }
         }
         
         public async Task<(bool, string, int?)> AddDrugBillInvoice(BillingInvoice billingInvoice)
@@ -567,6 +588,24 @@ namespace medicloud.emr.api.Services
             billingInvoice.amounttopay = invoiceamount.Item3 * billingInvoice.unit;
             billingInvoice.unitcharge = invoiceamount.Item3;
             billingInvoice.servicecode = null;
+
+            if (patient.Payor != null && patient.Payor == 2518.ToString())
+            {
+                // is NHIS patient
+                var nhisResult = SetNHISCopay(billingInvoice.billamount, patient.Payor);
+
+                if (nhisResult.Item1)
+                {
+                    billingInvoice.billamount = nhisResult.Item2;
+                    billingInvoice.copay = nhisResult.Item3;
+                }
+                else
+                {
+                    return (true, "Failed! error occurred setting patients NHIS copay", null);
+                }
+
+
+            }
             
             var billId = _context.BillingInvoice.Add(billingInvoice);
             await _context.SaveChangesAsync();
@@ -590,7 +629,9 @@ namespace medicloud.emr.api.Services
                     patientid = r.patientid,
                     ProviderID = r.ProviderID,
                     servicecode = r.servicecode,
-                    drugid = r.drugid
+                    drugid = r.drugid,
+                    amounttopay = r.amounttopay,
+                    copay = r.copay
 
                 }).ToListAsync();
 
@@ -638,7 +679,9 @@ namespace medicloud.emr.api.Services
                     unitcharge = r.unitcharge,
                     payortypeid = r.payortypeid,
                     sponsorid = r.sponsorid,
-                    drugid = r.drugid
+                    drugid = r.drugid,
+                    amounttopay = r.amounttopay,
+                    copay = r.copay
                     
                 }).ToListAsync();
 
