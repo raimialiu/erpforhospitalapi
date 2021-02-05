@@ -134,14 +134,7 @@ namespace medicloud.emr.api.Controllers
         [HttpPut]
         [Route("UpdatePrescriptionDetails/{id}")]
         public async Task<IActionResult> UpdatePrescriptionDetails(int id, [FromBody] PrescriptionDetailsUpdateDTO prescriptionDetailsUpdateDTO)
-        {
-
-            //var result = await _pharmacyManagementRepository.UpdateConsultationPrescriptionDetails(id, pharmacyManagementPrescriptionDetailsDTO);
-            //if (result == true)
-            //{
-            //    return NoContent();
-            //}
-            //else return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
+        {           
             if (prescriptionDetailsUpdateDTO.Statusid <0)
             {
                 return BadRequest();
@@ -226,5 +219,19 @@ namespace medicloud.emr.api.Controllers
             return Ok(locationList);
         }
 
-    }
+        [HttpPost]
+        [Route("AddPrescriptionDetails")]
+        public async Task<IActionResult> AddPrescriptionDetails([FromBody] FullPrescriptionDetailsDTO prescDetailsObj)
+        {
+            
+                var prescDetailsCreated = await _pharmacyManagementRepository.AddPrescriptionDetails(prescDetailsObj);
+                if (prescDetailsCreated)
+                {
+                    return NoContent();
+                }
+                else return BadRequest();
+          
+        }
+
+    }   
 }
