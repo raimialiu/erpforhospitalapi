@@ -40,17 +40,20 @@ namespace medicloud.emr.api.Services
             {
                 foreach (var item in model.consultationOrderDetails)
                 {
+                    if (item.unit == null || string.IsNullOrEmpty(item.unit))
+                    {
+                        item.unit = "1";
+                    }
+
                     BillingInvoice billingInvoice = new BillingInvoice()
                     {
                         patientid = model.consultationOrder.Patientid,
                         encounterId = model.consultationOrder.EncounterId,
                         servicecode = item.serviceId.ToString(),
-                        unit = (int?)int.Parse(item.unit),
+                        unit = int.Parse(item.unit),
                         locationid = model.consultationOrder.Locationid,
                         ProviderID = model.consultationOrder.ProviderId,
                         diagnosisid = item.DiagnosisId
-
-
                     };
                     try
                     {
@@ -85,6 +88,7 @@ namespace medicloud.emr.api.Services
 
                 foreach (var item in model.consultationOrderDetails)
                 {
+
                     item.investigationdate = item.investigationdate != null ? item.investigationdate.Value.AddHours(1) : DateTime.Now;
                     item.investigationdate = new DateTime(item.investigationdate.Value.Year, item.investigationdate.Value.Month, item.investigationdate.Value.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
