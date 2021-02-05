@@ -105,7 +105,7 @@ namespace medicloud.emr.api.DTOs
 
     public class FullPrescriptionDetailsDTO
     {
-        public int Encounterid { get; set; }
+      
         public int Frequencyid { get; set; }
         public int Doseformid { get; set; }
         public int Routeid { get; set; }
@@ -117,7 +117,7 @@ namespace medicloud.emr.api.DTOs
         public bool Isactive { get; set; }
         public int Itemid { get; set; }
        
-        public bool Isapprovedrequired { get; set; }
+        public bool Issubstitutenotallowed { get; set; }
         public int Locationid { get; set; }
         public int Providerid { get; set; }
         public string Patientid { get; set; }
@@ -126,7 +126,7 @@ namespace medicloud.emr.api.DTOs
         public DateTime Startdate { get; set; }
         public int Refill { get; set; }
         public int Statusid { get; set; }
-        
+        public bool Isapprovedrequired { get; set; }
         public int Prescriptionid { get; set; }
         public int Qty { get; set; }
         public string Prescriptiondetail { get; set; }
@@ -137,7 +137,8 @@ namespace medicloud.emr.api.DTOs
         public int Formularyid { get; set; }
         public int Doctorid { get; set; }
         public int Dosetime { get; set; }
-        public string Preauthorizationno { get; set; }
+       
+
     }
 
 }

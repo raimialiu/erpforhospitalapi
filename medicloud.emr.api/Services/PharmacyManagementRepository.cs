@@ -429,7 +429,7 @@ namespace medicloud.emr.api.Services
 
             var prescDetailObj = new ConsultationPrescriptionDetails
             {
-                EncounterId = prescDetails.Encounterid,
+
                 Frequencyid = prescDetails.Frequencyid,
                 Doseformid = prescDetails.Doseformid,
                 Routeid = prescDetails.Routeid,
@@ -462,7 +462,9 @@ namespace medicloud.emr.api.Services
                 Formularyid = prescDetails.Formularyid,
                 Doctorid = prescDetails.Doctorid,
                 Dosetime = prescDetails.Dosetime,
-                Preauthorizationno = prescDetails.Preauthorizationno
+                Issubstitutenotallowed = prescDetails.Issubstitutenotallowed,
+               
+
             };
 
             _context.ConsultationPrescriptionDetails.Add(prescDetailObj);

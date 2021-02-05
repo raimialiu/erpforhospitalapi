@@ -227,7 +227,8 @@ namespace medicloud.emr.api.Controllers
                 var prescDetailsCreated = await _pharmacyManagementRepository.AddPrescriptionDetails(prescDetailsObj);
                 if (prescDetailsCreated)
                 {
-                    return NoContent();
+                    
+                return NoContent();
                 }
                 else return BadRequest();
           
