@@ -30,6 +30,14 @@ namespace medicloud.emr.api.Services
 
         public async Task<(string, bool)> CreaateCheckIn(string patientId, int providerId, int locationId)
         {
+            var getPatientsAppointment = await _context.AppointmentSchedule.Where(a => a.PatientNumber == patientId && 
+                                                 a.ProviderID == providerId && a.Locationid == locationId && a.Starttime.Date == DateTime.Today.Date).ToListAsync();
+
+            if (getPatientsAppointment.Count() == 0)
+            {
+                return ("Patient cannot be checked-In because no appointment was found for the patient", false);
+            }
+
             var check = await _context.CheckIn.Where(e => e.Patientid == patientId && e.Locationid == locationId && e.ProviderId == providerId && e.CheckInDate.Date == DateTime.Today.Date /*&& e.IsCheckedOut == false*/).ToListAsync();
 
             if (check.Count == 0)
@@ -42,10 +50,11 @@ namespace medicloud.emr.api.Services
                     IsCheckedIn = true,
                     IsCheckedOut = false,
                     Locationid = locationId,
-                    Patientid = patientId
+                    Patientid = patientId,
+                    IsActive = true
                 };
 
-                await _context.AddAsync(checkIn);
+                var checkin = await _context.AddAsync(checkIn);
                 await _context.SaveChangesAsync();
 
                 // insert to patientQueue
@@ -64,6 +73,14 @@ namespace medicloud.emr.api.Services
                 await _context.AddAsync(patientQueue);
                 await _context.SaveChangesAsync();
 
+                foreach (var item in getPatientsAppointment)
+                {
+                    item.encounterid = checkin.Entity.Encounterid;
+                }
+
+                _context.AppointmentSchedule.UpdateRange(getPatientsAppointment);
+                await _context.SaveChangesAsync();
+
                 return ("Patient has been successfully checked-In", true);
             }
             else
@@ -77,14 +94,15 @@ namespace medicloud.emr.api.Services
         {
             if (!string.IsNullOrEmpty(searchWord))
             {
-                var _result = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false && c.ProviderId == accountId && c.CheckInDate.Date == DateTime.Today.Date).Include(s => s.Patient)/*.ThenInclude(g => g.Gender)*/
+                var _result = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false && c.IsActive == true && c.ProviderId == accountId && c.CheckInDate.Date == DateTime.Today.Date).Include(s => s.Patient)/*.ThenInclude(g => g.Gender)*/
                 .Select(r => new CheckInDTO
                 {
                     CheckInDate = r.CheckInDate,
                     CheckOutDate = r.CheckOutDate.Value,
                     EncounterId = r.Encounterid,
                     isCheckedIn = r.IsCheckedIn,
-                    isCheckedOut = r.IsCheckedOut,
+                    //Is = r.IsActive,
+                    isCheckedOut = (bool)r.IsCheckedOut,
                     LocationId = r.Locationid,
                     PatientId = r.Patientid,
                     ProviderId = r.ProviderId,
@@ -98,14 +116,14 @@ namespace medicloud.emr.api.Services
                 return checkInList;
             }
 
-            var result = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false && c.ProviderId == accountId && c.CheckInDate.Date == DateTime.Today.Date).Include(s => s.Patient)/*.ThenInclude(g => g.Gender)*/
+            var result = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false && c.IsActive == true && c.ProviderId == accountId && c.CheckInDate.Date == DateTime.Today.Date).Include(s => s.Patient)/*.ThenInclude(g => g.Gender)*/
                 .Select(r => new CheckInDTO
                 {
                     CheckInDate = r.CheckInDate,
                     CheckOutDate = r.CheckOutDate.Value,
                     EncounterId = r.Encounterid,
                     isCheckedIn = r.IsCheckedIn,
-                    isCheckedOut = r.IsCheckedOut,
+                    isCheckedOut = (bool)r.IsCheckedOut,
                     LocationId = r.Locationid,
                     PatientId = r.Patientid,
                     ProviderId = r.ProviderId,
@@ -119,9 +137,9 @@ namespace medicloud.emr.api.Services
         public async Task<(int, int, bool)> GetTotalCheckInTodayCount(int locationId, int accountId)
         {
             var totalCheckedInToday = await _context.CheckIn.Where(c => c.Locationid == locationId &&
-                         c.ProviderId == accountId && c.CheckInDate.Date == DateTime.Today.Date).CountAsync();
+                         c.ProviderId == accountId && c.CheckInDate.Date == DateTime.Today.Date && c.IsActive == true).CountAsync();
 
-            var totalCheckedInSixmonthsAgo = await _context.CheckIn.Where(c => c.Locationid == locationId &&
+            var totalCheckedInSixmonthsAgo = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsActive == true &&
                             c.ProviderId == accountId && c.CheckInDate.Date >= DateTime.Today.AddMonths(-6).Date).CountAsync();
 
             var increase = totalCheckedInToday - totalCheckedInSixmonthsAgo;
@@ -153,7 +171,7 @@ namespace medicloud.emr.api.Services
         
         public async Task<CheckIn> GetCheckedInPatient(int locationId, string patientId, int accountId)
         {
-            var result = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false && 
+            var result = await _context.CheckIn.Where(c => c.Locationid == locationId && c.IsCheckedOut == false && c.IsActive == true && 
                             c.ProviderId == accountId && c.Patientid == patientId && c.CheckInDate.Date == DateTime.Today.Date).AsNoTracking().FirstOrDefaultAsync();
             return result;
         }
@@ -167,7 +185,7 @@ namespace medicloud.emr.api.Services
                     CheckOutDate = r.CheckOutDate.Value,
                     EncounterId = r.Encounterid,
                     isCheckedIn = r.IsCheckedIn,
-                    isCheckedOut = r.IsCheckedOut,
+                    isCheckedOut = (bool)r.IsCheckedOut,
                     LocationId = r.Locationid,
                     PatientId = r.Patientid,
                     ProviderId = r.ProviderId,

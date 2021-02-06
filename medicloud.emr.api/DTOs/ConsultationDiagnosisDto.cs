@@ -24,23 +24,23 @@ namespace medicloud.emr.api.DTOs
         public string diagnosisdesc { get; set; }
         public int? genderconstraint { get; set; }
         public int? encounterId { get; set; }
-        public bool primarydiagnosis { get; set; }
-        public bool ischronic { get; set; }
-        public bool isresolved { get; set; }
+        public bool? primarydiagnosis { get; set; }
+        public bool? ischronic { get; set; }
+        public bool? isresolved { get; set; }
         public int? doctorid { get; set; }
         public string remarks { get; set; }
-        public bool isactive { get; set; }
+        public bool? isactive { get; set; }
         public int? encodedby { get; set; }
         public DateTime? encodeddate { get; set; }
-        public bool MRDCode { get; set; }
-        public bool IsOTDiagnosis { get; set; }
+        public bool? MRDCode { get; set; }
+        public bool? IsOTDiagnosis { get; set; }
         public int? diagnosisid { get; set; }
         public DateTime? Onsetdate { get; set; }
         public int? Typeid { get; set; }
         public int? conditionid1 { get; set; }
         public int? conditionid2 { get; set; }
         public int? conditionid3 { get; set; }
-        public int? isprovisional { get; set; }
+        public bool? isprovisional { get; set; }
     }
 
     public class ConsultationDiagnosisDto
@@ -58,22 +58,22 @@ namespace medicloud.emr.api.DTOs
         public string diagnosisdesc { get; set; }
         public int? genderconstraint { get; set; }
         public int? encounterId { get; set; }
-        public bool primarydiagnosis { get; set; }
-        public bool ischronic { get; set; }
-        public bool isresolved { get; set; }
+        public bool? primarydiagnosis { get; set; }
+        public bool? ischronic { get; set; }
+        public bool? isresolved { get; set; }
         public int? doctorid { get; set; }
         public string remarks { get; set; }
-        public bool isactive { get; set; }
+        public bool? isactive { get; set; }
         public int? encodedby { get; set; }
         public DateTime? encodeddate { get; set; }
-        public bool MRDCode { get; set; }
-        public bool IsOTDiagnosis { get; set; }
+        public bool? MRDCode { get; set; }
+        public bool? IsOTDiagnosis { get; set; }
         public int? diagnosisid { get; set; }
         public DateTime? Onsetdate { get; set; }
         public int? Typeid { get; set; }
         public int? conditionid1 { get; set; }
         public int? conditionid2 { get; set; }
         public int? conditionid3 { get; set; }
-        public int? isprovisional { get; set; }
+        public bool? isprovisional { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using medicloud.emr.api.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -27,7 +28,7 @@ namespace medicloud.emr.api.Etities
         public string Remarks { get; set; }
         public int? Lastchangeby { get; set; }
         public DateTime? Lastchangedate { get; set; }
-        public int? Side { get; set; }
+        public string Side { get; set; }
         public int? Onsetid { get; set; }
         public int? Qualityid { get; set; }
         public int? Qualityid1 { get; set; }
@@ -48,6 +49,11 @@ namespace medicloud.emr.api.Etities
         public int? Durationid { get; set; }
         public string Durationtype { get; set; }
 
-       
+        
+        public virtual Consultation Consultation { get; set; }
+        public virtual Patient Patient { get; set; }
+        public virtual AccountManager Provider { get; set; }
+
+
     }
 }

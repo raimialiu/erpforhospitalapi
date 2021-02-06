@@ -43,14 +43,19 @@ namespace medicloud.emr.api.Controllers
         {
             try
             {
-                await _orderInvestigationRepository.AddConsultationOrder(model);
-                var status = true;
-                return Ok(status);
+                var result = await _orderInvestigationRepository.AddConsultationOrder(model);
+                PatientTariffByPayorResponse response = new PatientTariffByPayorResponse()
+                {
+                    TariffAmount = null,
+                    ResponseMessage = result.Item2,
+                    Status = result.Item1
+                };
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 var status = false;
-                return BadRequest(status);
+                return BadRequest(ex.Message);
             }
 
         }

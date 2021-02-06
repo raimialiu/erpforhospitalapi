@@ -15,7 +15,7 @@ namespace medicloud.emr.api.Entities
             Biometric = new HashSet<Biometric>();
             BirthRegister = new HashSet<BirthRegister>();
             ConsultationCheck = new HashSet<ConsultationCheck>();
-            ConsultationComplaints = new HashSet<ConsultationComplaints>();
+            ConsultationComplaints = new HashSet<Etities.ConsultationComplaints>();
             ConsultationDental = new HashSet<ConsultationDental>();
             ConsultationDentalProcedure = new HashSet<ConsultationDentalProcedure>();
             ConsultationDiagnosis = new HashSet<ConsultationDiagnosis>();
@@ -142,7 +142,7 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<Biometric> Biometric { get; set; }
         public virtual ICollection<BirthRegister> BirthRegister { get; set; }
         public virtual ICollection<ConsultationCheck> ConsultationCheck { get; set; }
-        public virtual ICollection<ConsultationComplaints> ConsultationComplaints { get; set; }
+        public virtual ICollection<Etities.ConsultationComplaints> ConsultationComplaints { get; set; }
         public virtual ICollection<ConsultationDental> ConsultationDental { get; set; }
         public virtual ICollection<ConsultationDentalProcedure> ConsultationDentalProcedure { get; set; }
         public virtual ICollection<ConsultationDiagnosis> ConsultationDiagnosis { get; set; }
