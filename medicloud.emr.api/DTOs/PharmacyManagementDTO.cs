@@ -112,8 +112,8 @@ namespace medicloud.emr.api.DTOs
         public string Icdcode { get; set; }
         public bool EmrPrescription { get; set; }       
         public bool Isactive { get; set; }
-        public int Itemid { get; set; }
-       
+        public DateTime Encodeddate { get; set; }
+        public int Itemid { get; set; }        
         public bool Issubstitutenotallowed { get; set; }
         public int Locationid { get; set; }
         public int Providerid { get; set; }
@@ -134,7 +134,8 @@ namespace medicloud.emr.api.DTOs
         public int Formularyid { get; set; }
         public int Doctorid { get; set; }
         public int Dosetime { get; set; }
-       
+        public int Drugid { get; set; }
+        public string Prescdetail { get; set; }
         
 
     }

@@ -426,59 +426,6 @@ namespace medicloud.emr.api.Services
 
         public async Task<bool> AddPrescriptionDetails(FullPrescriptionDetailsDTO prescDetails)
         {
-
-            //var prescDetailObj = new ConsultationPrescriptionDetails
-            //{
-
-            //    Frequencyid = prescDetails.Frequencyid,
-            //    Doseformid = prescDetails.Doseformid,
-            //    Routeid = prescDetails.Routeid,
-            //    Unitid = prescDetails.Unitid,
-            //    Icdcode = prescDetails.Icdcode,
-
-            //    EmrPrescription = prescDetails.EmrPrescription,
-
-            //    Encodeddate = DateTime.Now,
-            //    ItemId = prescDetails.Itemid,
-            //    Isapprovedrequired = prescDetails.Isapprovedrequired,
-            //    Locationid = prescDetails.Locationid,
-            //    ProviderId = prescDetails.Providerid,
-            //    Patientid = prescDetails.Patientid,
-            //    Genericid = prescDetails.Genericid,
-            //    Strength = prescDetails.Strength,
-            //    //Startdate = prescDetails.Startdate,
-            //    Startdate = DateTime.Now,
-            //    Refill = prescDetails.Refill,
-            //    //Statusid = prescDetails.Statusid,
-            //    Lastchangeby = null,
-            //    //Lastchangedate = null,
-            //    Lastchangedate = DateTime.Now,
-            //    Prescriptionid = prescDetails.Prescriptionid,
-            //    Qty = prescDetails.Qty,
-            //    Strengthvalue = prescDetails.Strengthvalue,
-            //    Dose = prescDetails.Dose,
-            //    Durationtype = prescDetails.Durationtype,
-            //    Medicationinstructions = prescDetails.Medicationinstructions,
-            //    Formularyid = prescDetails.Formularyid,
-            //    Doctorid = prescDetails.Doctorid,
-            //    Dosetime = prescDetails.Dosetime,
-            //    Issubstitutenotallowed = prescDetails.Issubstitutenotallowed,
-
-
-            //};
-
-            //_context.ConsultationPrescriptionDetails.Add(prescDetailObj);
-            //var x = await _context.SaveChangesAsync();
-            //if (x >= 1)
-            //{
-            //    return true;
-
-            //}
-            //else return false;
-            //if (prescDetails == null)
-            //{
-            //    return false;
-            //}
             var validPatient = _context.Patient.FromSqlInterpolated($"select * from Patient where patientid = {prescDetails.Patientid}").FirstOrDefault();
 
 
@@ -495,10 +442,8 @@ namespace medicloud.emr.api.Services
                 Doseformid = prescDetails.Doseformid,
                 Routeid = prescDetails.Routeid,
                 Unitid = prescDetails.Unitid,
-                Icdcode = prescDetails.Icdcode,
-               
-                EmrPrescription = prescDetails.EmrPrescription,
-                
+                Icdcode = prescDetails.Icdcode,               
+                EmrPrescription = prescDetails.EmrPrescription,                
                 Encodeddate = DateTime.Now,
                 ItemId = prescDetails.Itemid,
                 Isapprovedrequired = prescDetails.Isapprovedrequired,
@@ -507,11 +452,11 @@ namespace medicloud.emr.api.Services
                 Patientid = prescDetails.Patientid,
                 Genericid = prescDetails.Genericid,
                 Strength = prescDetails.Strength,
-                Startdate = prescDetails.Startdate,
-                   
+                Startdate = prescDetails.Startdate,                   
                 Refill = prescDetails.Refill,
-                //Statusid = prescDetails.Statusid,
-                Lastchangeby = null,
+                Statusid = prescDetails.Statusid,
+                PrescriptionDetail = prescDetails.Prescdetail,
+                    //Lastchangeby = null,
                 //Lastchangedate = null,
                 Lastchangedate = DateTime.Now,
                 Prescriptionid = prescDetails.Prescriptionid,
