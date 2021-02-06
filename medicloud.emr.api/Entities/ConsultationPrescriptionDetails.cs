@@ -45,7 +45,18 @@ namespace medicloud.emr.api.Entities
         public int? Dose { get; set; }
         public int? Durationtype { get; set; }
         public string Medicationinstructions { get; set; }
-        public int? doctorid { get; set; }
+        public int? Formularyid { get; set; }
+        public int? Doctorid { get; set; }
+        public int? Dosetime { get; set; }
+        public string Preauthorizationno { get; set; }
+        
+
+        public virtual ConsultationPrescription ConsultationPrescription { get; set; }
+        public virtual DrugGeneric DrugGeneric { get; set; }
+
+        public virtual StatusMaster Status { get; set; }
+
+
     }
 }
 
