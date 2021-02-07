@@ -72,11 +72,14 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<ConsultationImpression> ConsultationImpression { get; set; }
         public virtual DbSet<ConsultationLaboratory> ConsultationLaboratory { get; set; }
         public virtual DbSet<ConsultationOtherDiagnosis> ConsultationOtherDiagnosis { get; set; }
-        //public virtual DbSet<Entities.ConsultationPrescription> ConsultationPrescription { get; set; }
+        public virtual DbSet<ConsultationPrescription> ConsultationPrescription { get; set; }
+       
         public virtual DbSet<ConsultationProblem> ConsultationProblem { get; set; }
         public virtual DbSet<ConsultationProcedure> ConsultationProcedure { get; set; }
         public virtual DbSet<ConsultationRadiology> ConsultationRadiology { get; set; }
         public virtual DbSet<ConsultationUtilization> ConsultationUtilization { get; set; }
+        public virtual DbSet<StatusMaster> StatusMaster { get; set; }
+
         public virtual DbSet<Country> Country { get; set; }
         public virtual DbSet<Cptcategory> Cptcategory { get; set; }
         public virtual DbSet<Cptprocedure> Cptprocedure { get; set; }
@@ -273,7 +276,7 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<DrugFoodrelation> DrugFoodrelation { get; set; }
 
         public virtual DbSet<DrugRoute> DrugRoute { get; set; }
-        public virtual DbSet<ConsultationPrescription> ConsultationPrescription { get; set; }
+       
         public virtual DbSet<DrugFrequency> DrugFrequency { get; set; }
 
         public virtual DbSet<TarriffPlan> TarriffPlan { get; set; }
@@ -283,11 +286,12 @@ namespace medicloud.emr.api.Data
         public virtual DbSet<BillingReceipt> BillingReceipt { get; set; }
         public virtual DbSet<BillType> BillType { get; set; }
 
-       // public DbSet<Etities.ConsultationPrescription> Prescriptions { get; set; }
+        // public DbSet<Etities.ConsultationPrescription> Prescriptions { get; set; }
         public DbSet<Etities.ConsultationPrescriptionFavorites> consultationPrescriptionFavorites { get; set; }
         public virtual DbSet<ImmunizationSchedule> ImmunizationSchedule { get; set; }
         public virtual DbSet<ImmunizationBrand> ImmunizationBrand { get; set; }
         public virtual DbSet<EmrimmunizationMaster> ImmunizatiinMaster { get; set; }
+        //public virtual DbSet<ConsultationPrescription> ConsultationPrescription { get; set; }
         public virtual DbSet<ConsultationPrescriptionDetails> ConsultationPrescriptionDetails { get; set; }
         public virtual DbSet<ImmunizationDetails> ImmunizationDetails { get; set; }
 
@@ -1259,6 +1263,8 @@ namespace medicloud.emr.api.Data
 
             modelBuilder.Entity<PlanType>(x => {
                 x.HasKey(x => x.planid);
+
+                
             });
 
             modelBuilder.Entity<AppSetting>(entity =>
@@ -2922,6 +2928,139 @@ namespace medicloud.emr.api.Data
                     .HasConstraintName("FK_Consultation_OtherDiagnosis_AccountManager");
             });
 
+            modelBuilder.Entity<ConsultationPrescription>(entity =>
+            {
+                entity.HasKey(e => e.Prescriptionid);
+
+                entity.ToTable("Consultation_Prescription");
+
+                entity.Property(e => e.Prescriptionid).HasColumnName("prescriptionid");
+
+                entity.Property(e => e.Consultationid).HasColumnName("consultationid");
+
+                entity.Property(e => e.Dateadded)
+                    .HasColumnName("dateadded")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Doctorid).HasColumnName("doctorid");
+
+                entity.Property(e => e.Durationtype).HasColumnName("durationtype");
+
+                entity.Property(e => e.Encodedby).HasColumnName("encodedby");
+
+                entity.Property(e => e.Encodeddate)
+                    .HasColumnName("encodeddate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Encounterid).HasColumnName("encounterid");
+
+                entity.Property(e => e.Indentclose).HasColumnName("indentclose");
+
+                entity.Property(e => e.Indentno).HasColumnName("indentno");
+
+                entity.Property(e => e.Indentstoreid).HasColumnName("indentstoreid");
+
+                entity.Property(e => e.Isactive).HasColumnName("isactive");
+
+                entity.Property(e => e.Isconsumable).HasColumnName("isconsumable");
+
+                entity.Property(e => e.Isnocurrentmedications).HasColumnName("isnocurrentmedications");
+
+                entity.Property(e => e.Ispregnant).HasColumnName("ispregnant");
+
+                entity.Property(e => e.Issubstitutenotallowed).HasColumnName("issubstitutenotallowed");
+
+                entity.Property(e => e.Locationid).HasColumnName("locationid");
+
+                entity.Property(e => e.Orderpriorityid).HasColumnName("orderpriorityid");
+
+                entity.Property(e => e.Patientid)
+                    .HasColumnName("patientid")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Prescriptiondate)
+                    .HasColumnName("prescriptiondate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
+
+                entity.Property(e => e.Remarks)
+                    .HasColumnName("remarks")
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+               
+
+                //entity.HasOne(d => d.EncodedbyNavigation)
+                //    .WithMany(p => p.ConsultationPrescription)
+                //    .HasForeignKey(d => d.Encodedby)
+                //    .HasConstraintName("FK_Consultation_Prescription_ApplicationUser");
+
+                //entity.HasOne(d => d.Encounter)
+                //    .WithMany(p => p.ConsultationPrescription)
+                //    .HasForeignKey(d => d.Encounterid)
+                //    .HasConstraintName("FK_Consultation_Prescription_CheckIn");
+
+                entity.HasOne(d => d.Indentstore)
+                    .WithMany(p => p.ConsultationPrescription)
+                    .HasForeignKey(d => d.Indentstoreid)
+                    .HasConstraintName("FK_Consultation_PrescriptionStore");
+
+                entity.HasOne(d => d.Location)
+                    .WithMany(p => p.ConsultationPrescription)
+                    .HasForeignKey(d => d.Locationid)
+                    .HasConstraintName("FK_Consultation_Prescription_Location");
+
+                //entity.HasOne(d => d.Orderpriority)
+                //    .WithMany(p => p.ConsultationPrescription)
+                //    .HasForeignKey(d => d.Orderpriorityid)
+                //    .HasConstraintName("FK_Consultation_PrescriptionOrderPriority");
+
+                entity.HasOne(d => d.Patient)
+                    .WithMany(p => p.ConsultationPrescription)
+                    .HasForeignKey(d => d.Patientid)
+                    .HasConstraintName("FK_Consultation_Prescription_Patient");
+
+                entity.HasOne(d => d.Provider)
+                    .WithMany(p => p.ConsultationPrescription)
+                    .HasForeignKey(d => d.ProviderId)
+                    .HasConstraintName("fk_consultationprescription_accountmanager");
+            });
+            //modelbuilder by Aishat
+            //modelBuilder.Entity<ConsultationPrescription>(entity =>
+            //{
+            //    entity.ToTable("Consultation_Prescription");
+            //    entity.HasKey(e => e.PrescriptionId);
+
+            //    entity.Property(e => e.Remarks)
+            //       .HasColumnName("remarks")
+            //       .HasMaxLength(500);
+
+            //    entity.HasOne(e => e.Consultation)
+            //           .WithMany(c => c.ConsultationPrescription);
+
+            //    entity.HasOne(e => e.Patient)
+            //           .WithMany(p => p.ConsultationPrescription)
+            //           .HasForeignKey(e =>e.Patientid)
+            //           .HasConstraintName("fk_consultationPrescription_patient");
+
+            //    entity.HasOne(e => e.Provider)
+            //           .WithMany(p => p.ConsultationPrescription)
+            //           .HasForeignKey(e => e.ProviderID)
+            //           .HasConstraintName("fk_consultationPrescription_accountManager");
+
+            //    entity.HasOne(e => e.Store)
+            //          .WithMany(s => s.ConsultationPrescription)
+            //          .HasForeignKey(e => e.Indentstoreid)
+            //          .HasConstraintName("fk_consultationPrescription_store");
+
+            //    entity.HasOne(e => e.Location)
+            //          .WithMany(l => l.ConsultationPrescription)
+            //          .HasForeignKey(e => e.Locationid)
+            //          .HasConstraintName("fk_consultationPrescription_location");
+            //});
+
             //modelBuilder.Entity<Etities.ConsultationPrescription>(entity =>
             //{
             //    entity.HasKey(e => e.Txnkey);
@@ -3027,6 +3166,136 @@ namespace medicloud.emr.api.Data
             //        .HasForeignKey(d => d.ProviderId)
             //        .HasConstraintName("fk_consultationprescription_accountmanager");
             //});
+
+            modelBuilder.Entity<ConsultationPrescriptionDetails>(entity =>
+            {
+                entity.ToTable("Consultation_PrescriptionDetails");
+
+                entity.Property(e => e.Comments)
+                    .HasColumnName("comments")
+                    .HasMaxLength(1000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Doctorid).HasColumnName("doctorid");
+
+                entity.Property(e => e.Dose).HasColumnName("dose");
+
+                entity.Property(e => e.Doseformid).HasColumnName("doseformid");
+
+                entity.Property(e => e.Dosetime).HasColumnName("dosetime");
+
+                entity.Property(e => e.Durationtype).HasColumnName("durationtype");
+
+                entity.Property(e => e.Encodedby).HasColumnName("encodedby");
+
+                entity.Property(e => e.Encodeddate)
+                    .HasColumnName("encodeddate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.EncounterId).HasColumnName("encounterId");
+
+                entity.Property(e => e.Formularyid).HasColumnName("formularyid");
+
+                entity.Property(e => e.Frequencyid).HasColumnName("frequencyid");
+
+                entity.Property(e => e.Genericid).HasColumnName("genericid");
+
+                entity.Property(e => e.Icdcode)
+                    .HasColumnName("ICDCode")
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Isactive).HasColumnName("isactive");
+
+                entity.Property(e => e.Isapprovedrequired).HasColumnName("isapprovedrequired");
+
+                entity.Property(e => e.Iscapitated).HasColumnName("iscapitated");
+
+                entity.Property(e => e.Isexcluded).HasColumnName("isexcluded");
+
+                entity.Property(e => e.Issubstitutenotallowed).HasColumnName("issubstitutenotallowed");
+
+                entity.Property(e => e.Isvariabledose).HasColumnName("isvariabledose");
+
+                entity.Property(e => e.Isvoid).HasColumnName("isvoid");
+
+                entity.Property(e => e.ItemId).HasColumnName("itemId");
+
+                entity.Property(e => e.Lastchangeby).HasColumnName("lastchangeby");
+
+                entity.Property(e => e.Lastchangedate)
+                    .HasColumnName("lastchangedate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Locationid).HasColumnName("locationid");
+
+                entity.Property(e => e.Medicationinstructions)
+                    .HasColumnName("medicationinstructions")
+                    .HasMaxLength(1000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Patientid)
+                    .HasColumnName("patientid")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Preauthorizationno)
+                    .HasColumnName("preauthorizationno")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PrescriptionDetail)
+                    .HasColumnName("prescriptionDetail")
+                    .HasMaxLength(1000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Prescriptionid).HasColumnName("prescriptionid");
+
+                entity.Property(e => e.ProviderId).HasColumnName("ProviderID");
+
+                entity.Property(e => e.Qty).HasColumnName("qty");
+
+                entity.Property(e => e.Refill).HasColumnName("refill");
+
+                entity.Property(e => e.Routeid).HasColumnName("routeid");
+
+                entity.Property(e => e.Startdate)
+                    .HasColumnName("startdate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Statusid).HasColumnName("statusid");
+
+                entity.Property(e => e.Strength)
+                    .HasColumnName("strength")
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Strengthvalue)
+                    .HasColumnName("strengthvalue")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.HasOne(e => e.DrugGeneric)
+                   .WithMany(dg => dg.ConsultationPrescriptionDetails)
+                   .HasForeignKey(e => e.Genericid)
+                   .HasConstraintName("FK_Consultation_PrescriptionDetailsDrugGeneric");
+
+                entity.HasOne(e => e.ConsultationPrescription)
+                    .WithMany(pd=> pd.ConsultationPrescriptionDetails)
+                    .HasForeignKey(e=> e.Prescriptionid)
+                    .HasConstraintName("FK_Consultation_PrescriptionDetailsConsultation_Prescription");
+                entity.HasOne(e => e.Status)
+                    .WithMany(s => s.ConsultationPrescriptionDetails)
+                    .HasForeignKey(e => e.Statusid)
+                    .HasConstraintName("FK_Consultation_PrescriptionDetailsStatusMaster");
+
+            });
+
+            modelBuilder.Entity<StatusMaster>(entity =>
+            {
+                entity.HasKey(e => e.Statusid);
+                entity.ToTable("StatusMaster");
+            });
 
             modelBuilder.Entity<ConsultationProblem>(entity =>
             {
@@ -5484,6 +5753,7 @@ namespace medicloud.emr.api.Data
                     .WithMany(p => p.Patient)
                     .HasForeignKey(d => d.Stateid)
                     .HasConstraintName("State_Patient").IsRequired(false);
+              
             });
 
             modelBuilder.Entity<PatientMedicalHistory>(entity =>
