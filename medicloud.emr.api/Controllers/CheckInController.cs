@@ -43,11 +43,11 @@ namespace medicloud.emr.api.Controllers
         }
 
         [HttpGet, Route("CheckPatientIn")]
-        public async Task<IActionResult> CheckPatientIn(int locationId, int providerId, string patientId)
+        public async Task<IActionResult> CheckPatientIn(int locationId, int providerId, string patientId, int userid)
         {
             try
             {
-                var result = await _checkInRepository.CreaateCheckIn(patientId, providerId, locationId);
+                var result = await _checkInRepository.CreaateCheckIn(patientId, providerId, locationId, userid);
 
                 MiniResponseBase response = new MiniResponseBase
                 {
