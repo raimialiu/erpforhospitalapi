@@ -32,9 +32,11 @@ namespace medicloud.emr.api.Controllers
         private DataContext _ctx;
         private EmailConfiguration emailConfig;
         private EmailMessageHelper _emailHelper;
+        private IBillingRepository _Billingrepo;
         public PatientController(IPatientRepo patientRepo, 
             //IBloodGroupRepo bloodGroupRepo,
             ITitleRepo titleRepo,
+            IBillingRepository _BillingRepo,
             IPatientServices ps, EmailConfiguration _config)
         {
             this.patientRepo = patientRepo;
@@ -43,6 +45,7 @@ namespace medicloud.emr.api.Controllers
             patientDB = new DataContextRepo<Patient>();
             _ctx = new DataContext();
             _emailHelper = EmailMessageHelper.instance(_config);
+            this._Billingrepo = _BillingRepo;
             //this.bloodGroupRepo = bloodGroupRepo;
 
 
@@ -222,10 +225,19 @@ namespace medicloud.emr.api.Controllers
             if (result != null)
             {
                 string[] spliResult = result.Split(":");
+                var billingResult = await _Billingrepo.WritePatientRegistrationBill(new BillingInvoice()
+                {
+                    patientid = spliResult[0],
+                    ProviderID = dto.ProviderId,
+                    locationid = Int32.Parse(dto.locationid),
+
+                });
+                var isSuccessResponse = billingResult.Item1;
                 var resultOut = new
                 {
                     PatientRegNumber = spliResult[0],
-                    PatientFamilyNumber = spliResult[1]
+                    PatientFamilyNumber = spliResult[1],
+                    message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please this is appropritaely billed later"
                 };
                 _reponse = BaseResponse.GetResponse(resultOut, "patient registered", "00");
                 return Ok(_reponse);
@@ -277,10 +289,19 @@ namespace medicloud.emr.api.Controllers
             if (result != null)
             {
                 string spliResult = result;
+                var billingResult = await _Billingrepo.WritePatientRegistrationBill(new BillingInvoice()
+                {
+                    patientid = spliResult,
+                    ProviderID = patient.ProviderId,
+                    locationid = Int32.Parse(patient.locationid),
+
+                });
+                bool isSuccessResponse = billingResult.Item1;
                 var resultOut = new
                 {
-                    PatientRegNumber = spliResult
-                    
+                    PatientRegNumber = spliResult,
+                    message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please this is appropritaely billed later"
+
                 };
                 _reponse = BaseResponse.GetResponse(resultOut, "patient registered", "00");
                 return Ok(_reponse);
@@ -298,24 +319,23 @@ namespace medicloud.emr.api.Controllers
             if(result != null)
             {   
                 string[] spliResult = result.Split(":");
+                var billingResult = await _Billingrepo.WritePatientRegistrationBill(new BillingInvoice()
+                {
+                     patientid = spliResult[0],
+                     ProviderID = patient.ProviderId,
+                     locationid = Int32.Parse(patient.locationid),
+                     
+                });
+
+                bool isSuccessResponse = billingResult.Item1;
                 var resultOut = new
                 {
                     PatientRegNumber = spliResult[0],
-                    PatientFamilyNumber = spliResult[1]
+                    PatientFamilyNumber = spliResult[1],
+                    message =  isSuccessResponse ? "":"Registration Successfull, but failed to create billing, please this is appropritaely billed later"
                 };
 
-                //
-                //var listOfPayors = new List<PatientPayorTypes>();
-                //foreach(string k in patient.payors)
-                //{
-                //    var current = new PatientPayorTypes()
-                //    {
-                //        Patientid = spliResult[0],
-                //        Payor = k
-                //    };
-
-                //    listOfPayors.Add(current);
-                //}
+                
 
                 if(patient.payors != null)
                 {
