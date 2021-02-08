@@ -324,7 +324,7 @@ namespace medicloud.emr.api.Services
 
             if (appointment.Statusid == 3)
             {
-                checkin = await _checkInRepository.CreaateCheckIn(appointment.PatientNumber, (int)appointment.ProviderID, (int)appointment.Locationid);
+                checkin = await _checkInRepository.CreaateCheckIn(appointment.PatientNumber, (int)appointment.ProviderID, (int)appointment.Locationid, int.Parse((model.Adjuster)));
             }
 
             var update = await _context.SaveChangesAsync() > 0;
