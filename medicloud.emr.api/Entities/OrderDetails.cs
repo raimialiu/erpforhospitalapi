@@ -17,6 +17,7 @@ namespace medicloud.emr.api.Entities
         public bool priceeditable { get; set; }
         public bool isactive { get; set; }
         public int? encodedby { get; set; }
+        public int? ordertypeid { get; set; }
         public DateTime? encodeddate { get; set; }
     }
 }
