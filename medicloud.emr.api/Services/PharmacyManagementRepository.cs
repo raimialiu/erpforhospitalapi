@@ -55,7 +55,7 @@ namespace medicloud.emr.api.Services
                        (((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
                        (p.Locationid == prescriptionListFilterModel.LocationId) ||
                        (p.ProviderId == prescriptionListFilterModel.ProviderId))) && 
-                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
+                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -84,7 +84,7 @@ namespace medicloud.emr.api.Services
                .Where(p => (p.Patientid != null) && (p.Isactive == true) && (
                        ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
                        (p.Locationid == prescriptionListFilterModel.LocationId))) &&
-                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
+                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -114,7 +114,7 @@ namespace medicloud.emr.api.Services
                .Where(p => (p.Patientid != null)  && (p.Isactive == true)  && (
                        ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
                        (p.ProviderId == prescriptionListFilterModel.ProviderId))) &&
-                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
+                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -146,7 +146,7 @@ namespace medicloud.emr.api.Services
                   .Where(p => (p.Patientid != null) && (p.Isactive == true) && (
                       (p.Locationid == prescriptionListFilterModel.LocationId) ||
                       (p.ProviderId == prescriptionListFilterModel.ProviderId)) &&
-                      (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
+                      (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
                   .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                   .Take(prescriptionListFilterModel.PageSize)
                  .Select(presc => new PharmacyManagementDTO
@@ -174,7 +174,7 @@ namespace medicloud.emr.api.Services
 
                   .Where(p => (p.Patientid != null) && (p.Isactive == true) && 
                           ((p.Locationid == prescriptionListFilterModel.LocationId))
-                          && (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
+                          && (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
                   .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                   .Take(prescriptionListFilterModel.PageSize)
                  .Select(presc => new PharmacyManagementDTO
@@ -201,7 +201,7 @@ namespace medicloud.emr.api.Services
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
                .Where(p => (p.Patientid != null) && (p.Isactive == true) && 
                             (p.Locationid == prescriptionListFilterModel.LocationId) && 
-                            (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
+                            (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -230,7 +230,7 @@ namespace medicloud.emr.api.Services
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
                .Where(p => (p.Patientid != null) && (p.Isactive == true) &&
                        (p.Prescriptiondate == prescriptionListFilterModel.Date) && 
-                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid)))
+                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -257,7 +257,7 @@ namespace medicloud.emr.api.Services
             {
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
               .Where(p => p.Patientid != null && (p.Isactive == true) && 
-                     ( _context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid))
+                     ( _context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true))
               )
               .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
               .Take(prescriptionListFilterModel.PageSize)
