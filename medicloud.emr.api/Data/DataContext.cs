@@ -876,7 +876,7 @@ namespace medicloud.emr.api.Data
 
                 entity.Property(e => e.EncounterId).HasColumnName("EncounterId");
                 entity.Property(e => e.Locationid).HasColumnName("locationid");
-                entity.Property(e => e.EncodedBy).HasColumnName("EncodedBy");
+                entity.Property(e => e.encodedby).HasColumnName("EncodedBy");
                 entity.Property(e => e.EncodedDate).HasColumnName("EncodedDate");
                 entity.Property(e => e.IsActive).HasColumnName("IsActive");
                 entity.Property(e => e.ordertypeid).HasColumnName("ordertypeid");
@@ -886,6 +886,7 @@ namespace medicloud.emr.api.Data
                 entity.Property(e => e.BedCategoryId).HasColumnName("BedCategoryId");
                 entity.Property(e => e.orderno).HasColumnName("orderno");
                 entity.Property(e => e.orderDate).HasColumnName("orderDate");
+                entity.Property(e => e.doctorid).HasColumnName("doctorid");
             });
 
 
@@ -924,6 +925,7 @@ namespace medicloud.emr.api.Data
                 entity.Property(e => e.diagnosisid).HasColumnName("diagnosisid");
                 entity.Property(e => e.ishmoclaim).HasColumnName("ishmoclaim");
                 entity.Property(e => e.drugid).HasColumnName("drugid");
+                entity.Property(e => e.encodedby).HasColumnName("encodedby");
             });
             
             modelBuilder.Entity<ConsultationOrderDetails>(entity =>

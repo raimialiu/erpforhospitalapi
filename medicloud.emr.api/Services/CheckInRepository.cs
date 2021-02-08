@@ -12,7 +12,7 @@ namespace medicloud.emr.api.Services
     public interface ICheckInRepository
     {
         Task CheckOutPatient(string patientId, int locationId, int accountId);
-        Task<(string, bool)> CreaateCheckIn(string patientId, int providerId, int locationId);
+        Task<(string, bool)> CreaateCheckIn(string patientId, int providerId, int locationId, int userid);
         Task<List<CheckInDTO>> GetCheckInList(int locationId, string searchWord, int accountId);
         Task<CheckIn> GetCheckedInPatient(int locationId, string patientId, int accountId);
         Task<(int, int, bool)> GetTotalCheckInTodayCount(int locationId, int accountId);
@@ -28,7 +28,7 @@ namespace medicloud.emr.api.Services
             _context = context;
         }
 
-        public async Task<(string, bool)> CreaateCheckIn(string patientId, int providerId, int locationId)
+        public async Task<(string, bool)> CreaateCheckIn(string patientId, int providerId, int locationId, int userid)
         {
             var getPatientsAppointment = await _context.AppointmentSchedule.Where(a => a.PatientNumber == patientId && 
                                                  a.ProviderID == providerId && a.Locationid == locationId && a.Starttime.Date == DateTime.Today.Date).ToListAsync();
@@ -51,7 +51,8 @@ namespace medicloud.emr.api.Services
                     IsCheckedOut = false,
                     Locationid = locationId,
                     Patientid = patientId,
-                    IsActive = true
+                    IsActive = true,
+                    EncodedBy = userid
                 };
 
                 var checkin = await _context.AddAsync(checkIn);

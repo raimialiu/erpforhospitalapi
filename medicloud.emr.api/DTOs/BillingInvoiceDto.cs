@@ -29,6 +29,7 @@ namespace medicloud.emr.api.DTOs
         public DateTime? billdate { get; set; }
         public string panumber { get; set; }
         public bool isbilledclosed { get; set; }
+        public bool settouseprivatetariff { get; set; }
         public string alternatecode { get; set; }
         public string comments { get; set; }
         public int? ProviderID { get; set; }
@@ -37,6 +38,7 @@ namespace medicloud.emr.api.DTOs
         public decimal? unitcharge { get; set; }
         public int? unit { get; set; }
         public int? drugid { get; set; }
+        public int? encodedby { get; set; }
         public PayerDto payer { get; set; }
         public Sponsor sponsor { get; set; }
     }
