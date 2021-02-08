@@ -142,7 +142,9 @@ namespace medicloud.emr.api.Controllers
             if (id != prescriptionDetailsUpdateDTO.Id) { return BadRequest(); }
             var details = await _context.ConsultationPrescriptionDetails.FindAsync(id);
             if (details == null) { return NotFound(); }
-                details.Statusid = prescriptionDetailsUpdateDTO.Statusid;            
+                details.Statusid = prescriptionDetailsUpdateDTO.Statusid;
+                details.Lastchangeby = prescriptionDetailsUpdateDTO.Lastchangeby;
+                details.Lastchangedate = DateTime.Now;
             try
             {
                 var update = await _context.SaveChangesAsync();
@@ -163,21 +165,18 @@ namespace medicloud.emr.api.Controllers
         [Route("RemovePrescriptionDetails/{id}")]
         public async Task<IActionResult> RemovePrescriptionDetails(int id, [FromBody] PrescriptionDetailsRemoveDTO prescriptionDetailsRemoveDTO)
         {
-
-            //var result = await _pharmacyManagementRepository.UpdateConsultationPrescriptionDetails(id, pharmacyManagementPrescriptionDetailsDTO);
-            //if (result == true)
-            //{
-            //    return NoContent();
-            //}
-            //else return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
-           
+                      
             if (id != prescriptionDetailsRemoveDTO.Id) { return BadRequest(); }
             var details = await _context.ConsultationPrescriptionDetails.FindAsync(id);
             if (details == null) { return NotFound(); }
             details.Isactive = false;
+            details.Lastchangeby = prescriptionDetailsRemoveDTO.Lastchangeby;
+            details.Lastchangedate = DateTime.Now;
             if (prescriptionDetailsRemoveDTO.Comment != null)
             {
-                details.Comments = prescriptionDetailsRemoveDTO.Comment;             }
+                details.Comments = prescriptionDetailsRemoveDTO.Comment;   
+                
+            }
            
             try
             {
