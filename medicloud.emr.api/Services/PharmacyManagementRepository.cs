@@ -16,10 +16,10 @@ namespace medicloud.emr.api.Services
     {
         Task<bool> AddPrescriptionDetails(FullPrescriptionDetailsDTO prescDetails);
         Task<PrescriptionListWithCount> getConsultationPrescriptionsList(PrescriptionListFilterModel prescriptionListFilterModel);
-        Task<bool> UpdateConsultationPrescriptionDetails(int id, PharmacyManagementPrescriptionDetailsDTO phar);
         Task<List<PharmacyManagementPrescriptionDetailsDTO>> getAllPrescriptionsDetails();
         PharmacyManagementDTO getConsultationPrescriptionByPrescriptionId(int prescriptionId);
-
+        Task<bool> UpdatePrescriptionDetails(PrescriptionDetailsUpdateDTO prescriptionDetailsUpdateDTO);
+        Task<bool> RemovePrescriptionDetails(PrescriptionDetailsRemoveDTO prescriptionDetailsRemoveDTO);
         Task<List<PharmacyManagementPrescriptionDetailsDTO>> getConsultationPrescriptionsDetailsByPrescriptionId(int prescriptionId);
         bool PrescriptionDetailsExist(int prescriptionDetailsId);
         bool ConsultationPrescriptionExists(int ConsultationPrescriptionId);
@@ -285,38 +285,7 @@ namespace medicloud.emr.api.Services
                
             }
 
-
-
-        public async Task<bool> UpdateConsultationPrescriptionDetails(int id, PharmacyManagementPrescriptionDetailsDTO prescriptionDetailsDTO) {
-    
-            if (id == prescriptionDetailsDTO.Id)
-            {
-                var prescriptionDetail = await _context.ConsultationPrescriptionDetails.FindAsync(id);
-                if (prescriptionDetail == null)
-                {
-                    return false;
-                }
-                prescriptionDetail.Isactive = prescriptionDetailsDTO.isActive;
-                prescriptionDetail.Comments = prescriptionDetailsDTO.Comments;
-                prescriptionDetail.Statusid = prescriptionDetailsDTO.StatusId;
-
-                try
-                {
-                    _context.Entry(prescriptionDetail).State = EntityState.Modified;
-                    var update = await _context.SaveChangesAsync();
-                    if (update < 0) { return false; }
-                    return true;
-                }
-                catch (DbUpdateConcurrencyException) when (!PrescriptionDetailsExist(id))
-                {
-                    return false;
-                }
-            }
-            else return false;
-           
-
-        }
-        
+               
 
         public async Task<List<PharmacyManagementPrescriptionDetailsDTO>> getAllPrescriptionsDetails()
         {
@@ -363,7 +332,7 @@ namespace medicloud.emr.api.Services
 
         public bool PrescriptionDetailsExist(int prescriptionDetailsId)
         {
-            return _context.ConsultationPrescriptionDetails.Any(e => e.Id == prescriptionDetailsId);
+            return _context.ConsultationPrescriptionDetails.Any(e => e.Id == prescriptionDetailsId);            
         }
 
         public bool ConsultationPrescriptionExists(int ConsultationPrescriptionId)
@@ -477,6 +446,54 @@ namespace medicloud.emr.api.Services
             else return false;
 
 
+
+        }
+
+        public async Task<bool> UpdatePrescriptionDetails(PrescriptionDetailsUpdateDTO prescriptionDetailsUpdateDTO)
+        {
+            var details = await _context.ConsultationPrescriptionDetails.FindAsync(prescriptionDetailsUpdateDTO.Id);
+            details.Statusid = prescriptionDetailsUpdateDTO.Statusid;
+            details.Lastchangeby = prescriptionDetailsUpdateDTO.Lastchangeby;
+            details.Lastchangedate = DateTime.Now;
+            try
+            {                var update = await _context.SaveChangesAsync();
+                if (update >= 1)
+                {
+                    return true;
+                }
+                else return false;
+            }
+            catch (DbUpdateConcurrencyException) when (!PrescriptionDetailsExist(prescriptionDetailsUpdateDTO.Id))
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RemovePrescriptionDetails(PrescriptionDetailsRemoveDTO prescriptionDetailsRemoveDTO)
+        {
+            var details = await _context.ConsultationPrescriptionDetails.FindAsync(prescriptionDetailsRemoveDTO.Id);
+            details.Isactive = false;
+            details.Lastchangeby = prescriptionDetailsRemoveDTO.Lastchangeby;
+            details.Lastchangedate = DateTime.Now;
+            if (prescriptionDetailsRemoveDTO.Comment != null)
+            {
+                details.Comments = prescriptionDetailsRemoveDTO.Comment;
+
+            }
+
+            try
+            {
+                var update = await _context.SaveChangesAsync();
+                if (update >= 1)
+                {
+                    return true;
+                }
+                else return false;
+            }
+            catch (DbUpdateConcurrencyException) when (!PrescriptionDetailsExist(prescriptionDetailsRemoveDTO.Id))
+            {
+                return false;
+            }
 
         }
 
