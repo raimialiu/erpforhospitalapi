@@ -24,14 +24,16 @@ namespace medicloud.emr.api.Controllers
     {
       try
       {
-        var latestPrice = await _mrpRepository.getLatestPrice(itemid);
-       // var status = true;
+        var latestPrice = await _mrpRepository.getLatestPrice(itemid);       
+        
         return Ok(latestPrice);
       }
       catch (Exception ex)
       {
-        var status = false;
-        return BadRequest(status);
+        decimal defaultprice = (decimal)1.00;
+        return Ok(defaultprice);
+        //var error = "Item not found";
+        // return BadRequest(error);
       }
 
     }
