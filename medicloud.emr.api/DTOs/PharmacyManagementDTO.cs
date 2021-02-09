@@ -96,11 +96,13 @@ namespace medicloud.emr.api.DTOs
     {
         public int Id { get; set; }
         public int Statusid { get; set; }
+        public int Lastchangeby { get; set; }
     }
     public class PrescriptionDetailsRemoveDTO
     {
         public int Id { get; set; }
-        public String Comment { get; set; }
+        public String Comment { get; set; }        
+        public int Lastchangeby { get; set; }
     }
 
     public class FullPrescriptionDetailsDTO
@@ -122,7 +124,6 @@ namespace medicloud.emr.api.DTOs
         public string Strength { get; set; }
         public DateTime Startdate { get; set; }
         public int Refill { get; set; }
-        public int Statusid { get; set; }
         public bool Isapprovedrequired { get; set; }
         public int Prescriptionid { get; set; }
         public int Qty { get; set; }
@@ -136,7 +137,7 @@ namespace medicloud.emr.api.DTOs
         public int Dosetime { get; set; }
         public int Drugid { get; set; }
         public string Prescdetail { get; set; }
-        
+        public int Encodedby { get; set; }
 
     }
 

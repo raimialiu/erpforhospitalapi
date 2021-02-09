@@ -48,16 +48,13 @@ namespace medicloud.emr.api.Controllers
                 var count = _context.ConsultationPrescription.Count();
                 var prescriptionListWithCount = await _pharmacyManagementRepository.getConsultationPrescriptionsList(prescriptionListFilterModel);
                 var prescriptionList = new PagedList<PharmacyManagementDTO>(prescriptionListWithCount.PrescriptionList, prescriptionListWithCount.Count, prescriptionListFilterModel.PageNumber, prescriptionListFilterModel.PageSize);
-                var metadata = new
-                {
-                    prescriptionList.TotalCount,
-                    prescriptionList.PageSize,
-                    prescriptionList.CurrentPage,
-                    prescriptionList.TotalPages,
-                    prescriptionList.HasNext,
-                    prescriptionList.HasPrevious
-                };
-                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+                Response.Headers.Add("TotalCount", JsonConvert.SerializeObject(prescriptionList.TotalCount));
+                Response.Headers.Add("PageSize", JsonConvert.SerializeObject(prescriptionList.PageSize));
+                Response.Headers.Add("CurrentPage", JsonConvert.SerializeObject(prescriptionList.CurrentPage));
+                Response.Headers.Add("TotalPages", JsonConvert.SerializeObject(prescriptionList.TotalPages));
+                Response.Headers.Add("HasNext", JsonConvert.SerializeObject(prescriptionList.HasNext));
+                Response.Headers.Add("HasPrevious", JsonConvert.SerializeObject(prescriptionList.HasPrevious));
                 return Ok(prescriptionList);
             }
             catch (Exception ex)
@@ -134,27 +131,22 @@ namespace medicloud.emr.api.Controllers
         [HttpPut]
         [Route("UpdatePrescriptionDetails/{id}")]
         public async Task<IActionResult> UpdatePrescriptionDetails(int id, [FromBody] PrescriptionDetailsUpdateDTO prescriptionDetailsUpdateDTO)
-        {           
-            if (prescriptionDetailsUpdateDTO.Statusid <0)
+        {
+            if (prescriptionDetailsUpdateDTO.Statusid < 0)
             {
                 return BadRequest();
             }
             if (id != prescriptionDetailsUpdateDTO.Id) { return BadRequest(); }
-            var details = await _context.ConsultationPrescriptionDetails.FindAsync(id);
-            if (details == null) { return NotFound(); }
-                details.Statusid = prescriptionDetailsUpdateDTO.Statusid;            
-            try
+            
+            if (_pharmacyManagementRepository.PrescriptionDetailsExist(prescriptionDetailsUpdateDTO.Id) != true) { return NotFound(); }
+            else
             {
-                var update = await _context.SaveChangesAsync();
-                if (update >= 1)
+               var update=  await _pharmacyManagementRepository.UpdatePrescriptionDetails(prescriptionDetailsUpdateDTO);
+                if (update == true)
                 {
                     return NoContent();
                 }
-                else return BadRequest(new ErrorResponse { ErrorMessage = "Previous StatusId is the same as update status Id" });
-            }
-            catch (DbUpdateConcurrencyException) when (!_pharmacyManagementRepository.PrescriptionDetailsExist(id))
-            {
-                return NotFound();
+                else return NotFound();
             }
 
         }
@@ -163,36 +155,15 @@ namespace medicloud.emr.api.Controllers
         [Route("RemovePrescriptionDetails/{id}")]
         public async Task<IActionResult> RemovePrescriptionDetails(int id, [FromBody] PrescriptionDetailsRemoveDTO prescriptionDetailsRemoveDTO)
         {
-
-            //var result = await _pharmacyManagementRepository.UpdateConsultationPrescriptionDetails(id, pharmacyManagementPrescriptionDetailsDTO);
-            //if (result == true)
-            //{
-            //    return NoContent();
-            //}
-            //else return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
-           
             if (id != prescriptionDetailsRemoveDTO.Id) { return BadRequest(); }
-            var details = await _context.ConsultationPrescriptionDetails.FindAsync(id);
-            if (details == null) { return NotFound(); }
-            details.Isactive = false;
-            if (prescriptionDetailsRemoveDTO.Comment != null)
-            {
-                details.Comments = prescriptionDetailsRemoveDTO.Comment;             }
-           
-            try
-            {
-                var update = await _context.SaveChangesAsync();
-                if (update >= 1)
-                {
-                    return NoContent();
-                }
-                else return BadRequest();
-            }
-            catch (DbUpdateConcurrencyException) when (!_pharmacyManagementRepository.PrescriptionDetailsExist(id))
-            {
-                return NotFound();
-            }
 
+            if (_pharmacyManagementRepository.PrescriptionDetailsExist(prescriptionDetailsRemoveDTO.Id) != true) { return NotFound(); }
+            var req = await _pharmacyManagementRepository.RemovePrescriptionDetails(prescriptionDetailsRemoveDTO);
+            if (req == true)
+            {
+                return NoContent();
+            }
+            else return NotFound();
         }
 
         [HttpGet]
