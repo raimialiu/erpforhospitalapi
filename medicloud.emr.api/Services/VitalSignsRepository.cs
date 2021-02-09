@@ -29,6 +29,7 @@ namespace medicloud.emr.api.Services
     {
       model.Vitalentrydate = DateTime.Now;
       model.Encodeddate = DateTime.Now;
+      model.Isactive = 1;
       var result = _context.ConsultationVitals.Add(model);
       await _context.SaveChangesAsync();
     }
@@ -52,12 +53,18 @@ namespace medicloud.emr.api.Services
 
     public async Task RemoveFromConsultationVitals(string patientId, int encounterId,int Id)
     {
-      var result = await _context.ConsultationVitals.Where(c => c.Patientid == patientId && c.EncounterId == encounterId && c.Id == Id).FirstOrDefaultAsync();
-      if (result != null)
+      try
       {
-        _context.Remove(result);
-        await _context.SaveChangesAsync();
+        var result = await _context.ConsultationVitals.Where(c => c.Patientid == patientId && c.EncounterId == encounterId && c.Id == Id).FirstOrDefaultAsync();
+        if (result != null)
+        {
+          _context.Remove(result);
+          await _context.SaveChangesAsync();
+        }
+
       }
+      catch (Exception ex)
+      { }
     }
 
     public async Task UpdateVitalSigns(ConsultationVitals model)
