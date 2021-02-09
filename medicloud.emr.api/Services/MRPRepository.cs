@@ -22,6 +22,7 @@ namespace medicloud.emr.api.Services
       _context = context;
     }
 
+<<<<<<< HEAD
     public async Task<PhrGrndetails> getLatestPrice(int itemid)
     {
       var cost = await _context.PhrGrndetails.Where(d => d.ItemId == itemid)
@@ -42,6 +43,30 @@ namespace medicloud.emr.api.Services
 
      return cost;
     }
+=======
+        public async Task<PhrGrndetails> getLatestPrice(int itemid)
+        {
+            var cost = await _context.PhrGrndetails.Where(d => d.ItemId == itemid)
+                       .OrderByDescending(s => s.UnitCost).FirstOrDefaultAsync();
+
+            if (cost.UnitCost <= 20000 && cost.UnitCost != null)
+            {
+                cost.UnitCost = Convert.ToDecimal(cost.UnitCost * 2);
+                //return cost.UnitCost;
+            }
+            else if (cost.UnitCost > 20000 && cost.UnitCost <= 400000 && cost.UnitCost != null)
+            {
+                cost.UnitCost = (decimal)(cost.UnitCost * Convert.ToDecimal(1.5));
+                //return cost.UnitCost;
+            }
+            else if (cost.UnitCost > 400000 && cost.UnitCost != null)
+            {
+                cost.UnitCost = (decimal)(cost.UnitCost * Convert.ToDecimal(1.3));
+                //  return cost.UnitCost;
+            }
+            return cost;
+        }
+>>>>>>> 2e62174710b1e8fea92a7d4fe5c4b9076975df50
 
   }
 

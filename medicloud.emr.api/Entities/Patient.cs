@@ -15,13 +15,13 @@ namespace medicloud.emr.api.Entities
             Biometric = new HashSet<Biometric>();
             BirthRegister = new HashSet<BirthRegister>();
             ConsultationCheck = new HashSet<ConsultationCheck>();
-            ConsultationComplaints = new HashSet<ConsultationComplaints>();
+            ConsultationComplaints = new HashSet<Etities.ConsultationComplaints>();
             ConsultationDental = new HashSet<ConsultationDental>();
             ConsultationDentalProcedure = new HashSet<ConsultationDentalProcedure>();
             ConsultationDiagnosis = new HashSet<ConsultationDiagnosis>();
             ConsultationLaboratory = new HashSet<ConsultationLaboratory>();
             ConsultationOtherDiagnosis = new HashSet<ConsultationOtherDiagnosis>();
-           // ConsultationPrescription = new HashSet<Etities.ConsultationPrescription>();
+            ConsultationPrescription = new HashSet<ConsultationPrescription>();
             ConsultationProblem = new HashSet<ConsultationProblem>();
             ConsultationProcedure = new HashSet<ConsultationProcedure>();
             Fingerprint = new HashSet<Fingerprint>();
@@ -133,7 +133,8 @@ namespace medicloud.emr.api.Entities
         public virtual Referral Ref { get; set; }
         public virtual Sponsor Spons { get; set; }
         public virtual State State { get; set; }
-        public virtual ICollection<Admission> Admission { get; set; }
+
+       public virtual ICollection<Admission> Admission { get; set; }
         public virtual ICollection<AppointmentSchedule> AppointmentSchedule { get; set; }
         public virtual ICollection<Bill> Bill { get; set; }
         public virtual ICollection<BillPayable> BillPayable { get; set; }
@@ -141,13 +142,13 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<Biometric> Biometric { get; set; }
         public virtual ICollection<BirthRegister> BirthRegister { get; set; }
         public virtual ICollection<ConsultationCheck> ConsultationCheck { get; set; }
-        public virtual ICollection<ConsultationComplaints> ConsultationComplaints { get; set; }
+        public virtual ICollection<Etities.ConsultationComplaints> ConsultationComplaints { get; set; }
         public virtual ICollection<ConsultationDental> ConsultationDental { get; set; }
         public virtual ICollection<ConsultationDentalProcedure> ConsultationDentalProcedure { get; set; }
         public virtual ICollection<ConsultationDiagnosis> ConsultationDiagnosis { get; set; }
         public virtual ICollection<ConsultationLaboratory> ConsultationLaboratory { get; set; }
         public virtual ICollection<ConsultationOtherDiagnosis> ConsultationOtherDiagnosis { get; set; }
-      //  public virtual ICollection<Etities.ConsultationPrescription> ConsultationPrescription { get; set; }
+        public virtual ICollection<Entities.ConsultationPrescription> ConsultationPrescription { get; set; }
         public virtual ICollection<ConsultationProblem> ConsultationProblem { get; set; }
         public virtual ICollection<ConsultationProcedure> ConsultationProcedure { get; set; }
         public virtual ICollection<Fingerprint> Fingerprint { get; set; }
@@ -162,5 +163,6 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<CheckIn> CheckIn { get; set; }
         public virtual ICollection<PatientQueue> PatientQueue { get; set; }
         public virtual ICollection<PaRequest> PaRequest { get; set; }
+
     }
 }

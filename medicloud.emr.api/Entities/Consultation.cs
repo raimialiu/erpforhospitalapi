@@ -10,12 +10,12 @@ namespace medicloud.emr.api.Entities
             AntenatalRecord = new HashSet<AntenatalRecord>();
             Bill = new HashSet<Bill>();
             ConsultationCheck = new HashSet<ConsultationCheck>();
-            ConsultationComplaints = new HashSet<ConsultationComplaints>();
+            ConsultationComplaints = new HashSet<Etities.ConsultationComplaints>();
             ConsultationDental = new HashSet<ConsultationDental>();
             ConsultationDentalProcedure = new HashSet<ConsultationDentalProcedure>();
             ConsultationDiagnosis = new HashSet<ConsultationDiagnosis>();
             ConsultationOtherDiagnosis = new HashSet<ConsultationOtherDiagnosis>();
-           // ConsultationPrescription = new HashSet<Etities.ConsultationPrescription>();
+            ConsultationPrescription = new HashSet<Entities.ConsultationPrescription>();
             ConsultationProblem = new HashSet<ConsultationProblem>();
             ConsultationProcedure = new HashSet<ConsultationProcedure>();
         }
@@ -53,12 +53,12 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<AntenatalRecord> AntenatalRecord { get; set; }
         public virtual ICollection<Bill> Bill { get; set; }
         public virtual ICollection<ConsultationCheck> ConsultationCheck { get; set; }
-        public virtual ICollection<ConsultationComplaints> ConsultationComplaints { get; set; }
+        public virtual ICollection<Etities.ConsultationComplaints> ConsultationComplaints { get; set; }
         public virtual ICollection<ConsultationDental> ConsultationDental { get; set; }
         public virtual ICollection<ConsultationDentalProcedure> ConsultationDentalProcedure { get; set; }
         public virtual ICollection<ConsultationDiagnosis> ConsultationDiagnosis { get; set; }
         public virtual ICollection<ConsultationOtherDiagnosis> ConsultationOtherDiagnosis { get; set; }
-     //  public virtual ICollection<Etities.ConsultationPrescription> ConsultationPrescription { get; set; }
+        public virtual ICollection<Entities.ConsultationPrescription> ConsultationPrescription { get; set; }
         public virtual ICollection<ConsultationProblem> ConsultationProblem { get; set; }
         public virtual ICollection<ConsultationProcedure> ConsultationProcedure { get; set; }
     }

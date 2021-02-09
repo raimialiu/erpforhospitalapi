@@ -10,6 +10,7 @@ namespace medicloud.emr.api.Entities
         public int plantariffid { get; set; }
         public int? planid { get; set; }
         public int? tariffid { get; set; }
+        public int? drugtariffid { get; set; }
         public string tariffplandescription { get; set; }
         public string alternatecode { get; set; }
         public string comments { get; set; }

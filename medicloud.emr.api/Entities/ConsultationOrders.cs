@@ -17,7 +17,8 @@ namespace medicloud.emr.api.Entities
         public int? BillCategoryId { get; set; }
         public string Remarks { get; set; }
         public bool IsActive { get; set; }
-        public int? EncodedBy { get; set; }
+        public int? encodedby { get; set; }
+        public int? doctorid { get; set; }
         public DateTime? EncodedDate { get; set; }
         public DateTime? orderDate { get; set; }
         public int? ordertypeid { get; set; }

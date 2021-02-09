@@ -21,6 +21,10 @@ namespace medicloud.emr.api.Entities
             Store = new HashSet<Store>();
             OrderPriority = new HashSet<OrderPriority>();
             DrugFoodrelation = new HashSet<DrugFoodrelation>();
+            ConsultationPrescription = new HashSet<ConsultationPrescription>();
+
+
+
         }
 
         public int Locationid { get; set; }
@@ -52,8 +56,7 @@ namespace medicloud.emr.api.Entities
         public virtual ICollection<Store> Store { get; set; }
 
         public virtual ICollection<OrderPriority> OrderPriority { get; set; }
-
-
         public virtual ICollection<DrugFoodrelation> DrugFoodrelation { get; set; }
+        public virtual ICollection<ConsultationPrescription> ConsultationPrescription { get; set; }
     }
 }
