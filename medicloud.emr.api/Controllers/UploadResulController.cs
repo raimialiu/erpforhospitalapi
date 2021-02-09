@@ -29,6 +29,7 @@ namespace medicloud.emr.api.Controllers
                 {
                     foreach(PatientsUpload t in dto.uploadedfiles)
                     {
+                        t.dateadded = DateTime.Now;
                         _ctx.PatientsUpload.Add(t);
                     }
 

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using medicloud.emr.api.Data;
 
-namespace medicloud.emr.api.Migrations.PatientUpload
+namespace medicloud.emr.api.Migrations
 {
     [DbContext(typeof(PatientUploadContext))]
-    partial class PatientUploadContextModelSnapshot : ModelSnapshot
+    [Migration("20210209171704_addedDateAddedColumn")]
+    partial class addedDateAddedColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

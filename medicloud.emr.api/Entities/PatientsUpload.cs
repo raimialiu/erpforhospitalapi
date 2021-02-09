@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace medicloud.emr.api.Entities
 {
+    [Table("PatientUpload")]
     public class PatientsUpload
     {
         [Key]
@@ -22,5 +23,7 @@ namespace medicloud.emr.api.Entities
         public int? encounterId { get; set; }
         public int? providerId { get; set; }
         public int? locationId { get; set; }
+        public DateTime dateadded { get; set; }
+        public string ordertypename { get; set; }
     }
 }

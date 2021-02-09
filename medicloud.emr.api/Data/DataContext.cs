@@ -5,20 +5,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace medicloud.emr.api.Data
 {
-    //public class PatientUploadContext:DbContext
-    //{
-    //    public DbSet<PatientsUpload> PatientUpload { get; set; }
+    public class PatientUploadContext : DbContext
+    {
+        public DbSet<PatientsUpload> PatientUpload { get; set; }
 
-    //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //    {
-    //        //base.OnConfiguring(optionsBuilder);
-    //        if (!optionsBuilder.IsConfigured)
-    //        {
-    //            optionsBuilder.UseSqlServer("Data Source=hnltestuatlhis.database.windows.net;Initial Catalog=medismartsemr_db_test;Persist Security Info=True;User ID=!lagadmin!;Password=8mT@92EFQi0x;MultipleActiveResultSets=True",
-    //            builder => builder.EnableRetryOnFailure());
-    //        }
-    //    }
-    //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            //base.OnConfiguring(optionsBuilder);
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Data Source=hnltestuatlhis.database.windows.net;Initial Catalog=medismartsemr_db_dev;Persist Security Info=True;User ID=!lagadmin!;Password=8mT@92EFQi0x;MultipleActiveResultSets=True",
+                builder => builder.EnableRetryOnFailure());
+            }
+        }
+    }
     public partial class DataContext : DbContext
     {
         public DataContext()
