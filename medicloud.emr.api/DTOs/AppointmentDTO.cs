@@ -92,15 +92,15 @@ namespace medicloud.emr.api.DTOs
         [Required]
         public string PatientNo { get; set; }
         public DateTime Date { get; set; }
-        public int LocationId { get; set; }
-        public int SpecId { get; set; }
-        public int ProviderId { get; set; }
-        public int AccountId { get; set; }
-        public int VisitTypeId { get; set; }
-        public int StatusId { get; set; }
-        public int ReferralTypeId { get; set; }
-        public int ReferringPhysicianId { get; set; }
-        public int ReminderId { get; set; }
+        public int? LocationId { get; set; }
+        public int? SpecId { get; set; }
+        public int? ProviderId { get; set; }
+        public int? AccountId { get; set; }
+        public int? VisitTypeId { get; set; }
+        public int? StatusId { get; set; }
+        public int? ReferralTypeId { get; set; }
+        public int? ReferringPhysicianId { get; set; }
+        public int? ReminderId { get; set; }
         public string Reason { get; set; }
         public bool IsRecurring { get; set; }
         public string RecurrenceRule { get; set; }

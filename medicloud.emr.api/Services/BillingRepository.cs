@@ -39,13 +39,15 @@ namespace medicloud.emr.api.Services
         private readonly DataContext _context;
         private readonly IPayerInsuranceRepository _payerInsuranceRepository;
         private readonly ICheckInRepository _checkInRepository;
+        private readonly IAppointmentRepository _apptRepository;
         private readonly IMRPRepository _mRPRepository;
-        public BillingRepository(DataContext context, IPayerInsuranceRepository payerInsuranceRepository, IMRPRepository mRPRepository, ICheckInRepository checkInRepository)
+        public BillingRepository(DataContext context, IPayerInsuranceRepository payerInsuranceRepository, IAppointmentRepository apptRepository, IMRPRepository mRPRepository, ICheckInRepository checkInRepository)
         {
             _context = context;
             _payerInsuranceRepository = payerInsuranceRepository;
             _checkInRepository = checkInRepository;
             _mRPRepository = mRPRepository;
+            _apptRepository = apptRepository;
         }
 
 
@@ -446,29 +448,49 @@ namespace medicloud.emr.api.Services
 
             if (encounterCheck == null)
             {
-                CheckIn checkIn = new CheckIn
+                AppointmentCreate model = new AppointmentCreate()
                 {
-                    ProviderId = (int)billingInvoice.ProviderID,
-                    CheckInDate = DateTime.Now,
-                    CheckOutDate = null,
-                    IsCheckedIn = false,
-                    IsCheckedOut = false,
-                    Locationid = (int)billingInvoice.locationid,
-                    Patientid = billingInvoice.patientid,
-                    IsActive = false
+                    AccountId = (int)billingInvoice.ProviderID,
+                    Adjuster = billingInvoice.encodedby.ToString(),
+                    Date = DateTime.Now.AddHours(1),
+                    IsRecurring = false,
+                    LocationId = (int)billingInvoice.locationid,
+                    ProviderId = null,
+                    PatientNo = billingInvoice.patientid,
+                    ReferralTypeId = null,
+                    ReferringPhysicianId = null,
+                    ReminderId = null,
+                    SpecId = 1,
+                    VisitTypeId = 1,
+                    StatusId = 3
                 };
 
-                var _checkIn = await _context.AddAsync(checkIn);
-                await _context.SaveChangesAsync();
+                await _apptRepository.AddAppointment(model);
 
-                billingInvoice.encounterId = _checkIn.Entity.Encounterid;
+                var encounter = await _checkInRepository.CreaateCheckIn(billingInvoice.patientid, (int)billingInvoice.ProviderID, (int)billingInvoice.locationid, (int)billingInvoice.encodedby);
+
+                //CheckIn checkIn = new CheckIn
+                //{
+                //    ProviderId = (int)billingInvoice.ProviderID,
+                //    CheckInDate = DateTime.Now,
+                //    CheckOutDate = null,
+                //    IsCheckedIn = false,
+                //    IsCheckedOut = false,
+                //    Locationid = (int)billingInvoice.locationid,
+                //    Patientid = billingInvoice.patientid,
+                //    IsActive = false
+                //};
+
+                //var _checkIn = await _context.AddAsync(checkIn);
+                //await _context.SaveChangesAsync();
+
+                billingInvoice.encounterId = encounter.Item3;
             }
             else
             {
                 billingInvoice.encounterId = encounterCheck.EncounterId;
             }
 
-            
             billingInvoice.dateadded = DateTime.Now;
             
             _context.BillingInvoice.Add(billingInvoice);
@@ -483,23 +505,43 @@ namespace medicloud.emr.api.Services
 
                 if (currentEncounter == null)
                 {
-                    CheckIn checkIn = new CheckIn
+                    AppointmentCreate model = new AppointmentCreate()
                     {
-                        ProviderId = (int)billingInvoice.ProviderID,
-                        CheckInDate = DateTime.Now,
-                        CheckOutDate = null,
-                        IsCheckedIn = false,
-                        IsCheckedOut = false,
-                        Locationid = (int)billingInvoice.locationid,
-                        Patientid = billingInvoice.patientid,
-                        IsActive = false,
-                        EncodedBy = (int)billingInvoice.adjusterid
+                        AccountId = (int)billingInvoice.ProviderID,
+                        Adjuster = billingInvoice.encodedby.ToString(),
+                        Date = DateTime.Now.AddHours(1),
+                        IsRecurring = false,
+                        LocationId = (int)billingInvoice.locationid,
+                        ProviderId = null,
+                        PatientNo = billingInvoice.patientid,
+                        ReferralTypeId = null,
+                        ReferringPhysicianId = null,
+                        ReminderId = null,
+                        SpecId = 1,
+                        VisitTypeId = 1,
+                        StatusId = 3
                     };
 
-                    var _checkIn = await _context.AddAsync(checkIn);
+                    await _apptRepository.AddAppointment(model);
+
+                    var encounter = await _checkInRepository.CreaateCheckIn(billingInvoice.patientid, (int)billingInvoice.ProviderID, (int)billingInvoice.locationid, (int)billingInvoice.encodedby);
+
+                    //CheckIn checkIn = new CheckIn
+                    //{
+                    //    ProviderId = (int)billingInvoice.ProviderID,
+                    //    CheckInDate = DateTime.Now,
+                    //    CheckOutDate = null,
+                    //    IsCheckedIn = false,
+                    //    IsCheckedOut = false,
+                    //    Locationid = (int)billingInvoice.locationid,
+                    //    Patientid = billingInvoice.patientid,
+                    //    IsActive = false
+                    //};
+
+                    //var _checkIn = await _context.AddAsync(checkIn);
                     //await _context.SaveChangesAsync();
 
-                    billingInvoice.encounterId = _checkIn.Entity.Encounterid;
+                    billingInvoice.encounterId = encounter.Item3;
                 }
                 else
                 {
@@ -640,22 +682,43 @@ namespace medicloud.emr.api.Services
 
                 if (currentEncounter == null)
                 {
-                    CheckIn checkIn = new CheckIn
+                    AppointmentCreate model = new AppointmentCreate()
                     {
-                        ProviderId = (int)billingInvoice.ProviderID,
-                        CheckInDate = DateTime.Now,
-                        CheckOutDate = null,
-                        IsCheckedIn = false,
-                        IsCheckedOut = false,
-                        Locationid = (int)billingInvoice.locationid,
-                        Patientid = billingInvoice.patientid,
-                        IsActive = false
+                        AccountId = (int)billingInvoice.ProviderID,
+                        Adjuster = billingInvoice.encodedby.ToString(),
+                        Date = DateTime.Now.AddHours(1),
+                        IsRecurring = false,
+                        LocationId = (int)billingInvoice.locationid,
+                        ProviderId = null,
+                        PatientNo = billingInvoice.patientid,
+                        ReferralTypeId = null,
+                        ReferringPhysicianId = null,
+                        ReminderId = null,
+                        SpecId = 1,
+                        VisitTypeId = 1,
+                        StatusId = 3
                     };
 
-                    var _checkIn = await _context.AddAsync(checkIn);
+                    await _apptRepository.AddAppointment(model);
+
+                    var encounter = await _checkInRepository.CreaateCheckIn(billingInvoice.patientid, (int)billingInvoice.ProviderID, (int)billingInvoice.locationid, (int)billingInvoice.encodedby);
+
+                    //CheckIn checkIn = new CheckIn
+                    //{
+                    //    ProviderId = (int)billingInvoice.ProviderID,
+                    //    CheckInDate = DateTime.Now,
+                    //    CheckOutDate = null,
+                    //    IsCheckedIn = false,
+                    //    IsCheckedOut = false,
+                    //    Locationid = (int)billingInvoice.locationid,
+                    //    Patientid = billingInvoice.patientid,
+                    //    IsActive = false
+                    //};
+
+                    //var _checkIn = await _context.AddAsync(checkIn);
                     //await _context.SaveChangesAsync();
 
-                    billingInvoice.encounterId = _checkIn.Entity.Encounterid;
+                    billingInvoice.encounterId = encounter.Item3;
                 }
                 else
                 {
