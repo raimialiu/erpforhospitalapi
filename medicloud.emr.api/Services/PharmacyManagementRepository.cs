@@ -72,8 +72,9 @@ namespace medicloud.emr.api.Services
                   Alert = 0,
                   Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                   Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
-                  Store = presc.Indentstore.Departmentname
-              })).OrderBy(p => p.Prescdate).ToListAsync();
+                  Store = presc.Indentstore.Departmentname,
+                  Encounterid = presc.Encounterid?? 1
+              })).OrderByDescending(p => p.Prescdate).ToListAsync();
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND (locationid = {prescriptionListFilterModel.LocationId}  OR ProviderID = {prescriptionListFilterModel.ProviderId} OR prescriptiondate == {prescriptionListFilterModel.Date})").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
                 return prescriptionListWithCount;
@@ -101,9 +102,12 @@ namespace medicloud.emr.api.Services
                   Alert = 0,
                   Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                   Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
-                  Store = presc.Indentstore.Departmentname
-              })).OrderBy(p => p.Prescdate).ToListAsync();
+                  Store = presc.Indentstore.Departmentname,
+                  Encounterid = presc.Encounterid ?? 1
+              })).OrderByDescending(p => p.Prescdate).ToListAsync();
 
+                
+                
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND (locationid = {prescriptionListFilterModel.LocationId} OR prescriptiondate = {prescriptionListFilterModel.Date})").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
                 return prescriptionListWithCount;
@@ -131,8 +135,9 @@ namespace medicloud.emr.api.Services
                   Alert = 0,
                   Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                   Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
-                  Store = presc.Indentstore.Departmentname
-              })).OrderBy(p => p.Prescdate).ToListAsync();
+                  Store = presc.Indentstore.Departmentname,
+                  Encounterid = presc.Encounterid ?? 1
+              })).OrderByDescending(p => p.Prescdate).ToListAsync();
 
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND (ProviderID = {prescriptionListFilterModel.ProviderId} OR prescriptiondate = {prescriptionListFilterModel.Date})").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
@@ -162,8 +167,9 @@ namespace medicloud.emr.api.Services
                      Alert = 0,
                      Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                      Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
-                     Store = presc.Indentstore.Departmentname
-                 })).ToListAsync();
+                     Store = presc.Indentstore.Departmentname,
+                     Encounterid = presc.Encounterid ?? 1
+                 })).OrderByDescending(p => p.Prescdate).ToListAsync();
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND (locationid = {prescriptionListFilterModel.LocationId}  OR ProviderID = {prescriptionListFilterModel.ProviderId})").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
                 return prescriptionListWithCount;
@@ -190,8 +196,9 @@ namespace medicloud.emr.api.Services
                      Alert = 0,
                      Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                      Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
-                     Store = presc.Indentstore.Departmentname
-                 })).ToListAsync();
+                     Store = presc.Indentstore.Departmentname,
+                     Encounterid = presc.Encounterid ?? 1
+                 })).OrderByDescending(p => p.Prescdate).ToListAsync();
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND locationid = {prescriptionListFilterModel.LocationId}").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
                 return prescriptionListWithCount;
@@ -218,8 +225,9 @@ namespace medicloud.emr.api.Services
                   Alert = 0,
                   Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                   Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
-                  Store = presc.Indentstore.Departmentname
-              })).OrderBy(p => p.Prescdate).ToListAsync();
+                  Store = presc.Indentstore.Departmentname,
+                  Encounterid = presc.Encounterid ?? 1
+              })).OrderByDescending(p => p.Prescdate).ToListAsync();
 
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE patientid is not null  AND ProviderID = {prescriptionListFilterModel.ProviderId}").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
@@ -247,8 +255,9 @@ namespace medicloud.emr.api.Services
                   Alert = 0,
                   Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                   Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
-                  Store = presc.Indentstore.Departmentname
-              })).OrderBy(p => p.Prescdate).ToListAsync();
+                  Store = presc.Indentstore.Departmentname,
+                  Encounterid = presc.Encounterid ?? 1
+              })).OrderByDescending(p => p.Prescdate).ToListAsync();
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND prescriptiondate = {prescriptionListFilterModel.Date}").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
                 return prescriptionListWithCount;
@@ -275,8 +284,9 @@ namespace medicloud.emr.api.Services
                  Alert = 0,
                  Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                  Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
-                 Store = presc.Indentstore.Departmentname
-             })).OrderBy(p => p.Prescdate).ToListAsync();
+                 Store = presc.Indentstore.Departmentname,
+                 Encounterid = presc.Encounterid ?? 1
+             })).OrderByDescending(p => p.Prescdate).ToListAsync();
 
                 int count = _context.ConsultationPrescription.Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
