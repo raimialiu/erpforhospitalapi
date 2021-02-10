@@ -42,9 +42,5 @@ namespace medicloud.emr.api.Data
         public decimal? BoxMrpold24062016 { get; set; }
         public decimal? BoxSalePriceOld24062016 { get; set; }
 
-    public static implicit operator PhrGrndetails(decimal? v)
-    {
-      throw new NotImplementedException();
-    }
   }
 }

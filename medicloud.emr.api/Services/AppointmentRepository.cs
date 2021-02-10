@@ -320,11 +320,11 @@ namespace medicloud.emr.api.Services
             appointment.PatientNumber = model.PatientNo;
             appointment.ProviderID = model.AccountId;
 
-            var checkin = ("", false);
+            //var checkin = ("", false, 0);
 
             if (appointment.Statusid == 3)
             {
-                checkin = await _checkInRepository.CreaateCheckIn(appointment.PatientNumber, (int)appointment.ProviderID, (int)appointment.Locationid, int.Parse((model.Adjuster)));
+                var checkin = await _checkInRepository.CreaateCheckIn(appointment.PatientNumber, (int)appointment.ProviderID, (int)appointment.Locationid, int.Parse((model.Adjuster)));
             }
 
             var update = await _context.SaveChangesAsync() > 0;
@@ -474,6 +474,8 @@ namespace medicloud.emr.api.Services
 
         public async Task AddAppointment(AppointmentCreate model)
         {
+            var encounterCheck = await _checkInRepository.GetPatientLatestEncounter(model.PatientNo, (int)model.AccountId);
+
             var generalSchedule = await _context.GeneralSchedule.FirstOrDefaultAsync(s => s.Locationid == model.LocationId);
             int duration = generalSchedule?.Timeinterval ?? 30;
 
@@ -497,6 +499,8 @@ namespace medicloud.emr.api.Services
                 PatientNumber = model.PatientNo,
                 ProviderID = model.AccountId
             };
+
+            if (encounterCheck != null) appointment.encounterid = encounterCheck.EncounterId;
 
             _context.AppointmentSchedule.Add(appointment);
             await _context.SaveChangesAsync();
