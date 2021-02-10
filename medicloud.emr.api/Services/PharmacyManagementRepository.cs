@@ -56,6 +56,7 @@ namespace medicloud.emr.api.Services
                        (p.Locationid == prescriptionListFilterModel.LocationId) ||
                        (p.ProviderId == prescriptionListFilterModel.ProviderId))) && 
                        (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
+               .OrderByDescending(p => p.Prescriptiondate)
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -74,7 +75,8 @@ namespace medicloud.emr.api.Services
                   Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                   Store = presc.Indentstore.Departmentname,
                   Encounterid = presc.Encounterid?? 1
-              })).OrderByDescending(p => p.Prescdate).ToListAsync();
+              }))
+              .ToListAsync();
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND (locationid = {prescriptionListFilterModel.LocationId}  OR ProviderID = {prescriptionListFilterModel.ProviderId} OR prescriptiondate == {prescriptionListFilterModel.Date})").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
                 return prescriptionListWithCount;
@@ -82,6 +84,7 @@ namespace medicloud.emr.api.Services
             else if (prescriptionListFilterModel.Date.HasValue && prescriptionListFilterModel.LocationId.HasValue && !prescriptionListFilterModel.ProviderId.HasValue)
             {
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+                .OrderByDescending(p => p.Prescriptiondate)
                .Where(p => (p.Patientid != null) && (p.Isactive == true) && (
                        ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
                        (p.Locationid == prescriptionListFilterModel.LocationId))) &&
@@ -104,7 +107,7 @@ namespace medicloud.emr.api.Services
                   Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                   Store = presc.Indentstore.Departmentname,
                   Encounterid = presc.Encounterid ?? 1
-              })).OrderByDescending(p => p.Prescdate).ToListAsync();
+              })).ToListAsync();
 
                 
                 
@@ -115,6 +118,7 @@ namespace medicloud.emr.api.Services
             else if (prescriptionListFilterModel.Date.HasValue && prescriptionListFilterModel.ProviderId.HasValue && !prescriptionListFilterModel.LocationId.HasValue)
             {
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+                .OrderByDescending(p => p.Prescriptiondate)
                .Where(p => (p.Patientid != null)  && (p.Isactive == true)  && (
                        ((p.Prescriptiondate == prescriptionListFilterModel.Date) ||
                        (p.ProviderId == prescriptionListFilterModel.ProviderId))) &&
@@ -137,7 +141,7 @@ namespace medicloud.emr.api.Services
                   Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                   Store = presc.Indentstore.Departmentname,
                   Encounterid = presc.Encounterid ?? 1
-              })).OrderByDescending(p => p.Prescdate).ToListAsync();
+              })).ToListAsync();
 
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND (ProviderID = {prescriptionListFilterModel.ProviderId} OR prescriptiondate = {prescriptionListFilterModel.Date})").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
@@ -152,6 +156,7 @@ namespace medicloud.emr.api.Services
                       (p.Locationid == prescriptionListFilterModel.LocationId) ||
                       (p.ProviderId == prescriptionListFilterModel.ProviderId)) &&
                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
+                  .OrderByDescending(p => p.Prescriptiondate)
                   .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                   .Take(prescriptionListFilterModel.PageSize)
                  .Select(presc => new PharmacyManagementDTO
@@ -169,7 +174,7 @@ namespace medicloud.emr.api.Services
                      Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                      Store = presc.Indentstore.Departmentname,
                      Encounterid = presc.Encounterid ?? 1
-                 })).OrderByDescending(p => p.Prescdate).ToListAsync();
+                 })).ToListAsync();
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND (locationid = {prescriptionListFilterModel.LocationId}  OR ProviderID = {prescriptionListFilterModel.ProviderId})").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
                 return prescriptionListWithCount;
@@ -177,10 +182,10 @@ namespace medicloud.emr.api.Services
             else if (!prescriptionListFilterModel.Date.HasValue && !prescriptionListFilterModel.ProviderId.HasValue && prescriptionListFilterModel.LocationId.HasValue)
             {
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
-
                   .Where(p => (p.Patientid != null) && (p.Isactive == true) && 
                           ((p.Locationid == prescriptionListFilterModel.LocationId))
                           && (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
+                  .OrderByDescending(p => p.Prescriptiondate)
                   .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                   .Take(prescriptionListFilterModel.PageSize)
                  .Select(presc => new PharmacyManagementDTO
@@ -198,7 +203,7 @@ namespace medicloud.emr.api.Services
                      Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                      Store = presc.Indentstore.Departmentname,
                      Encounterid = presc.Encounterid ?? 1
-                 })).OrderByDescending(p => p.Prescdate).ToListAsync();
+                 })).ToListAsync();
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND locationid = {prescriptionListFilterModel.LocationId}").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
                 return prescriptionListWithCount;
@@ -209,6 +214,7 @@ namespace medicloud.emr.api.Services
                .Where(p => (p.Patientid != null) && (p.Isactive == true) && 
                             (p.Locationid == prescriptionListFilterModel.LocationId) && 
                             (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
+               .OrderByDescending(p => p.Prescriptiondate)
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -227,7 +233,7 @@ namespace medicloud.emr.api.Services
                   Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                   Store = presc.Indentstore.Departmentname,
                   Encounterid = presc.Encounterid ?? 1
-              })).OrderByDescending(p => p.Prescdate).ToListAsync();
+              })).ToListAsync();
 
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE patientid is not null  AND ProviderID = {prescriptionListFilterModel.ProviderId}").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
@@ -239,6 +245,7 @@ namespace medicloud.emr.api.Services
                .Where(p => (p.Patientid != null) && (p.Isactive == true) &&
                        (p.Prescriptiondate == prescriptionListFilterModel.Date) && 
                        (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
+               .OrderByDescending(p => p.Prescriptiondate)
                .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
                .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
@@ -257,7 +264,7 @@ namespace medicloud.emr.api.Services
                   Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                   Store = presc.Indentstore.Departmentname,
                   Encounterid = presc.Encounterid ?? 1
-              })).OrderByDescending(p => p.Prescdate).ToListAsync();
+              })).ToListAsync();
                 int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE  patientid is not null  AND prescriptiondate = {prescriptionListFilterModel.Date}").Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
                 return prescriptionListWithCount;
@@ -267,7 +274,7 @@ namespace medicloud.emr.api.Services
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
               .Where(p => p.Patientid != null && (p.Isactive == true) && 
                      ( _context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true))
-              )
+              ).OrderByDescending(p => p.Prescriptiondate)
               .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
               .Take(prescriptionListFilterModel.PageSize)
              .Select(presc => new PharmacyManagementDTO
@@ -286,7 +293,7 @@ namespace medicloud.emr.api.Services
                  Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
                  Store = presc.Indentstore.Departmentname,
                  Encounterid = presc.Encounterid ?? 1
-             })).OrderByDescending(p => p.Prescdate).ToListAsync();
+             })).ToListAsync();
 
                 int count = _context.ConsultationPrescription.Count();
                 var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
