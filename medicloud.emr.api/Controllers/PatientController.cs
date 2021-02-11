@@ -361,6 +361,7 @@ namespace medicloud.emr.api.Controllers
                         patientid = spliResult[0],
                         ProviderID = patient.ProviderId,
                         locationid = Int32.Parse(patient.locationid),
+                        encodedby = Int32.Parse(patient.encodedby)
 
                     });
                     isSuccessResponse = billingResult.Item1;
