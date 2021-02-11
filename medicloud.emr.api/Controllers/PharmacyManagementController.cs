@@ -80,8 +80,6 @@ namespace medicloud.emr.api.Controllers
         }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
                 return BadRequest();
             }
         }
