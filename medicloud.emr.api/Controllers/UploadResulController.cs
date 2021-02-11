@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace medicloud.emr.api.Controllers
 {
@@ -25,6 +26,15 @@ namespace medicloud.emr.api.Controllers
         {
             if(dto != null)
             {
+                string[] eq = new[] { "+", "*", "-", "/" };
+                string sk = "";
+                //eq.FirstOrDefault
+                //eq.Contains()
+                //eq.Con
+                List<int> ski = new List<int>();
+                //ski.Con
+                //eq.
+               // sk.Contains(eq.Any())
                 if(dto.uploadedfiles != null)
                 {
                     foreach(PatientsUpload t in dto.uploadedfiles)
