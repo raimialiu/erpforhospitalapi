@@ -28,13 +28,9 @@ namespace medicloud.emr.api.Controllers
             {
                 string[] eq = new[] { "+", "*", "-", "/" };
                 string sk = "";
-                //eq.FirstOrDefault
-                //eq.Contains()
-                //eq.Con
+               
                 List<int> ski = new List<int>();
-                //ski.Con
-                //eq.
-               // sk.Contains(eq.Any())
+                
                 if(dto.uploadedfiles != null)
                 {
                     foreach(PatientsUpload t in dto.uploadedfiles)
