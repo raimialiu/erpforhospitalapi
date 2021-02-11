@@ -40,7 +40,7 @@ namespace medicloud.emr.api.DTOs
         public string Patientname { get; set; }
         public string Plantype { get; set; }
         public string Agegender { get; set; }
-        
+        public int Encounterid { get; set; }
         public string Company { get; set; }
         public int? Alert { get; set; }
         public string Doctorname { get; set; }
