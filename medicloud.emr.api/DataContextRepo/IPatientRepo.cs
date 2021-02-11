@@ -265,7 +265,7 @@ namespace medicloud.emr.api.DataContextRepo
                 string familyNumber = generateFamilyNumber();
                 patient.Patientid = newPatientId;
                 patient.FamilyNumber = familyNumber;
-                patient.ProviderId = 2;
+                //patient.ProviderId = 2;
                 if(_db.AddNew(patient))
                 {
                     return newPatientId+":"+ familyNumber;
