@@ -351,7 +351,7 @@ namespace medicloud.emr.api.Controllers
                 {
                     PatientRegNumber = spliResult[0],
                     PatientFamilyNumber = spliResult[1],
-                    message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please the patient is billed appropriately"
+                    message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please ensure the patient is billed appropriately"
                 };
                 try
                 {
@@ -368,7 +368,7 @@ namespace medicloud.emr.api.Controllers
                     {
                         PatientRegNumber = spliResult[0],
                         PatientFamilyNumber = spliResult[1],
-                        message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please the patient is billed appropriately"
+                        message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please ensure the patient is billed appropriately"
                     };
                 }
                 catch (Exception)
@@ -378,7 +378,7 @@ namespace medicloud.emr.api.Controllers
                     {
                         PatientRegNumber = spliResult[0],
                         PatientFamilyNumber = spliResult[1],
-                        message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please the patient is billed appropriately"
+                        message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please ensure the patient is billed appropriately"
                     };
                 }
                
