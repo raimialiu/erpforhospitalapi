@@ -319,21 +319,46 @@ namespace medicloud.emr.api.Controllers
             if(result != null)
             {   
                 string[] spliResult = result.Split(":");
-                var billingResult = await _Billingrepo.WritePatientRegistrationBill(new BillingInvoice()
-                {
-                     patientid = spliResult[0],
-                     ProviderID = patient.ProviderId,
-                     locationid = Int32.Parse(patient.locationid),
-                     
-                });
 
-                bool isSuccessResponse = billingResult.Item1;
+                (bool, string, decimal?) billingResult = default;
+                bool isSuccessResponse = false;
                 var resultOut = new
                 {
                     PatientRegNumber = spliResult[0],
                     PatientFamilyNumber = spliResult[1],
-                    message =  isSuccessResponse ? "":"Registration Successfull, but failed to create billing, please this is appropritaely billed later"
+                    message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please the patient is billed appropriately"
                 };
+                try
+                {
+                    
+                    billingResult = await _Billingrepo.WritePatientRegistrationBill(new BillingInvoice()
+                    {
+                        patientid = spliResult[0],
+                        ProviderID = patient.ProviderId,
+                        locationid = Int32.Parse(patient.locationid),
+
+                    });
+                    isSuccessResponse = billingResult.Item1;
+                    resultOut = new
+                    {
+                        PatientRegNumber = spliResult[0],
+                        PatientFamilyNumber = spliResult[1],
+                        message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please the patient is billed appropriately"
+                    };
+                }
+                catch (Exception)
+                {
+
+                    resultOut = new
+                    {
+                        PatientRegNumber = spliResult[0],
+                        PatientFamilyNumber = spliResult[1],
+                        message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please the patient is billed appropriately"
+                    };
+                }
+               
+
+                        
 
                 
 

@@ -260,6 +260,11 @@ namespace medicloud.emr.api.Services
         {
             var patient = await _context.Patient.Where(p => p.Patientid == billingInvoice.patientid && p.ProviderId == billingInvoice.ProviderID).FirstOrDefaultAsync();
 
+            if(patient == null)
+            {
+                return (false, "patient not found", null);
+            }
+
             if (string.IsNullOrEmpty(patient.Plantype))
             {
                 return (false, "plan type not available for this patient", null);
