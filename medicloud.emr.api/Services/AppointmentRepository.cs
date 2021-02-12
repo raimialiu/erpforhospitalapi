@@ -24,7 +24,7 @@ namespace medicloud.emr.api.Services
         Task<(int, int, bool)> GetTotalAppointmentTodayCount(int locationId, int accountId);
         Task<(int, int, bool)> GetAppointmentNoShowTodayCount(int locationId, int accountId);
         Task<bool> RemoveBlockSchedule(int blockid);
-        Task<bool> UpdateAppointment(AppointmentCreate model);
+        Task<(bool, int?)> UpdateAppointment(AppointmentCreate model);
         //Task<(string, bool, bool)> UpdateAppointment(AppointmentCreate model);
         Task AddAppointment(AppointmentCreate model);
         Task<IEnumerable<AppointmentList>> GetListAppointments(int locationId, int accountId);
@@ -292,11 +292,11 @@ namespace medicloud.emr.api.Services
         }
 
         //public async Task<(string, bool, bool)> UpdateAppointment(AppointmentCreate model)
-        public async Task<bool> UpdateAppointment(AppointmentCreate model)
+        public async Task<(bool, int?)> UpdateAppointment(AppointmentCreate model)
         {
             var appointment = await _context.AppointmentSchedule.FindAsync(model.Id);
             if (appointment is null)
-                return false;
+                return (false, null);
                 //return ("", false, false);
 
             var generalSchedule = await _context.GeneralSchedule.FirstOrDefaultAsync(s => s.Locationid == model.LocationId);
@@ -322,15 +322,17 @@ namespace medicloud.emr.api.Services
 
             //var checkin = ("", false, 0);
 
+            int? encounterid = null; 
             if (appointment.Statusid == 3)
             {
                 var checkin = await _checkInRepository.CreaateCheckIn(appointment.PatientNumber, (int)appointment.ProviderID, (int)appointment.Locationid, int.Parse((model.Adjuster)));
+                encounterid = checkin.Item3;
             }
 
-            var update = await _context.SaveChangesAsync() > 0;
+            //var update = await _context.SaveChangesAsync() > 0;
 
             //return (checkin.Item1, checkin.Item2, update);
-            return update = true;
+            return (true, encounterid);
         }
 
         public async Task<List<UpcomingAppointmentList>> UpcomingAppointment(int locationId, int accountId, string searchWord)

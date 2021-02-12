@@ -58,7 +58,7 @@ namespace medicloud.emr.api.Services
                     };
                     try
                     {
-                        var inserted = await _billingRepository.AddBillInvoice(billingInvoice);
+                        var inserted = await _billingRepository.AddBillInvoice(billingInvoice, null);
                         if (!inserted.Item1)
                         {
                             return (inserted.Item1, inserted.Item2);
