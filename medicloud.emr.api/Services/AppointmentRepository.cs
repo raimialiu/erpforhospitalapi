@@ -329,7 +329,7 @@ namespace medicloud.emr.api.Services
                 encounterid = checkin.Item3;
             }
 
-            //var update = await _context.SaveChangesAsync() > 0;
+            var update = await _context.SaveChangesAsync() > 0;
 
             //return (checkin.Item1, checkin.Item2, update);
             return (true, encounterid);
