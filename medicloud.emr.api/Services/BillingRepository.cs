@@ -74,7 +74,7 @@ namespace medicloud.emr.api.Services
                 }
                 else
                 {
-                    return (false, "No tariff was found for the service requested not even private", null, false, null);
+                    return (false, "No tariff was found for the service requested not even private tariff", null, false, null);
                 }
 
 
@@ -526,10 +526,25 @@ namespace medicloud.emr.api.Services
 
                 var _result = await getPatientTarrifByPayor((int)billingInvoice.ProviderID, billingInvoice.patientid, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
 
+                if (!_result.Item1)
+                {
+                    return (_result.Item1, _result.Item2, null);
+                }
+
                 invoiceamount.Item1 = _result.Item1;
                 invoiceamount.Item2 = _result.Item2;
                 invoiceamount.Item3 = (decimal)_result.Item3;
-                billingInvoice.settouseprivatetariff = _result.Item4;
+
+                if (plantype.payerid == 1162 && plantype.plantypeid == 32)
+                {
+                    billingInvoice.settouseprivatetariff = false;
+                }
+                else
+                {
+                    billingInvoice.settouseprivatetariff = _result.Item4;
+                }
+
+                    
 
                 
                 if (!invoiceamount.Item1)
@@ -615,10 +630,23 @@ namespace medicloud.emr.api.Services
 
                 var _result = await getPatientTarrifByPayor((int)billingInvoice.ProviderID, billingInvoice.patientid, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
 
+                if (!_result.Item1)
+                {
+                    return (_result.Item1, _result.Item2, null);
+                }
+
                 invoiceamount.Item1 = _result.Item1;
                 invoiceamount.Item2 = _result.Item2;
                 invoiceamount.Item3 = (decimal)_result.Item3;
-                billingInvoice.settouseprivatetariff = _result.Item4;
+
+                if (plantype.payerid == 1162 && plantype.plantypeid == 32)
+                {
+                    billingInvoice.settouseprivatetariff = false;
+                }
+                else
+                {
+                    billingInvoice.settouseprivatetariff = _result.Item4;
+                }
 
                 #region old implementation
 
@@ -1101,6 +1129,7 @@ namespace medicloud.emr.api.Services
 
                                     await CreateReceipt(billingReceipt);
                                     whatIsLeftOfAmountPaid = whatIsLeftOfAmountPaid - billToclear;
+                                    continue;
                                 }
 
                                 if (whatIsLeftOfAmountPaid <= balanceTopay && whatIsLeftOfAmountPaid > 0)
@@ -1123,6 +1152,7 @@ namespace medicloud.emr.api.Services
 
                                     await CreateReceipt(billingReceipt);
                                     whatIsLeftOfAmountPaid = 0;
+                                    continue;
                                 }
                             }
                         }
@@ -1150,6 +1180,7 @@ namespace medicloud.emr.api.Services
 
                                 await CreateReceipt(billingReceipt);
                                 whatIsLeftOfAmountPaid = balanceTopay;
+                                continue;
                             }
 
                             if (whatIsLeftOfAmountPaid <= invoice.billamount)
@@ -1172,6 +1203,7 @@ namespace medicloud.emr.api.Services
 
                                 await CreateReceipt(billingReceipt);
                                 whatIsLeftOfAmountPaid = 0;
+                                continue;
                             }
                         }
                     }
@@ -1232,6 +1264,7 @@ namespace medicloud.emr.api.Services
 
                             await UpdateBillInvoice(encounterBilllingInvoice);
                             await _context.SaveChangesAsync();
+                            continue;
                         }
 
                     }
@@ -1259,6 +1292,7 @@ namespace medicloud.emr.api.Services
 
                     await UpdateBillInvoice(encounterBilllingInvoice);
                     await _context.SaveChangesAsync();
+                    continue;
                 }
             }
 
