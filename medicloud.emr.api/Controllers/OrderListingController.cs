@@ -13,9 +13,11 @@ namespace medicloud.emr.api.Controllers
     public class OrderListingController : ControllerBase
     {
         private readonly IOrderListingRepository _orderListRepository;
-        public OrderListingController(IOrderListingRepository orderListRepository)
+        private ISetupRepository setup;
+        public OrderListingController(IOrderListingRepository orderListRepository, ISetupRepository setup)
         {
             _orderListRepository = orderListRepository;
+            this.setup = setup;
         }
 
         [HttpGet, Route("GetOrdersList")]
@@ -31,6 +33,21 @@ namespace medicloud.emr.api.Controllers
                 return BadRequest(ex.Message);
             }
 
+        }
+
+        [Route("AllOrderType")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllOrderType([FromQuery]int accountId)
+        {
+            return Ok(setup.GetOrderTypeList(accountId).Result);
+        }
+
+
+        [Route("GetAllTypeDetails")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllOrderTypeDetails([FromQuery]int accountId, [FromQuery] int ordertypeid=0,[FromQuery]string searchWord="")
+        {
+            return Ok(await setup.FilterOrderDetails(accountId, searchWord, ordertypeid));
         }
 
         [HttpPost("CreateOrderList")]

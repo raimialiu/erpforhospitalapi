@@ -25,7 +25,7 @@ namespace medicloud.emr.api.Services
         Task<(decimal, int)> GetBillingInvoiceOutstanding(int billId, int accountId, decimal billAmount);
         Task<(bool, string, decimal?)> getTarrifByServiceCode(int accountId, int tariffid, int servicecode, int locationId);
         Task AddConsulttionAndRegBillInvoice(BillingInvoice billingInvoice);
-        Task<(bool, string, int?)> AddBillInvoice(BillingInvoice billingInvoice);
+        Task<(bool, string, int?)> AddBillInvoice(BillingInvoice billingInvoice, bool? isappoint);
         Task ClearPatientEncounterBill(int accountId, int encounterId, string patientId, decimal amountPaid, int locationid);
         Task<(bool, string, decimal?)> getPatientDrugTarriff(int accountId, string patientId, int drugid, int locationId);
         Task<(bool, string, decimal?)> getDrugTarrifByDrugId(int accountId, int tariffid, int drugid, int locationId);
@@ -260,6 +260,11 @@ namespace medicloud.emr.api.Services
         {
             var patient = await _context.Patient.Where(p => p.Patientid == billingInvoice.patientid && p.ProviderId == billingInvoice.ProviderID).FirstOrDefaultAsync();
 
+            if(patient == null)
+            {
+                return (false, "patient not found", null);
+            }
+
             if (string.IsNullOrEmpty(patient.Plantype))
             {
                 return (false, "plan type not available for this patient", null);
@@ -311,7 +316,7 @@ namespace medicloud.emr.api.Services
 
                     billingInvoice.billamount = registrationTariff.Item3;
                     billingInvoice.amounttopay = registrationTariff.Item3;
-                    billingInvoice.settouseprivatetariff = registrationTariff.Item4;
+                    billingInvoice.settouseprivatetariff = false;
 
                     billingInvoice.plantypeid = int.Parse(patient.Plantype);
                     billingInvoice.tariffid = 38;
@@ -346,86 +351,87 @@ namespace medicloud.emr.api.Services
 
         public async Task<(bool, string, decimal?)> WritePatientConsultationBill(BillingInvoice billingInvoice)
         {
-            var patient = await _context.Patient.Where(p => p.Patientid == billingInvoice.patientid && p.ProviderId == billingInvoice.ProviderID).FirstOrDefaultAsync();
 
-            if (string.IsNullOrEmpty(patient.Plantype))
+            //check if the person has an appointment starting today before writing bill 
+            var getPatientsAppointment = await _context.AppointmentSchedule.Where(a => a.PatientNumber == billingInvoice.patientid &&
+                                       a.ProviderID == billingInvoice.ProviderID && a.Locationid == billingInvoice.locationid && a.Starttime.Date == DateTime.Today.Date).ToListAsync();
+
+            if (getPatientsAppointment.Count > 0)
             {
-                return (false, "plan type not available for this patient", null);
-            }
+                var patient = await _context.Patient.Where(p => p.Patientid == billingInvoice.patientid && p.ProviderId == billingInvoice.ProviderID).FirstOrDefaultAsync();
 
-            var plantype = await _context.PlanType.Where(p => p.planid == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
-
-            if (plantype != null)
-            {
-                if (plantype.payerid == 1162 && plantype.plantypeid == 32)
+                if (string.IsNullOrEmpty(patient.Plantype))
                 {
-                    var tariffServiceCode = await (from r in _context.TariffServiceCode
-                                                   join s in _context.ServiceCode on r.serviceid equals s.serviceid
-                                                   where s.servicename.Contains("Consultation") && r.tariffid == 38
-                                                   select new
-                                                   {
-                                                       r.tariffamount,
-                                                       r.premiumtariffamount,
-                                                       serviceName = s.servicename,
-                                                       s.serviceid,
-                                                       r.tariffid
-                                                   }).ToListAsync();
+                    return (false, "plan type not available for this patient", null);
+                }
 
-                    //var registration = tariffServiceCode.Where(e => e.serviceid == 137).FirstOrDefault();
-                    var consultationTariff = await getPatientTarrifByPayor((int)billingInvoice.ProviderID, billingInvoice.patientid, 137, (int)billingInvoice.locationid);
+                var plantype = await _context.PlanType.Where(p => p.planid == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
 
-                    if (!consultationTariff.Item1)
+                if (plantype != null)
+                {
+                    if (plantype.payerid == 1162 && plantype.plantypeid == 32)
                     {
-                        return (consultationTariff.Item1, consultationTariff.Item2, null);
+                        var tariffServiceCode = await (from r in _context.TariffServiceCode
+                                                       join s in _context.ServiceCode on r.serviceid equals s.serviceid
+                                                       where s.servicename.Contains("Consultation") && r.tariffid == 38
+                                                       select new
+                                                       {
+                                                           r.tariffamount,
+                                                           r.premiumtariffamount,
+                                                           serviceName = s.servicename,
+                                                           s.serviceid,
+                                                           r.tariffid
+                                                       }).ToListAsync();
+
+                        //var registration = tariffServiceCode.Where(e => e.serviceid == 137).FirstOrDefault();
+                        var consultationTariff = await getPatientTarrifByPayor((int)billingInvoice.ProviderID, billingInvoice.patientid, 137, (int)billingInvoice.locationid);
+
+                        if (!consultationTariff.Item1)
+                        {
+                            return (consultationTariff.Item1, consultationTariff.Item2, null);
+                        }
+
+                        billingInvoice.billamount = consultationTariff.Item3;
+                        billingInvoice.amounttopay = consultationTariff.Item3;
+                        billingInvoice.settouseprivatetariff = false;
+
+                        billingInvoice.plantypeid = null;// int.Parse(patient.Plantype);
+                        billingInvoice.tariffid = 38;
+                        billingInvoice.servicecode = 137.ToString();
+                        billingInvoice.unit = 1;
+                        billingInvoice.unitcharge = billingInvoice.unit * billingInvoice.billamount;
+                        billingInvoice.payortypeid = !string.IsNullOrEmpty(patient.Payor) ? (int?)int.Parse(patient.Payor) : null;
+                        billingInvoice.dateadded = DateTime.Now;
+                        //billingInvoice.servicecode = tariffServiceCode.serviceid;
+
+                        if (billingInvoice.payortypeid != null)
+                        {
+                            var sponsor = await _context.PlanType.Where(p => p.payerid == billingInvoice.payortypeid).FirstOrDefaultAsync();
+
+                            billingInvoice.sponsorid = sponsor != null ? sponsor.sponsid : null;
+                        }
+
+                        var billId = _context.BillingInvoice.Add(billingInvoice);
+                        await _context.SaveChangesAsync();
+                        //await AddBillInvoice(billingInvoice, true);
+                        return (true, "success", billingInvoice.billamount);
                     }
-
-                    //var location = await _context.Location.Where(l => l.Locationid == billingInvoice.locationid && l.AccountID == billingInvoice.ProviderID).FirstOrDefaultAsync();
-
-                    //if (location.ispremium)
-                    //{
-                    //    billingInvoice.billamount = registration.premiumtariffamount;
-                    //    billingInvoice.amounttopay = registration.premiumtariffamount;
-                    //}
-                    //else
-                    //{
-                    //    billingInvoice.billamount = registration.tariffamount;
-                    //    billingInvoice.amounttopay = registration.tariffamount;
-                    //}
-
-                    //var registration = tariffServiceCode.Where(e => e.serviceid == 3209).FirstOrDefault();
-                    //var registrationTariff = await getPatientTarrifByPayor((int)billingInvoice.ProviderID, billingInvoice.patientid, 137, (int)billingInvoice.locationid);
-
-                    billingInvoice.billamount = consultationTariff.Item3;
-                    billingInvoice.amounttopay = consultationTariff.Item3;
-                    billingInvoice.settouseprivatetariff = consultationTariff.Item4;
-
-                    billingInvoice.plantypeid = null;// int.Parse(patient.Plantype);
-                    billingInvoice.tariffid = 38;
-                    billingInvoice.servicecode = 137.ToString();
-                    billingInvoice.unit = 1;
-                    billingInvoice.unitcharge = billingInvoice.unit * billingInvoice.billamount;
-                    billingInvoice.payortypeid = !string.IsNullOrEmpty(patient.Payor) ? (int?)int.Parse(patient.Payor) : null;
-                    //billingInvoice.servicecode = tariffServiceCode.serviceid;
-
-                    if (billingInvoice.payortypeid != null)
+                    else
                     {
-                        var sponsor = await _context.PlanType.Where(p => p.payerid == billingInvoice.payortypeid).FirstOrDefaultAsync();
-
-                        billingInvoice.sponsorid = sponsor != null ? sponsor.sponsid : null;
+                        return (false, "Patient plan type doesn't match a private plan", null);
                     }
-
-                    await AddConsulttionAndRegBillInvoice(billingInvoice);
-                    return (true, "success", billingInvoice.billamount);
                 }
                 else
                 {
-                    return (false, "Patient plan type doesn't match a private plan", null);
+                    return (false, "Inalid patient plan type", null);
                 }
             }
             else
             {
-                return (false, "Inalid patient plan type", null);
+                return (false, "no appointment for this patient today", null);
             }
+
+            
         }
         
         public async Task UpdateBillInvoice(BillingInvoice billingInvoice)
@@ -445,27 +451,33 @@ namespace medicloud.emr.api.Services
         public async Task AddConsulttionAndRegBillInvoice(BillingInvoice billingInvoice)
         {
             var encounterCheck = await _checkInRepository.GetPatientLatestEncounter(billingInvoice.patientid, (int)billingInvoice.ProviderID);
+            //var appointment = await _apptRepository.GetPatientAppointmentsToday(billingInvoice.patientid, (int)billingInvoice.locationid,  (int)billingInvoice.ProviderID);
 
             if (encounterCheck == null)
             {
-                AppointmentCreate model = new AppointmentCreate()
-                {
-                    AccountId = (int)billingInvoice.ProviderID,
-                    Adjuster = billingInvoice.encodedby.ToString(),
-                    Date = DateTime.Now.AddHours(1),
-                    IsRecurring = false,
-                    LocationId = (int)billingInvoice.locationid,
-                    ProviderId = null,
-                    PatientNo = billingInvoice.patientid,
-                    ReferralTypeId = null,
-                    ReferringPhysicianId = null,
-                    ReminderId = null,
-                    SpecId = 1,
-                    VisitTypeId = 1,
-                    StatusId = 3
-                };
+                var appointment = await _apptRepository.GetPatientAppointmentsToday(billingInvoice.patientid, (int)billingInvoice.locationid, (int)billingInvoice.ProviderID);
 
-                await _apptRepository.AddAppointment(model);
+                if (appointment == null)
+                {
+                    AppointmentCreate model = new AppointmentCreate()
+                    {
+                        AccountId = (int)billingInvoice.ProviderID,
+                        Adjuster = billingInvoice.encodedby.ToString(),
+                        Date = DateTime.Now.AddHours(1),
+                        IsRecurring = false,
+                        LocationId = (int)billingInvoice.locationid,
+                        ProviderId = null,
+                        PatientNo = billingInvoice.patientid,
+                        ReferralTypeId = null,
+                        ReferringPhysicianId = null,
+                        ReminderId = null,
+                        SpecId = 1,
+                        VisitTypeId = 1,
+                        StatusId = 3
+                    };
+
+                    await _apptRepository.AddAppointment(model);
+                }
 
                 var encounter = await _checkInRepository.CreaateCheckIn(billingInvoice.patientid, (int)billingInvoice.ProviderID, (int)billingInvoice.locationid, (int)billingInvoice.encodedby);
 
@@ -497,160 +509,196 @@ namespace medicloud.emr.api.Services
             await _context.SaveChangesAsync();
         }
         
-        public async Task<(bool, string, int?)> AddBillInvoice(BillingInvoice billingInvoice)
+        public async Task<(bool, string, int?)> AddBillInvoice(BillingInvoice billingInvoice, bool? isappoint)
         {
-            if(billingInvoice.encounterId == null || billingInvoice.encounterId <= 0)
+            if (isappoint.HasValue)
             {
-                var currentEncounter = await _checkInRepository.GetPatientLatestEncounter(billingInvoice.patientid, (int)billingInvoice.ProviderID);
+                var patient = await _context.Patient.Where(p => p.Patientid == billingInvoice.patientid && p.ProviderId == billingInvoice.ProviderID).FirstOrDefaultAsync();
 
-                if (currentEncounter == null)
+                if (patient == null)
                 {
-                    AppointmentCreate model = new AppointmentCreate()
+                    return (false, "Patient was not found", null);
+                }
+
+                var plantype = await _context.PlanType.Where(p => p.planid == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
+
+                var invoiceamount = (false, "", 0.00m);
+
+                var _result = await getPatientTarrifByPayor((int)billingInvoice.ProviderID, billingInvoice.patientid, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
+
+                invoiceamount.Item1 = _result.Item1;
+                invoiceamount.Item2 = _result.Item2;
+                invoiceamount.Item3 = (decimal)_result.Item3;
+                billingInvoice.settouseprivatetariff = _result.Item4;
+
+                
+                if (!invoiceamount.Item1)
+                {
+                    return (false, _result.Item2, null);
+                }
+
+                if (billingInvoice.unit == null || billingInvoice.unit == 0)
+                {
+                    billingInvoice.unit = 1;
+                }
+
+                billingInvoice.dateadded = DateTime.Now;
+                billingInvoice.plantypeid = plantype != null ? (int?)plantype.planid : null;
+                billingInvoice.payortypeid = !string.IsNullOrEmpty(patient.Payor) ? (int?)int.Parse(patient.Payor) : null;
+                billingInvoice.tariffid = _result.Item5;
+                billingInvoice.billamount = invoiceamount.Item3 * billingInvoice.unit;
+                billingInvoice.amounttopay = invoiceamount.Item3 * billingInvoice.unit;
+                billingInvoice.unitcharge = invoiceamount.Item3;
+
+                var billId = _context.BillingInvoice.Add(billingInvoice);
+                await _context.SaveChangesAsync();
+                return (true, "success", billId.Entity.billid);
+            }
+            else
+            {
+                if (billingInvoice.encounterId == null || billingInvoice.encounterId <= 0)
+                {
+                    var currentEncounter = await _checkInRepository.GetPatientLatestEncounter(billingInvoice.patientid, (int)billingInvoice.ProviderID);
+
+                    if (currentEncounter == null)
                     {
-                        AccountId = (int)billingInvoice.ProviderID,
-                        Adjuster = billingInvoice.encodedby.ToString(),
-                        Date = DateTime.Now.AddHours(1),
-                        IsRecurring = false,
-                        LocationId = (int)billingInvoice.locationid,
-                        ProviderId = null,
-                        PatientNo = billingInvoice.patientid,
-                        ReferralTypeId = null,
-                        ReferringPhysicianId = null,
-                        ReminderId = null,
-                        SpecId = 1,
-                        VisitTypeId = 1,
-                        StatusId = 3
-                    };
+                        var appointment = await _apptRepository.GetPatientAppointmentsToday(billingInvoice.patientid, (int)billingInvoice.locationid, (int)billingInvoice.ProviderID);
 
-                    await _apptRepository.AddAppointment(model);
+                        if (appointment == null)
+                        {
+                            AppointmentCreate model = new AppointmentCreate()
+                            {
+                                AccountId = (int)billingInvoice.ProviderID,
+                                Adjuster = billingInvoice.encodedby.ToString(),
+                                Date = DateTime.Now.AddHours(1),
+                                IsRecurring = false,
+                                LocationId = (int)billingInvoice.locationid,
+                                ProviderId = null,
+                                PatientNo = billingInvoice.patientid,
+                                ReferralTypeId = null,
+                                ReferringPhysicianId = null,
+                                ReminderId = null,
+                                SpecId = 1,
+                                VisitTypeId = 1,
+                                StatusId = 3
+                            };
 
-                    var encounter = await _checkInRepository.CreaateCheckIn(billingInvoice.patientid, (int)billingInvoice.ProviderID, (int)billingInvoice.locationid, (int)billingInvoice.encodedby);
+                            await _apptRepository.AddAppointment(model);
+                        }
 
-                    //CheckIn checkIn = new CheckIn
-                    //{
-                    //    ProviderId = (int)billingInvoice.ProviderID,
-                    //    CheckInDate = DateTime.Now,
-                    //    CheckOutDate = null,
-                    //    IsCheckedIn = false,
-                    //    IsCheckedOut = false,
-                    //    Locationid = (int)billingInvoice.locationid,
-                    //    Patientid = billingInvoice.patientid,
-                    //    IsActive = false
-                    //};
+                        var encounter = await _checkInRepository.CreaateCheckIn(billingInvoice.patientid, (int)billingInvoice.ProviderID, (int)billingInvoice.locationid, (int)billingInvoice.encodedby);
 
-                    //var _checkIn = await _context.AddAsync(checkIn);
-                    //await _context.SaveChangesAsync();
+                        billingInvoice.encounterId = encounter.Item3;
+                    }
+                    else
+                    {
+                        billingInvoice.encounterId = currentEncounter.EncounterId;
+                    }
 
-                    billingInvoice.encounterId = encounter.Item3;
+                    return (false, "Please pass in encounterid", null);
                 }
-                else
+
+                var patient = await _context.Patient.Where(p => p.Patientid == billingInvoice.patientid && p.ProviderId == billingInvoice.ProviderID).FirstOrDefaultAsync();
+
+                if (patient == null)
                 {
-                    billingInvoice.encounterId = currentEncounter.EncounterId;
+                    return (false, "Patient was not found", null);
                 }
 
-                return (false, "Please pass in encounterid", null);
+                var plantype = await _context.PlanType.Where(p => p.planid == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
+
+                //if (plantype == null)
+                //{
+                //    return (false, "Invalid Patient plantype", null);
+                //}
+                var invoiceamount = (false, "", 0.00m);
+
+                var _result = await getPatientTarrifByPayor((int)billingInvoice.ProviderID, billingInvoice.patientid, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
+
+                invoiceamount.Item1 = _result.Item1;
+                invoiceamount.Item2 = _result.Item2;
+                invoiceamount.Item3 = (decimal)_result.Item3;
+                billingInvoice.settouseprivatetariff = _result.Item4;
+
+                #region old implementation
+
+                //var tariffplan = await _context.TarriffPlan.Where(t => t.planid == (plantype != null ? plantype.plantypeid : 0)).FirstOrDefaultAsync();
+
+
+
+                //if (tariffplan == null )
+                //{
+                //    // uses private tariff if no tariff is mapped to the patients plantype
+                //    var result = await getTarrifByServiceCode((int)billingInvoice.ProviderID, 38, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
+
+                //    if (result.Item1)
+                //    {
+                //        invoiceamount.Item1 = result.Item1;
+                //        invoiceamount.Item2 = result.Item2;
+                //        invoiceamount.Item3 = (decimal)result.Item3;
+                //        billingInvoice.settouseprivatetariff = true;
+                //    }
+                //    else
+                //    {
+                //        return (false, "No tariff was found for the service requested not even private", null);
+                //    }
+
+
+                //}
+                //else
+                //{
+                //    var result = await getTarrifByServiceCode((int)billingInvoice.ProviderID, tariffplan != null ? (int)tariffplan.tariffid : 0, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
+
+                //    if (!result.Item1)
+                //    {
+                //        // uses private tariff if the requested service is not mapped to the patients tariff
+                //        var _result = await getTarrifByServiceCode((int)billingInvoice.ProviderID, 38, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
+
+                //        if (_result.Item1)
+                //        {
+                //            invoiceamount.Item1 = _result.Item1;
+                //            invoiceamount.Item2 = _result.Item2;
+                //            invoiceamount.Item3 = (decimal)_result.Item3;
+                //            billingInvoice.settouseprivatetariff = true;
+                //        }
+                //        else
+                //        {
+                //            return (false, "No tariff was found for the service requested not even private", null);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        invoiceamount.Item1 = result.Item1;
+                //        invoiceamount.Item2 = result.Item2;
+                //        invoiceamount.Item3 = (decimal)result.Item3;
+                //    }
+
+                //}
+
+                #endregion
+
+                if (!invoiceamount.Item1)
+                {
+                    return (false, _result.Item2, null);
+                }
+
+                if (billingInvoice.unit == null || billingInvoice.unit == 0)
+                {
+                    billingInvoice.unit = 1;
+                }
+
+                billingInvoice.dateadded = DateTime.Now;
+                billingInvoice.plantypeid = plantype != null ? (int?)plantype.planid : null;
+                billingInvoice.payortypeid = !string.IsNullOrEmpty(patient.Payor) ? (int?)int.Parse(patient.Payor) : null;
+                billingInvoice.tariffid = _result.Item5;
+                billingInvoice.billamount = invoiceamount.Item3 * billingInvoice.unit;
+                billingInvoice.amounttopay = invoiceamount.Item3 * billingInvoice.unit;
+                billingInvoice.unitcharge = invoiceamount.Item3;
+
+                var billId = _context.BillingInvoice.Add(billingInvoice);
+                await _context.SaveChangesAsync();
+                return (true, "success", billId.Entity.billid);
             }
-
-            var patient = await _context.Patient.Where(p => p.Patientid == billingInvoice.patientid && p.ProviderId == billingInvoice.ProviderID).FirstOrDefaultAsync();
-
-            if (patient == null)
-            {
-                return (false, "Patient was not found", null);
-            }
-
-            var plantype = await _context.PlanType.Where(p => p.planid == int.Parse(patient.Plantype)).FirstOrDefaultAsync();
-
-            //if (plantype == null)
-            //{
-            //    return (false, "Invalid Patient plantype", null);
-            //}
-            var invoiceamount = (false, "", 0.00m);
-
-            var _result = await getPatientTarrifByPayor((int)billingInvoice.ProviderID, billingInvoice.patientid, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
-
-            invoiceamount.Item1 = _result.Item1;
-            invoiceamount.Item2 = _result.Item2;
-            invoiceamount.Item3 = (decimal)_result.Item3;
-            billingInvoice.settouseprivatetariff = _result.Item4;
-
-            #region old implementation
-
-            //var tariffplan = await _context.TarriffPlan.Where(t => t.planid == (plantype != null ? plantype.plantypeid : 0)).FirstOrDefaultAsync();
-
-
-
-            //if (tariffplan == null )
-            //{
-            //    // uses private tariff if no tariff is mapped to the patients plantype
-            //    var result = await getTarrifByServiceCode((int)billingInvoice.ProviderID, 38, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
-
-            //    if (result.Item1)
-            //    {
-            //        invoiceamount.Item1 = result.Item1;
-            //        invoiceamount.Item2 = result.Item2;
-            //        invoiceamount.Item3 = (decimal)result.Item3;
-            //        billingInvoice.settouseprivatetariff = true;
-            //    }
-            //    else
-            //    {
-            //        return (false, "No tariff was found for the service requested not even private", null);
-            //    }
-
-
-            //}
-            //else
-            //{
-            //    var result = await getTarrifByServiceCode((int)billingInvoice.ProviderID, tariffplan != null ? (int)tariffplan.tariffid : 0, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
-
-            //    if (!result.Item1)
-            //    {
-            //        // uses private tariff if the requested service is not mapped to the patients tariff
-            //        var _result = await getTarrifByServiceCode((int)billingInvoice.ProviderID, 38, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
-
-            //        if (_result.Item1)
-            //        {
-            //            invoiceamount.Item1 = _result.Item1;
-            //            invoiceamount.Item2 = _result.Item2;
-            //            invoiceamount.Item3 = (decimal)_result.Item3;
-            //            billingInvoice.settouseprivatetariff = true;
-            //        }
-            //        else
-            //        {
-            //            return (false, "No tariff was found for the service requested not even private", null);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        invoiceamount.Item1 = result.Item1;
-            //        invoiceamount.Item2 = result.Item2;
-            //        invoiceamount.Item3 = (decimal)result.Item3;
-            //    }
-
-            //}
-
-            #endregion
-
-            if (!invoiceamount.Item1)
-            {
-                return (false, _result.Item2, null);
-            }
-
-            if (billingInvoice.unit == null || billingInvoice.unit == 0)
-            {
-                billingInvoice.unit = 1;
-            }
-
-            billingInvoice.dateadded = DateTime.Now;
-            billingInvoice.plantypeid = plantype != null ? (int?)plantype.planid : null;
-            billingInvoice.payortypeid = !string.IsNullOrEmpty(patient.Payor) ? (int?)int.Parse(patient.Payor) : null;
-            billingInvoice.tariffid = _result.Item5;
-            billingInvoice.billamount = invoiceamount.Item3 * billingInvoice.unit;
-            billingInvoice.amounttopay = invoiceamount.Item3 * billingInvoice.unit;
-            billingInvoice.unitcharge = invoiceamount.Item3;
-
-            var billId = _context.BillingInvoice.Add(billingInvoice);
-            await _context.SaveChangesAsync();
-            return (true, "success", billId.Entity.billid);
         }
 
         public (bool, decimal?, decimal) SetNHISCopay (decimal? billamount, string payerid)
