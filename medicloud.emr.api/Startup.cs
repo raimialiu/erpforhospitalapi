@@ -60,7 +60,7 @@ namespace medicloud.emr.api
             services.AddCors(options =>
             {
                 options.AddPolicy(corsPolicy,
-                                  builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+                                  builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("PageSize", "CurrentPage", "TotalPages", "TotalCount", "HasNext", "HasPrevious"));
 
                 //.WithOrigins(new[] { "http://localhost:4200", "http://test.medicloud.ng/lagoonhis", "http://localhost:58213",
                 //                                      "https://hnlhisdev.azurewebsites.net",
@@ -125,6 +125,8 @@ namespace medicloud.emr.api
             services.AddScoped<IOrderInvestigationRepository, OrderInvestigationRepository>();
             services.AddScoped<IBillingRepository, BillingRepository>();
             services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+            services.AddScoped<IPharmacyManagementRepository, PharmacyManagementRepository>();
+
             services.AddSingleton<IVitalRepo, VitalRepo>();
             services.AddScoped<ISoapRepository, SoapRepository>();
             services.AddScoped<IVitalSignsRepository, VitalSignsRepository>();

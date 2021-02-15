@@ -14,10 +14,12 @@ namespace medicloud.emr.api.Controllers
     public class CheckInController : ControllerBase
     {
         private readonly ICheckInRepository _checkInRepository;
+        private readonly IBillingRepository _billingRepository;
 
-        public CheckInController(ICheckInRepository checkInRepository)
+        public CheckInController(ICheckInRepository checkInRepository, IBillingRepository billingRepository)
         {
             _checkInRepository = checkInRepository;
+            _billingRepository = billingRepository;
         }
 
         [HttpGet, Route("GetCheckedInList")]
@@ -43,11 +45,23 @@ namespace medicloud.emr.api.Controllers
         }
 
         [HttpGet, Route("CheckPatientIn")]
-        public async Task<IActionResult> CheckPatientIn(int locationId, int providerId, string patientId)
+        public async Task<IActionResult> CheckPatientIn(int locationId, int providerId, string patientId, int userid)
         {
             try
             {
-                var result = await _checkInRepository.CreaateCheckIn(patientId, providerId, locationId);
+                var result = await _checkInRepository.CreaateCheckIn(patientId, providerId, locationId, userid);
+
+                // add bill
+                BillingInvoice billingInvoice = new BillingInvoice()
+                {
+                    patientid = patientId,
+                    ProviderID = providerId,
+                    locationid = locationId,
+                    encodedby = userid,
+                    encounterId = result.Item3
+                };
+
+                var billResult = _billingRepository.WritePatientConsultationBill(billingInvoice);
 
                 MiniResponseBase response = new MiniResponseBase
                 {

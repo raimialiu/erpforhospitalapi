@@ -24,7 +24,7 @@ namespace medicloud.emr.api.Services
         Task<(int, int, bool)> GetTotalAppointmentTodayCount(int locationId, int accountId);
         Task<(int, int, bool)> GetAppointmentNoShowTodayCount(int locationId, int accountId);
         Task<bool> RemoveBlockSchedule(int blockid);
-        Task<bool> UpdateAppointment(AppointmentCreate model);
+        Task<(bool, int?)> UpdateAppointment(AppointmentCreate model);
         //Task<(string, bool, bool)> UpdateAppointment(AppointmentCreate model);
         Task AddAppointment(AppointmentCreate model);
         Task<IEnumerable<AppointmentList>> GetListAppointments(int locationId, int accountId);
@@ -292,11 +292,11 @@ namespace medicloud.emr.api.Services
         }
 
         //public async Task<(string, bool, bool)> UpdateAppointment(AppointmentCreate model)
-        public async Task<bool> UpdateAppointment(AppointmentCreate model)
+        public async Task<(bool, int?)> UpdateAppointment(AppointmentCreate model)
         {
             var appointment = await _context.AppointmentSchedule.FindAsync(model.Id);
             if (appointment is null)
-                return false;
+                return (false, null);
                 //return ("", false, false);
 
             var generalSchedule = await _context.GeneralSchedule.FirstOrDefaultAsync(s => s.Locationid == model.LocationId);
@@ -320,17 +320,19 @@ namespace medicloud.emr.api.Services
             appointment.PatientNumber = model.PatientNo;
             appointment.ProviderID = model.AccountId;
 
-            var checkin = ("", false);
+            //var checkin = ("", false, 0);
 
+            int? encounterid = null; 
             if (appointment.Statusid == 3)
             {
-                checkin = await _checkInRepository.CreaateCheckIn(appointment.PatientNumber, (int)appointment.ProviderID, (int)appointment.Locationid);
+                var checkin = await _checkInRepository.CreaateCheckIn(appointment.PatientNumber, (int)appointment.ProviderID, (int)appointment.Locationid, int.Parse((model.Adjuster)));
+                encounterid = checkin.Item3;
             }
 
             var update = await _context.SaveChangesAsync() > 0;
 
             //return (checkin.Item1, checkin.Item2, update);
-            return update = true;
+            return (true, encounterid);
         }
 
         public async Task<List<UpcomingAppointmentList>> UpcomingAppointment(int locationId, int accountId, string searchWord)
@@ -474,6 +476,8 @@ namespace medicloud.emr.api.Services
 
         public async Task AddAppointment(AppointmentCreate model)
         {
+            var encounterCheck = await _checkInRepository.GetPatientLatestEncounter(model.PatientNo, (int)model.AccountId);
+
             var generalSchedule = await _context.GeneralSchedule.FirstOrDefaultAsync(s => s.Locationid == model.LocationId);
             int duration = generalSchedule?.Timeinterval ?? 30;
 
@@ -497,6 +501,8 @@ namespace medicloud.emr.api.Services
                 PatientNumber = model.PatientNo,
                 ProviderID = model.AccountId
             };
+
+            if (encounterCheck != null) appointment.encounterid = encounterCheck.EncounterId;
 
             _context.AppointmentSchedule.Add(appointment);
             await _context.SaveChangesAsync();

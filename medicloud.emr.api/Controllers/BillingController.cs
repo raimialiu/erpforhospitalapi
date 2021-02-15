@@ -260,7 +260,7 @@ namespace medicloud.emr.api.Controllers
         {
             try
             {
-                var result = await _billingRepository.AddBillInvoice(billingInvoice);
+                var result = await _billingRepository.AddBillInvoice(billingInvoice, null);
 
                 PatientTariffByPayorResponse response = new PatientTariffByPayorResponse()
                 {

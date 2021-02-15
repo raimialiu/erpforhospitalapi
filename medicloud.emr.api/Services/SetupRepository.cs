@@ -10,6 +10,7 @@ namespace medicloud.emr.api.Services
 {
     public interface ISetupRepository
     {
+        //Task<>
         Task<List<OrderCategory>> GetOrderCategoryList(int accountId);
         Task<List<OrderType>> GetOrderTypeList(int accountId);
         Task<List<OrderCategory>> GetOrderCategoryByOrdeTypeIdList(int accountId, int orderTypeId);
@@ -24,6 +25,7 @@ namespace medicloud.emr.api.Services
         Task<List<DiagnosisProblems>> GetDiagnosisProblemList(int accountId);
         Task<Diagnosis> GetDiagnosisByCode(int accountId, string icdCode);
         Task<List<OrderDetails>> GetOrderDetailsList(int accountId, string searchWord, /*int? orderTypeId, */int? orderCategoryId);
+        Task<List<OrderDetails>> FilterOrderDetails(int accountId, string searchWord="", int? orderTypeId=0);
     }
 
     public class SetupRepository : ISetupRepository
@@ -259,6 +261,33 @@ namespace medicloud.emr.api.Services
 
             return _diagnosisSubGroup;
         }
-        
+
+        public async Task<List<OrderDetails>> FilterOrderDetails(int accountId, string searchWord="", int? orderTypeId=0)
+        {
+            if(searchWord != "")
+            {
+               
+                if (orderTypeId != 0)
+                {
+                    var orderdetailsl = await _context.OrderDetails.Where(a => a.servicename.ToUpper().Contains(searchWord.ToUpper())
+                                    && a.providerId == accountId && a.ordertypeid.Value == orderTypeId.Value).Take(500).OrderBy(p => p.servicename).ToListAsync();
+
+                 
+
+                    return orderdetailsl;
+                }
+
+                
+                var _orderdetailsl = await _context.OrderDetails.Where(a => a.servicename.ToUpper().Contains(searchWord.ToUpper())
+                                    && a.providerId == accountId).Take(500).OrderBy(p => p.servicename).ToListAsync();
+
+                
+
+                return _orderdetailsl;
+            }
+            var _orderDetails = await _context.OrderDetails.Where(a => a.providerId == accountId).Take(50).OrderBy(p => p.servicename).ToListAsync();
+
+            return _orderDetails;
+        }
     }
 }

@@ -53,11 +53,12 @@ namespace medicloud.emr.api.Services
                         unit = int.Parse(item.unit),
                         locationid = model.consultationOrder.Locationid,
                         ProviderID = model.consultationOrder.ProviderId,
-                        diagnosisid = item.DiagnosisId
+                        diagnosisid = item.DiagnosisId,
+                        encodedby = item.EncodedBy
                     };
                     try
                     {
-                        var inserted = await _billingRepository.AddBillInvoice(billingInvoice);
+                        var inserted = await _billingRepository.AddBillInvoice(billingInvoice, null);
                         if (!inserted.Item1)
                         {
                             return (inserted.Item1, inserted.Item2);
@@ -74,7 +75,7 @@ namespace medicloud.emr.api.Services
                             _context.BillingInvoice.Remove(bill);
                         }
                         /// delete all inserted billing_Invoice
-                        throw new Exception(ex.Message);
+                        throw new Exception("An error occured while creating consultation order bills please try again or contact suppport");
                     }
 
                 }
@@ -101,9 +102,16 @@ namespace medicloud.emr.api.Services
 
                     await _context.ConsultationOrderDetails.AddRangeAsync(item);
                 }
-
-                await _context.SaveChangesAsync();
-                return (true, "success!");
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return (true, "success!");
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("An error occured while creating consultation order details please try again or contact suppport");
+                }
+                
             }
             catch(Exception ex) 
             {
@@ -111,6 +119,7 @@ namespace medicloud.emr.api.Services
                 {
                     var order = await _context.ConsultationOrders.Where(e => e.Id == orderId && e.ProviderId == model.consultationOrder.ProviderId).FirstOrDefaultAsync();
                     _context.ConsultationOrders.Remove(order);
+                    await _context.SaveChangesAsync();
                 }
 
                 if (insertedBillId.Count() > 0)
@@ -119,9 +128,11 @@ namespace medicloud.emr.api.Services
                     {
                         var bill = await _context.BillingInvoice.Where(y => y.billid == billid).FirstOrDefaultAsync();
                         _context.BillingInvoice.Remove(bill);
+                        await _context.SaveChangesAsync();
                     }
                 }
 
+                await _context.SaveChangesAsync();
                 return (false, ex.Message);
                 
             }

@@ -14,5 +14,7 @@ namespace medicloud.emr.api.Entities
         public int? Lastchangeby { get; set; }
         public DateTime? Lastchangedate { get; set; }
         public DateTime? Encodeddate { get; set; }
+
+        public virtual ICollection<ConsultationPrescriptionDetails> ConsultationPrescriptionDetails { get; set; }
     }
 }
