@@ -23,6 +23,8 @@ namespace medicloud.emr.api.Controllers
         //public int VisitType { get; set; }        
         public int? ProviderId { get; set; }
         public int? StatusId { get; set; }
+        public string PatientId { get; set; }
+        
     }
 
     [Route("api/[controller]")]
@@ -84,6 +86,24 @@ namespace medicloud.emr.api.Controllers
             }
         }
 
+        [HttpGet, Route("getPatientPrescription")]
+        public async Task<IActionResult> getPatientPrescription([FromQuery] string patientid, [FromQuery] int locationid)
+        {
+            try
+            {
+                //    if (_pharmacyManagementRepository.ConsultationPrescriptionExists(prescriptionid))
+                //    {
+                var prescriptionList =await  _pharmacyManagementRepository.getPatientPrescriptionsList(patientid, locationid);
+                return Ok(prescriptionList);
+                //}
+                //    else return BadRequest("invalid prescriptionid");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpGet, Route("getPrescriptionDetailsByPrescriptionId/{prescriptionid}")]
         public async Task<IActionResult> getPrescriptionDetailsByPrescriptionId(int prescriptionid)
         {
@@ -104,6 +124,8 @@ namespace medicloud.emr.api.Controllers
                 return BadRequest();
             }
         }
+
+
 
 
         [HttpGet]
