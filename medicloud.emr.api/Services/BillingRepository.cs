@@ -857,7 +857,7 @@ namespace medicloud.emr.api.Services
             if (plantype != null && plantype.payerid == 2518 && billingInvoice.tariffid == 51)
             {
                 // is NHIS patient
-                var nhisResult = SetNHISCopay(billingInvoice.billamount, patient.Payor);
+                var nhisResult = SetNHISCopay(billingInvoice.billamount, plantype.payerid.ToString());
 
                 if (nhisResult.Item1)
                 {
@@ -866,7 +866,7 @@ namespace medicloud.emr.api.Services
                 }
                 else
                 {
-                    return (true, "Failed! error occurred setting patients NHIS copay", null);
+                    return (false, "Failed! error occurred setting patients NHIS copay", null);
                 }
 
 
