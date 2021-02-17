@@ -400,8 +400,9 @@ namespace medicloud.emr.api.Controllers
 
            
             //string query_create = "CREATE TABLE template_" + formname.Replace(" ", "").ToLower() + " (Id INT IDENTITY(1,1), accountid int, locationid int, patientid varchar(100)";
-            string query_create = "CREATE TABLE template_" + formname.Replace(" ", "").ToLower() + " (Id INT, accountid int, locationid int, patientid varchar(100)";
+            string query_create = "CREATE TABLE template_" + formname.Replace(" ", "").ToLower() + " (Id INT, encodedby int foreign key references ApplicationUser(AppUserId), encounterid int foreign key references checkin(encounterid),accountid int, locationid int, patientid varchar(100)";
 
+            // s789990-
             //List<Component> request = new List<Component>();
             try
             {
@@ -443,7 +444,7 @@ namespace medicloud.emr.api.Controllers
             }
 
             //query_create += $" , Dateadded datetime DEFAULT GETDATE(), CONSTRAINT [{formname.Replace(" ", "").ToLower()+"_"+Guid.NewGuid().ToString()}] PRIMARY KEY CLUSTERED ([id] asc) )";
-            query_create += $" , Dateadded datetime , CONSTRAINT [{formname.Replace(" ", "").ToLower() + "_" + Guid.NewGuid().ToString()}] PRIMARY KEY CLUSTERED ([id] asc) )";
+            query_create += $" , Dateadded varchar(100) default '', oldid int default 0,CONSTRAINT [{formname.Replace(" ", "").ToLower() + "_" + Guid.NewGuid().ToString()}] PRIMARY KEY CLUSTERED ([id] asc)   )";
             sql.ExecuteNonQuery(query_create, CommandType.Text);
 
             return "Success";
