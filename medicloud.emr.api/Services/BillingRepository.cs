@@ -55,12 +55,14 @@ namespace medicloud.emr.api.Services
         {
             var patientPlantype = await _context.Patient.Where(p => p.Patientid == patientId && p.ProviderId == accountId).Select(r => r.Plantype).FirstOrDefaultAsync();
 
+            var plantype = await _context.PlanType.Where(p => p.planid == int.Parse(patientPlantype)).FirstOrDefaultAsync();
+
             if (string.IsNullOrEmpty(patientPlantype))
             {
                 return (false, "plan type not available for this patient", null, false, null);
             }
 
-            var tariffplan = await _context.TarriffPlan.Where(t => t.planid == int.Parse(patientPlantype)).FirstOrDefaultAsync();
+            var tariffplan = await _context.TarriffPlan.Where(t => t.planid == plantype.plantypeid).FirstOrDefaultAsync();
 
             if (tariffplan == null)
             {
