@@ -29,11 +29,9 @@ namespace medicloud.emr.api.Controllers
         return Ok(latestPrice);
       }
       catch (Exception ex)
-      {
-        decimal defaultprice = (decimal)1.00;
-        return Ok(defaultprice);
-        //var error = "Item not found";
-        // return BadRequest(error);
+      {       
+        var error = "An error occured";
+        return BadRequest(error);
       }
 
     }
