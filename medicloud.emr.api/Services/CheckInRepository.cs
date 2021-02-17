@@ -38,7 +38,7 @@ namespace medicloud.emr.api.Services
                 return ("Patient cannot be checked-In because no appointment was found for the patient", false, null);
             }
 
-            var check = await _context.CheckIn.Where(e => e.Patientid == patientId && e.Locationid == locationId && e.ProviderId == providerId && e.CheckInDate.Date == DateTime.Today.Date /*&& e.IsCheckedOut == false*/).ToListAsync();
+            var check = await _context.CheckIn.Where(e => e.Patientid == patientId && e.Locationid == locationId && e.ProviderId == providerId && e.CheckInDate.Date == DateTime.Today.Date && e.IsCheckedOut == false).ToListAsync();
 
             if (check.Count == 0)
             {

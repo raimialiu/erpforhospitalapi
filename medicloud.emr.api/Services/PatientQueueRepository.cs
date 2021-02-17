@@ -19,9 +19,11 @@ namespace medicloud.emr.api.Services
     public class PatientQueueRepository : IPatientQueueRepository
     {
         private readonly DataContext _context;
-        public PatientQueueRepository(DataContext context)
+        private readonly IPayerInsuranceRepository _payerInsuranceRepository;
+        public PatientQueueRepository(DataContext context, IPayerInsuranceRepository payerInsuranceRepository)
         {
             _context = context;
+            _payerInsuranceRepository = payerInsuranceRepository;
         }
 
         public async Task<List<PatientQueueDTO>> PatientQueuesToday(int locationId, int accountId)
@@ -40,10 +42,12 @@ namespace medicloud.emr.api.Services
                     Patient = r.Patient,
                     HospitalUnitName = r.HospitalUnit.HospitalUnitName,
                     PatientName = r.Patient.Lastname + " " + r.Patient.Firstname,
-                    Gender = _context.Gender.Where(g => g.Genderid == r.Patient.Genderid).Select(n => n.Gendername).FirstOrDefault()
+                    Gender = _context.Gender.Where(g => g.Genderid == r.Patient.Genderid).Select(n => n.Gendername).FirstOrDefault(),
+                    AccountCategory = _payerInsuranceRepository.GetPatientPayerInfo(r.Patient.Payor).Result
 
 
-                })
+
+        })
                 .ToListAsync();
             return todayQueue;
         }

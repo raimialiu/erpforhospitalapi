@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using medicloud.emr.api.DataContextRepo;
 using medicloud.emr.api.DTOs;
+using medicloud.emr.api.Entities;
 using medicloud.emr.api.Helpers;
 using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Http;
@@ -17,12 +18,14 @@ namespace medicloud.emr.api.Controllers
     {
         private readonly IAppointmentRepository _repository;
         private readonly IPatientRepo _patientRepo;
+        private readonly IBillingRepository _billingRepository;
 
 
-        public AppointmentsController(IAppointmentRepository repository, IPatientRepo patientRepo)
+        public AppointmentsController(IAppointmentRepository repository, IBillingRepository billingRepository, IPatientRepo patientRepo)
         {
             _repository = repository;
             _patientRepo = patientRepo;
+            _billingRepository = billingRepository;
         }
 
         [HttpGet, Route("GetUpcomingAppointments")]
@@ -152,28 +155,56 @@ namespace medicloud.emr.api.Controllers
         [HttpPut("update/{apptId}")]
         public async Task<IActionResult> UpdateAppointment(int apptId, AppointmentCreate model)
         {
-            if (apptId != model.Id)
-                return BadRequest(new ErrorResponse { ErrorMessage = "Id does not match" });
+            try
+            {
+                if (apptId != model.Id)
+                    return BadRequest(new ErrorResponse { ErrorMessage = "Id does not match" });
 
-            model.Date.AddHours(1);
+                model.Date.AddHours(1);
 
-            //(string, bool, bool) updated = await _repository.UpdateAppointment(model);
-           bool updated = await _repository.UpdateAppointment(model);
+                //(string, bool, bool) updated = await _repository.UpdateAppointment(model);
+                var updated = await _repository.UpdateAppointment(model);
 
-            //updateAppointmentResponse updateAppointmentResponse = new updateAppointmentResponse
-            //{
-            //    CheckinMessage = updated.Item1,
-            //    IsCheckedIn = updated.Item2,
-            //    IsUpdated = updated.Item3
-            //};
+                //updateAppointmentResponse updateAppointmentResponse = new updateAppointmentResponse
+                //{
+                //    CheckinMessage = updated.Item1,
+                //    IsCheckedIn = updated.Item2,
+                //    IsUpdated = updated.Item3
+                //};
 
-            //if (!updated.Item3)
-            //    return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
+                //if (!updated.Item3)
+                //    return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
+
+                if (!updated.Item1)
+                {
+                    return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
+                }
+                    
+
+                if (model.StatusId == 3 && updated.Item2 != null)
+                {
+                    // add bill
+                    BillingInvoice billingInvoice = new BillingInvoice()
+                    {
+                        patientid = model.PatientNo,
+                        ProviderID = model.AccountId,
+                        locationid = model.LocationId,
+                        encodedby = int.Parse(model.Adjuster),
+                        encounterId = updated.Item2
+                    };
+
+                    var billResult = await _billingRepository.WritePatientConsultationBill(billingInvoice);
+                }
+
+                return Ok(updated);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+
             
-            if (!updated)
-                return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
-
-            return Ok(updated);
         }
 
         [HttpGet("retrieve/{apptId}")]
