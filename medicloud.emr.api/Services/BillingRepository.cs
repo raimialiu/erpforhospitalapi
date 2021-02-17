@@ -101,7 +101,7 @@ namespace medicloud.emr.api.Services
                     }
                 }
 
-                return (result.Item1, result.Item2, result.Item3, true, tariffplan.tariffid);
+                return (result.Item1, result.Item2, result.Item3, false, tariffplan.tariffid);
 
             }
               
