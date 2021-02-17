@@ -74,7 +74,7 @@ namespace medicloud.emr.api.Services
                 }
                 else
                 {
-                    return (false, "No tariff was found for the service requested not even private", null, false, null);
+                    return (false, "No tariff was found for the service requested not even private tariff", null, false, null);
                 }
 
 
@@ -526,10 +526,25 @@ namespace medicloud.emr.api.Services
 
                 var _result = await getPatientTarrifByPayor((int)billingInvoice.ProviderID, billingInvoice.patientid, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
 
+                if (!_result.Item1)
+                {
+                    return (_result.Item1, _result.Item2, null);
+                }
+
                 invoiceamount.Item1 = _result.Item1;
                 invoiceamount.Item2 = _result.Item2;
                 invoiceamount.Item3 = (decimal)_result.Item3;
-                billingInvoice.settouseprivatetariff = _result.Item4;
+
+                if (plantype.payerid == 1162 && plantype.plantypeid == 32)
+                {
+                    billingInvoice.settouseprivatetariff = false;
+                }
+                else
+                {
+                    billingInvoice.settouseprivatetariff = _result.Item4;
+                }
+
+                    
 
                 
                 if (!invoiceamount.Item1)
@@ -615,10 +630,23 @@ namespace medicloud.emr.api.Services
 
                 var _result = await getPatientTarrifByPayor((int)billingInvoice.ProviderID, billingInvoice.patientid, int.Parse(billingInvoice.servicecode), (int)billingInvoice.locationid);
 
+                if (!_result.Item1)
+                {
+                    return (_result.Item1, _result.Item2, null);
+                }
+
                 invoiceamount.Item1 = _result.Item1;
                 invoiceamount.Item2 = _result.Item2;
                 invoiceamount.Item3 = (decimal)_result.Item3;
-                billingInvoice.settouseprivatetariff = _result.Item4;
+
+                if (plantype.payerid == 1162 && plantype.plantypeid == 32)
+                {
+                    billingInvoice.settouseprivatetariff = false;
+                }
+                else
+                {
+                    billingInvoice.settouseprivatetariff = _result.Item4;
+                }
 
                 #region old implementation
 
@@ -1001,7 +1029,7 @@ namespace medicloud.emr.api.Services
             }
             else
             {
-                return (0.00m, 0);
+                return (billAmount, 0);
             }
         }
 
@@ -1058,7 +1086,7 @@ namespace medicloud.emr.api.Services
         
         public async Task ClearPatientEncounterBill(int accountId, int encounterId, string patientId, decimal amountPaid, int locationid)
         {
-            var encounterBilllingInvoice = await _context.BillingInvoice.Where(r => r.ProviderID == accountId && r.encounterId == encounterId && r.patientid == patientId).ToListAsync();
+            var encounterBilllingInvoice = await _context.BillingInvoice.Where(r => r.ProviderID == accountId && r.encounterId == encounterId && r.patientid == patientId).OrderBy(i => i.dateadded).ToListAsync();
 
             var patient = await _context.Patient.Where(p => p.Patientid == patientId && p.ProviderId == accountId).FirstOrDefaultAsync();
 
@@ -1066,29 +1094,42 @@ namespace medicloud.emr.api.Services
 
             if (encounterBilllingInvoice.Count > 0)
             {
-
-                foreach (var invoice in encounterBilllingInvoice)
+                List<BillingInvoice> outstandingInvoices = new List<BillingInvoice>();
+                
+                foreach (var inv in encounterBilllingInvoice)
                 {
-                    var receipt = await _context.BillingReceipt.Where(p => p.billid == invoice.billid && p.encounterId == invoice.encounterId && p.patientid == invoice.patientid).ToListAsync();
+                    var totalcreditAmount = await _context.BillingReceipt.Where(p => p.billid == inv.billid && p.encounterId == inv.encounterId && p.patientid == inv.patientid).SumAsync(i => i.creditamount);
+                    if (totalcreditAmount < inv.billamount)
+                    {
+                        outstandingInvoices.Add(inv);
+                    };
+                }
+
+
+                foreach (var invoice in outstandingInvoices.ToList())
+                {
+                    //var receipt = await _context.BillingReceipt.Where(p => p.billid == invoice.billid && p.encounterId == invoice.encounterId && p.patientid == invoice.patientid).ToListAsync();
+
+                    var outstanding = await GetBillingInvoiceOutstanding(invoice.billid, accountId, (decimal)invoice.billamount);
 
                     if (whatIsLeftOfAmountPaid > 0)
                     {
-                        if (receipt.Count > 0)
+                        if (outstanding.Item2 > 0)
                         {
-                            var totalSum = receipt.Sum(i => i.creditamount);
+                            //var totalSum = receipt.Sum(i => i.creditamount);
 
-                            if (totalSum < invoice.billamount)
+                            if (outstanding.Item1 < invoice.billamount)
                             {
-                                var balanceTopay = invoice.billamount - totalSum;
+                                var balanceTopay = invoice.billamount - outstanding.Item1;
 
-                                if (whatIsLeftOfAmountPaid > balanceTopay)
+                                if (whatIsLeftOfAmountPaid > outstanding.Item1)
                                 {
-                                    var billToclear = whatIsLeftOfAmountPaid - balanceTopay;
+                                    var newAmount = whatIsLeftOfAmountPaid - outstanding.Item1;
 
                                     BillingReceipt billingReceipt = new BillingReceipt()
                                     {
                                         billid = invoice.billid,
-                                        creditamount = (decimal)billToclear,
+                                        creditamount = outstanding.Item1,
                                         encounterId = encounterId,
                                         dateadded = DateTime.Now,
                                         patientid = patientId,
@@ -1100,10 +1141,12 @@ namespace medicloud.emr.api.Services
                                     };
 
                                     await CreateReceipt(billingReceipt);
-                                    whatIsLeftOfAmountPaid = whatIsLeftOfAmountPaid - billToclear;
+                                    whatIsLeftOfAmountPaid = newAmount;
+                                    outstandingInvoices.Remove(invoice);
+                                    continue;
                                 }
 
-                                if (whatIsLeftOfAmountPaid <= balanceTopay && whatIsLeftOfAmountPaid > 0)
+                                if (whatIsLeftOfAmountPaid <= outstanding.Item1 && whatIsLeftOfAmountPaid > 0)
                                 {
                                     //var billToclear = whatIsLeftOfAmountPaid - balanceTopay;
 
@@ -1123,6 +1166,8 @@ namespace medicloud.emr.api.Services
 
                                     await CreateReceipt(billingReceipt);
                                     whatIsLeftOfAmountPaid = 0;
+                                    outstandingInvoices.Remove(invoice);
+                                    continue;
                                 }
                             }
                         }
@@ -1131,8 +1176,6 @@ namespace medicloud.emr.api.Services
                             if (whatIsLeftOfAmountPaid > invoice.billamount)
                             {
                                 var balanceTopay = whatIsLeftOfAmountPaid - invoice.billamount;
-
-                                var billToclear = whatIsLeftOfAmountPaid - balanceTopay;
 
                                 BillingReceipt billingReceipt = new BillingReceipt()
                                 {
@@ -1150,6 +1193,8 @@ namespace medicloud.emr.api.Services
 
                                 await CreateReceipt(billingReceipt);
                                 whatIsLeftOfAmountPaid = balanceTopay;
+                                outstandingInvoices.Remove(invoice);
+                                continue;
                             }
 
                             if (whatIsLeftOfAmountPaid <= invoice.billamount)
@@ -1172,12 +1217,14 @@ namespace medicloud.emr.api.Services
 
                                 await CreateReceipt(billingReceipt);
                                 whatIsLeftOfAmountPaid = 0;
+                                outstandingInvoices.Remove(invoice);
+                                continue;
                             }
                         }
                     }
                     else
                     {
-                        return;
+                        //return;
                     }
                 }
 
@@ -1232,6 +1279,7 @@ namespace medicloud.emr.api.Services
 
                             await UpdateBillInvoice(encounterBilllingInvoice);
                             await _context.SaveChangesAsync();
+                            continue;
                         }
 
                     }
@@ -1259,6 +1307,7 @@ namespace medicloud.emr.api.Services
 
                     await UpdateBillInvoice(encounterBilllingInvoice);
                     await _context.SaveChangesAsync();
+                    continue;
                 }
             }
 
@@ -1267,8 +1316,8 @@ namespace medicloud.emr.api.Services
 
         public async Task CreateReceipt (BillingReceipt billingReceipt)
         {
-            await _context.BillingReceipt.AddAsync(billingReceipt);
-            await _context.SaveChangesAsync();
+            _context.BillingReceipt.Add(billingReceipt);
+            _context.SaveChanges();
         }
 
     }
