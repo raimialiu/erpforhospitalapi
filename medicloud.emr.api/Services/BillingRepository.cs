@@ -157,11 +157,19 @@ namespace medicloud.emr.api.Services
 
             if (tariffServiceCode == null)
             {
-                var latestPrice = await _mRPRepository.getLatestPrice(drugid);
-
-                if (latestPrice != null)
+                PhrGrndetails phrGrndetails = new PhrGrndetails();
+                try
                 {
-                    return (true, "success", latestPrice.UnitCost);
+                    phrGrndetails = await _mRPRepository.getLatestPrice(drugid);
+                }
+                catch
+                {
+                    return (false, "failed! cost returned Null", null);
+                }
+                
+                if (phrGrndetails != null)
+                {
+                    return (true, "success", phrGrndetails.UnitCost);
                 }
                 else
                 {
@@ -829,7 +837,7 @@ namespace medicloud.emr.api.Services
 
             if (!invoiceamount.Item1)
             {
-                return (false, "tariff not found for this service requested", null);
+                return (false, invoiceamount.Item2, null);
             }
 
             if (billingInvoice.unit == null || billingInvoice.unit == 0)
@@ -840,13 +848,13 @@ namespace medicloud.emr.api.Services
             billingInvoice.dateadded = DateTime.Now;
             billingInvoice.plantypeid = /*plantype != null ? */int.Parse(patient.Plantype);/* : null*/;
             billingInvoice.payortypeid = !string.IsNullOrEmpty(patient.Payor) ? (int?)int.Parse(patient.Payor) : null;
-            billingInvoice.tariffid = tariffplan != null ? tariffplan.tariffid : null;
+            billingInvoice.tariffid = tariffplan != null ? tariffplan.drugtariffid : null;
             billingInvoice.billamount = invoiceamount.Item3 * billingInvoice.unit;
             billingInvoice.amounttopay = invoiceamount.Item3 * billingInvoice.unit;
             billingInvoice.unitcharge = invoiceamount.Item3;
             billingInvoice.servicecode = null;
 
-            if (patient.Payor != null && patient.Payor == 2518.ToString())
+            if (plantype != null && plantype.payerid == 2518 && billingInvoice.tariffid == 51)
             {
                 // is NHIS patient
                 var nhisResult = SetNHISCopay(billingInvoice.billamount, patient.Payor);
