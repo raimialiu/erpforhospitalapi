@@ -142,7 +142,7 @@ namespace medicloud.emr.api.Controllers
         
         [Route("GetPatientBillingInvoiceHistory")]
         [HttpGet]
-        public async Task<IActionResult> GetPatientBillingInvoiceHistory([FromQuery]int accountId, [FromQuery]string patientId, [FromQuery]int? encounterId)
+        public async Task<IActionResult> GetPatientBillingInvoiceHistory([FromQuery]int accountId, [FromQuery]string patientId)
         {
             //if(encounterId.HasValue)
             //{
