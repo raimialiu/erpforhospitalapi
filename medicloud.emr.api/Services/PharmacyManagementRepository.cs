@@ -16,7 +16,7 @@ namespace medicloud.emr.api.Services
     {
         Task<bool> AddPrescriptionDetails(FullPrescriptionDetailsDTO prescDetails);
         Task<PrescriptionListWithCount> getConsultationPrescriptionsList(PrescriptionListFilterModel prescriptionListFilterModel);
-        Task<ICollection<PharmacyManagementDTO>> getPatientPrescriptionsList(string patientid, int locationid);
+        Task<PrescriptionListWithCount> getPatientPrescriptionsList(PrescriptionListFilterModel prescriptionListFilterModel);
         Task<List<PharmacyManagementPrescriptionDetailsDTO>> getAllPrescriptionsDetails();
         PharmacyManagementDTO getConsultationPrescriptionByPrescriptionId(int prescriptionId);
         Task<bool> UpdatePrescriptionDetails(PrescriptionDetailsUpdateDTO prescriptionDetailsUpdateDTO);
@@ -303,17 +303,16 @@ namespace medicloud.emr.api.Services
                
             }
 
-        public async Task<ICollection<PharmacyManagementDTO>> getPatientPrescriptionsList(string patientid, int locationid)
+        public async Task<PrescriptionListWithCount> getPatientPrescriptionsList(PrescriptionListFilterModel prescriptionListFilterModel)
         {
-            var preseciptionList = new List<PharmacyManagementDTO>();
-            
+            var preseciptionList = new List<PharmacyManagementDTO>();            
                 preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
                 .OrderByDescending(p => p.Prescriptiondate)
-               .Where(p => (p.Patientid.Contains(patientid)) && (p.Isactive == true) && 
-                       (p.Locationid == locationid)  &&
+               .Where(p => (p.Patientid.Contains(prescriptionListFilterModel.PatientId)) && (p.Isactive == true) && 
+                       (p.Locationid == prescriptionListFilterModel.LocationId)  &&
                        (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
-               //.Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
-               //.Take(prescriptionListFilterModel.PageSize)
+               .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
+               .Take(prescriptionListFilterModel.PageSize)
               .Select(presc => new PharmacyManagementDTO
               {
                   Facility = presc.Location.Locationname,
@@ -331,11 +330,13 @@ namespace medicloud.emr.api.Services
                   Store = presc.Indentstore.Departmentname,
                   Encounterid = presc.Encounterid ?? 1
               })).ToListAsync();
-
-                //int count = _context.ConsultationPrescription.FromSqlInterpolated($"SELECT prescriptionid AS pid FROM Consultation_Prescription WHERE (patientid = {prescriptionListFilterModel.PatientId} AND locationid = {prescriptionListFilterModel.LocationId})").Count();
-                //int count = preseciptionList.Count();
-                //var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
-                return preseciptionList;            
+            //int count = preseciptionList.Count();
+            int count = _context.ConsultationPrescription.Where(p => (p.Patientid.Contains(prescriptionListFilterModel.PatientId)) && (p.Isactive == true) &&
+                      (p.Locationid == prescriptionListFilterModel.LocationId) &&
+                      (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true))).Count();
+            //int count = preseciptionList.Count();
+            var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
+                return prescriptionListWithCount;            
         }
 
         public async Task<List<PharmacyManagementPrescriptionDetailsDTO>> getAllPrescriptionsDetails()
