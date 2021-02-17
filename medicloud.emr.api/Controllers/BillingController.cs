@@ -158,7 +158,7 @@ namespace medicloud.emr.api.Controllers
 
             var patientBillingViewHistory = _conn.Query($"select a.*, b.serviceid, b.servicename, b.servicecategoryid, c.servicecategoryname, ck.checkindate,ck.encounterno,ck.encounterid checkinencounterid," +
                 $"c.servicecategorydesc from Billing_Invoice a join checkin ck on a.encounterid = ck.encounterid join ServiceCode b on a.servicecode = b.serviceid join servicecategory " +
-                $"c on b.servicecategoryid = c.servicecategoryid where a.patientid = '{patientId}' and a.providerid = {accountId} and  a.encounterid = {encounterId.Value}");
+                $"c on b.servicecategoryid = c.servicecategoryid where a.patientid = '{patientId}' and a.providerid = {accountId}");
           //   var bills = await _billingRepository.GetPatientEncounterBill(accountId, patientId, encounterId);
 
              return Ok(patientBillingViewHistory);
