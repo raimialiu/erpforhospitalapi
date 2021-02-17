@@ -16,6 +16,7 @@ namespace medicloud.emr.api.Services
     {
         Task<bool> AddPrescriptionDetails(FullPrescriptionDetailsDTO prescDetails);
         Task<PrescriptionListWithCount> getConsultationPrescriptionsList(PrescriptionListFilterModel prescriptionListFilterModel);
+        Task<PrescriptionListWithCount> getPatientPrescriptionsList(PrescriptionListFilterModel prescriptionListFilterModel);
         Task<List<PharmacyManagementPrescriptionDetailsDTO>> getAllPrescriptionsDetails();
         PharmacyManagementDTO getConsultationPrescriptionByPrescriptionId(int prescriptionId);
         Task<bool> UpdatePrescriptionDetails(PrescriptionDetailsUpdateDTO prescriptionDetailsUpdateDTO);
@@ -302,7 +303,41 @@ namespace medicloud.emr.api.Services
                
             }
 
-               
+        public async Task<PrescriptionListWithCount> getPatientPrescriptionsList(PrescriptionListFilterModel prescriptionListFilterModel)
+        {
+            var preseciptionList = new List<PharmacyManagementDTO>();            
+                preseciptionList = await (_context.ConsultationPrescription.AsNoTracking()
+                .OrderByDescending(p => p.Prescriptiondate)
+               .Where(p => (p.Patientid.Contains(prescriptionListFilterModel.PatientId)) && (p.Isactive == true) && 
+                       (p.Locationid == prescriptionListFilterModel.LocationId)  &&
+                       (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true)))
+               .Skip((prescriptionListFilterModel.PageNumber - 1) * prescriptionListFilterModel.PageSize)
+               .Take(prescriptionListFilterModel.PageSize)
+              .Select(presc => new PharmacyManagementDTO
+              {
+                  Facility = presc.Location.Locationname,
+                  Prescno = presc.Prescriptionid,
+                  Prescdate = presc.Prescriptiondate,
+                  Patientname = presc.Patient.Firstname + " " + presc.Patient.Lastname,
+                  Agegender = CalculateAge((DateTime)presc.Patient.Dob) + "/Yrs" + presc.Patient.Gender.Gendername,
+                  Regno = UInt32.Parse(presc.Patientid),
+                  //Plantype = _context.PlanType.Where(pl=>pl.planid==Int32.Parse(presc.Patient.Plantype)).Select(pl=>pl.planname).FirstOrDefault(),
+                  //Plantype = _context.PlanType.FromSqlInterpolated($"SELECT planname from PlanType where planid = {presc.Patient.Plantype}").FirstOrDefault().ToString(),
+                  Company = presc.Patient.Spons.Sponsortype,
+                  Alert = 0,
+                  Doctorname = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                  Seenbydoctor = _context.ApplicationUser.Where(o => o.Appuserid == presc.Doctorid).Select(o => o.Lastname + " " + o.Firstname).FirstOrDefault(),
+                  Store = presc.Indentstore.Departmentname,
+                  Encounterid = presc.Encounterid ?? 1
+              })).ToListAsync();
+            //int count = preseciptionList.Count();
+            int count = _context.ConsultationPrescription.Where(p => (p.Patientid.Contains(prescriptionListFilterModel.PatientId)) && (p.Isactive == true) &&
+                      (p.Locationid == prescriptionListFilterModel.LocationId) &&
+                      (_context.ConsultationPrescriptionDetails.Any(pd => pd.Prescriptionid == p.Prescriptionid && pd.Isactive == true))).Count();
+            //int count = preseciptionList.Count();
+            var prescriptionListWithCount = new PrescriptionListWithCount(preseciptionList, count);
+                return prescriptionListWithCount;            
+        }
 
         public async Task<List<PharmacyManagementPrescriptionDetailsDTO>> getAllPrescriptionsDetails()
         {
