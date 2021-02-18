@@ -120,7 +120,7 @@ namespace medicloud.emr.api.DTOs
         public int Locationid { get; set; }
         public int Providerid { get; set; }
         public string Patientid { get; set; }
-        public int Genericid { get; set; }
+        public int? Genericid { get; set; }
         public string Strength { get; set; }
         public DateTime Startdate { get; set; }
         public int Refill { get; set; }

@@ -22,6 +22,7 @@ namespace medicloud.emr.api.Services
         Task<bool> UpdatePrescriptionDetails(PrescriptionDetailsUpdateDTO prescriptionDetailsUpdateDTO);
         Task<bool> RemovePrescriptionDetails(PrescriptionDetailsRemoveDTO prescriptionDetailsRemoveDTO);
         Task<List<PharmacyManagementPrescriptionDetailsDTO>> getConsultationPrescriptionsDetailsByPrescriptionId(int prescriptionId);
+        Task<List<PharmacyManagementPrescriptionDetailsDTO>> GetPrescriptiondetailsWithStatus(int statusid, int prescriptionId);
         bool PrescriptionDetailsExist(int prescriptionDetailsId);
         bool ConsultationPrescriptionExists(int ConsultationPrescriptionId);
         Task<IEnumerable<ProviderDTO>> GetProviders();
@@ -380,6 +381,30 @@ namespace medicloud.emr.api.Services
                     }).OrderBy(p => p.Name).ToListAsync();
             return list;
 
+        }
+
+        //returns the list of prescription that do not have the specified status id applied to them yet
+        public async Task<List<PharmacyManagementPrescriptionDetailsDTO>> GetPrescriptiondetailsWithStatus(int statusid, int prescriptionId)
+        {
+            var list = await _context.ConsultationPrescriptionDetails.AsNoTracking()
+                 .Where(e => e.Prescriptionid.Equals(prescriptionId) && e.ItemId != null 
+                            && e.Isactive == true && e.Statusid != statusid)
+                    .Select(s => new PharmacyManagementPrescriptionDetailsDTO
+                    {
+                        Name = _context.Drug.Where(d => d.Id == s.ItemId).Select(e => e.Name).FirstOrDefault(),
+                        Prescdetails = s.PrescriptionDetail,
+                        Prescriptionquantity = (s.Qty).HasValue ? (int)s.Qty : 0,
+                        Issuedquantity = 0,
+                        disensedQuantity = 0,
+                        PAno = 0,
+                        Status = s.Status.Status,
+                        Instructions = s.Medicationinstructions,
+                        Id = s.Id,
+                        StatusId = s.Statusid,
+                        Comments = s.Comments,
+                        isActive = (bool)s.Isactive
+                    }).OrderBy(p => p.Name).ToListAsync();
+            return list;
         }
 
         public bool PrescriptionDetailsExist(int prescriptionDetailsId)
