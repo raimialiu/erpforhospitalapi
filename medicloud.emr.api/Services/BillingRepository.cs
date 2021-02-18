@@ -31,6 +31,7 @@ namespace medicloud.emr.api.Services
         Task<(bool, string, decimal?)> getDrugTarrifByDrugId(int accountId, int tariffid, int drugid, int locationId);
         Task ClearPatientEncounterBillByPaCode(BillingInvoicePaymentByPaDto invoicePayment);
         Task<(bool, string, int?)> AddDrugBillInvoice(BillingInvoice billingInvoice);
+        Task<BillingInvoice> CheckPrivatePatientBillForRegistration(string patientId, int accountId);
 
     }
 
@@ -55,12 +56,14 @@ namespace medicloud.emr.api.Services
         {
             var patientPlantype = await _context.Patient.Where(p => p.Patientid == patientId && p.ProviderId == accountId).Select(r => r.Plantype).FirstOrDefaultAsync();
 
+            var plantype = await _context.PlanType.Where(p => p.planid == int.Parse(patientPlantype)).FirstOrDefaultAsync();
+
             if (string.IsNullOrEmpty(patientPlantype))
             {
                 return (false, "plan type not available for this patient", null, false, null);
             }
 
-            var tariffplan = await _context.TarriffPlan.Where(t => t.planid == int.Parse(patientPlantype)).FirstOrDefaultAsync();
+            var tariffplan = await _context.TarriffPlan.Where(t => t.planid == plantype.plantypeid).FirstOrDefaultAsync();
 
             if (tariffplan == null)
             {
@@ -99,7 +102,7 @@ namespace medicloud.emr.api.Services
                     }
                 }
 
-                return (result.Item1, result.Item2, result.Item3, true, tariffplan.tariffid);
+                return (result.Item1, result.Item2, result.Item3, false, tariffplan.tariffid);
 
             }
               
@@ -454,6 +457,12 @@ namespace medicloud.emr.api.Services
             billingInvoice.isadjusted = true;
             _context.BillingInvoice.Update(billingInvoice);
             await _context.SaveChangesAsync();
+        }
+        
+        public async Task<BillingInvoice> CheckPrivatePatientBillForRegistration(string patientId, int accountId)
+        {
+            var bill = await _context.BillingInvoice.Where(b => b.patientid == patientId && b.servicecode == 3209.ToString() && b.ProviderID == accountId).FirstOrDefaultAsync();
+            return bill;
         }
         
         public async Task AddConsulttionAndRegBillInvoice(BillingInvoice billingInvoice)

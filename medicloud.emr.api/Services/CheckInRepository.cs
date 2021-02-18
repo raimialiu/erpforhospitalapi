@@ -74,13 +74,17 @@ namespace medicloud.emr.api.Services
                 await _context.AddAsync(patientQueue);
                 await _context.SaveChangesAsync();
 
-                foreach (var item in getPatientsAppointment)
+                if (getPatientsAppointment.Count > 0)
                 {
-                    item.encounterid = checkin.Entity.Encounterid;
-                }
+                    foreach (var item in getPatientsAppointment)
+                    {
+                        item.encounterid = checkin.Entity.Encounterid;
+                    }
 
-                _context.AppointmentSchedule.UpdateRange(getPatientsAppointment);
-                await _context.SaveChangesAsync();
+                    _context.AppointmentSchedule.UpdateRange(getPatientsAppointment);
+                    await _context.SaveChangesAsync();
+                }
+                
 
                 return ("Patient has been successfully checked-In", true, checkin.Entity.Encounterid);
             }

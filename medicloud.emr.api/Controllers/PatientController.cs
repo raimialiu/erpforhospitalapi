@@ -300,14 +300,14 @@ namespace medicloud.emr.api.Controllers
                 };
                 try
                 {
-                    billingResult = await _Billingrepo.WritePatientRegistrationBill(new BillingInvoice()
-                    {
-                        patientid = spliResult,
-                        ProviderID = patient.ProviderId,
-                        locationid = Int32.Parse(patient.locationid),
+                    //billingResult = await _Billingrepo.WritePatientRegistrationBill(new BillingInvoice()
+                    //{
+                    //    patientid = spliResult,
+                    //    ProviderID = patient.ProviderId,
+                    //    locationid = Int32.Parse(patient.locationid),
 
-                    });
-                    isSuccessResponse = billingResult.Item1;
+                    //});
+                    isSuccessResponse = true;
                     resultOut = new
                     {
                         PatientRegNumber = spliResult,
