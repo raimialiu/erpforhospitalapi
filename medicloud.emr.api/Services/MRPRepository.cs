@@ -17,6 +17,8 @@ namespace medicloud.emr.api.Services
   public class MRPRepository : IMRPRepository
   {
     private readonly DataContext _context;
+    private PhrGrndetails cost;
+
     public MRPRepository(DataContext context)
     {
       _context = context;
@@ -24,23 +26,42 @@ namespace medicloud.emr.api.Services
 
     public async Task<PhrGrndetails> getLatestPrice(int itemid)
     {
-      var cost = await _context.PhrGrndetails.Where(d => d.ItemId == itemid)
-                 .OrderByDescending(s => s.UnitCost).FirstOrDefaultAsync();
       
-      if (cost.UnitCost <= 20000 && cost.UnitCost != null)
+      try
       {
-        cost.UnitCost = Convert.ToDecimal(cost.UnitCost * 2);
+        
+        cost = await _context.PhrGrndetails.Where(d => d.ItemId == itemid)
+                .OrderByDescending(s => s.UnitCost).FirstOrDefaultAsync();
+
+        if (cost != null)
+        {
+          if (cost.UnitCost <= 20000 && cost.UnitCost != null)
+          {
+            cost.UnitCost = Convert.ToDecimal(cost.UnitCost * 2);
+          }
+          else if (cost.UnitCost > 20000 && cost.UnitCost <= 400000 && cost.UnitCost != null)
+          {
+            cost.UnitCost = (decimal)(cost.UnitCost * Convert.ToDecimal(1.5));
+          }
+          else if (cost.UnitCost > 400000 && cost.UnitCost != null)
+          {
+            cost.UnitCost = (decimal)(cost.UnitCost * Convert.ToDecimal(1.3));
+          }
+        }
+        else if(cost == null)
+        {
+          PhrGrndetails cost = new PhrGrndetails();
+          cost.UnitCost = (decimal)1.00;
+          return cost;
+        }
+
       }
-      else if (cost.UnitCost > 20000 && cost.UnitCost <= 400000 && cost.UnitCost != null)
+      catch (Exception ex)
       {
-        cost.UnitCost = (decimal)(cost.UnitCost * Convert.ToDecimal(1.5));
-      }
-      else if (cost.UnitCost > 400000 && cost.UnitCost != null)
-      {
-        cost.UnitCost = (decimal)(cost.UnitCost * Convert.ToDecimal(1.3));      
+       
       }
 
-     return cost;
+      return cost;
     }
            
   }
