@@ -13,6 +13,7 @@ namespace medicloud.emr.api.DTOs
         public Patient Patient { get; set; }
         public int AccountId { get; set; }
         public string Payer { get; set; }
+        public PayerDto AccountCategory { get; set; }
         public int LocationId { get; set; }
         public Location Location { get; set; }
         public int HospitalUnitId { get; set; }

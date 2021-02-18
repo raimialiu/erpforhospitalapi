@@ -17,12 +17,14 @@ namespace medicloud.emr.api.Controllers
     public class PrescriptionListFilterModel : QueryListParameters
     {
         //both defaultDate and Date must be equal, as this is the initial date value
-       public DateTime defaultDate = new DateTime(1753, 1, 1);
+        public DateTime defaultDate = new DateTime(1753, 1, 1);
         public int? LocationId { get; set; }
         public DateTime? Date { get; set; } 
         //public int VisitType { get; set; }        
         public int? ProviderId { get; set; }
         public int? StatusId { get; set; }
+        public string PatientId { get; set; }
+        
     }
 
     [Route("api/[controller]")]
@@ -43,9 +45,8 @@ namespace medicloud.emr.api.Controllers
         public async Task<IActionResult> GetPrescriptionList([FromQuery] PrescriptionListFilterModel prescriptionListFilterModel)
         {
             try
-            {
-               
-                var count = _context.ConsultationPrescription.Count();
+            {               
+                //var count = _context.ConsultationPrescription.Count();
                 var prescriptionListWithCount = await _pharmacyManagementRepository.getConsultationPrescriptionsList(prescriptionListFilterModel);
                 var prescriptionList = new PagedList<PharmacyManagementDTO>(prescriptionListWithCount.PrescriptionList, prescriptionListWithCount.Count, prescriptionListFilterModel.PageNumber, prescriptionListFilterModel.PageSize);
 
@@ -84,6 +85,33 @@ namespace medicloud.emr.api.Controllers
             }
         }
 
+        [HttpGet, Route("getPatientPrescription")]
+        public async Task<IActionResult> getPatientPrescription([FromQuery] PrescriptionListFilterModel prescriptionListFilterModel)
+        {
+            try
+            {
+                if (_context.Patient.Any(p => p.Patientid.Contains(prescriptionListFilterModel.PatientId)))
+                {
+                    var prescriptionListWithCount = await  _pharmacyManagementRepository.getPatientPrescriptionsList(prescriptionListFilterModel);
+                var prescriptionList = new PagedList<PharmacyManagementDTO>(prescriptionListWithCount.PrescriptionList, prescriptionListWithCount.Count, prescriptionListFilterModel.PageNumber, prescriptionListFilterModel.PageSize);
+
+                Response.Headers.Add("TotalCount", JsonConvert.SerializeObject(prescriptionList.TotalCount));
+                Response.Headers.Add("PageSize", JsonConvert.SerializeObject(prescriptionList.PageSize));
+                Response.Headers.Add("CurrentPage", JsonConvert.SerializeObject(prescriptionList.CurrentPage));
+                Response.Headers.Add("TotalPages", JsonConvert.SerializeObject(prescriptionList.TotalPages));
+                Response.Headers.Add("HasNext", JsonConvert.SerializeObject(prescriptionList.HasNext));
+                Response.Headers.Add("HasPrevious", JsonConvert.SerializeObject(prescriptionList.HasPrevious));
+
+                return Ok(prescriptionList);
+                }
+                else return BadRequest("invalid patientid");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpGet, Route("getPrescriptionDetailsByPrescriptionId/{prescriptionid}")]
         public async Task<IActionResult> getPrescriptionDetailsByPrescriptionId(int prescriptionid)
         {
@@ -104,6 +132,8 @@ namespace medicloud.emr.api.Controllers
                 return BadRequest();
             }
         }
+
+
 
 
         [HttpGet]
