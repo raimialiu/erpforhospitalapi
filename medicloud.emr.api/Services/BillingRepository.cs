@@ -31,6 +31,7 @@ namespace medicloud.emr.api.Services
         Task<(bool, string, decimal?)> getDrugTarrifByDrugId(int accountId, int tariffid, int drugid, int locationId);
         Task ClearPatientEncounterBillByPaCode(BillingInvoicePaymentByPaDto invoicePayment);
         Task<(bool, string, int?)> AddDrugBillInvoice(BillingInvoice billingInvoice);
+        Task<BillingInvoice> CheckPrivatePatientBillForRegistration(string patientId, int accountId);
 
     }
 
@@ -456,6 +457,12 @@ namespace medicloud.emr.api.Services
             billingInvoice.isadjusted = true;
             _context.BillingInvoice.Update(billingInvoice);
             await _context.SaveChangesAsync();
+        }
+        
+        public async Task<BillingInvoice> CheckPrivatePatientBillForRegistration(string patientId, int accountId)
+        {
+            var bill = await _context.BillingInvoice.Where(b => b.patientid == patientId && b.servicecode == 3209.ToString() && b.ProviderID == accountId).FirstOrDefaultAsync();
+            return bill;
         }
         
         public async Task AddConsulttionAndRegBillInvoice(BillingInvoice billingInvoice)
