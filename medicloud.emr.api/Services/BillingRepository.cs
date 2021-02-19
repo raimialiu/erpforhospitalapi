@@ -32,6 +32,7 @@ namespace medicloud.emr.api.Services
         Task ClearPatientEncounterBillByPaCode(BillingInvoicePaymentByPaDto invoicePayment);
         Task<(bool, string, int?)> AddDrugBillInvoice(BillingInvoice billingInvoice);
         Task<BillingInvoice> CheckPrivatePatientBillForRegistration(string patientId, int accountId);
+        Task<List<EncounterBillingInvoicesDto>> GetPatientBillingInvoiceHistory(int accountId, string patientId);
 
     }
 
@@ -887,17 +888,38 @@ namespace medicloud.emr.api.Services
         }
 
 
-        public async Task<PatientBillDto> GetPatientBillingInvoiceHistory(int accountId, string patientId, int? encounterId)
+        public async Task<List<EncounterBillingInvoicesDto>> GetPatientBillingInvoiceHistory(int accountId, string patientId)
         {
-            
+
             var patient = await _context.Patient.Where(p => p.Patientid == patientId && p.ProviderId == accountId).FirstOrDefaultAsync();
-                       
-            var billingInvoice = await _context.BillingInvoice.Where(b => b.ProviderID == accountId && b.patientid == patientId)
+
+            PayerDto payer = new PayerDto()
+            {
+                AccountCategory = new AccountCategory(),
+                AccountCatId = null,
+                dateadded = null,
+                IsinsuranceCompany = false,
+                PayerId = 0,
+                PayerType = ""
+            };
+
+            if (patient.Payor != null)
+            {
+                payer = await _payerInsuranceRepository.GetPatientPayerInfo(patient.Payor.ToString());
+
+                if (payer != null)
+                {
+                    payer.PayerType = await _context.Payer.Where(p => p.PayerId == payer.PayerId).Select(r => r.PayerType).FirstOrDefaultAsync() + "("+payer.AccountCategory.Accountcattype+")";
+                }
+
+            }
+
+            var billingInvoice1 = await _context.BillingInvoice.Where(b => b.ProviderID == accountId && b.patientid == patientId)
                 .Select(r => new BillingInvoiceDto()
                 {
                     billamount = r.billamount,
                     billid = r.billid,
-                    discount = r.discount,
+                    discount = (double)r.discount,
                     encounterId = r.encounterId,
                     locationid = r.locationid,
                     patientid = r.patientid,
@@ -905,29 +927,141 @@ namespace medicloud.emr.api.Services
                     servicecode = r.servicecode,
                     drugid = r.drugid,
                     amounttopay = r.amounttopay,
-                    copay = r.copay,
-                    settouseprivatetariff = r.settouseprivatetariff
+                    copay = (decimal)r.copay,
+                    unit = r.unit,
+                    unitcharge = r.unitcharge,
+                    settouseprivatetariff = (bool)r.settouseprivatetariff,
+                    dateadded = r.dateadded
+                    //Servicename = !string.IsNullOrEmpty(r.servicecode) ? _context.ServiceCode.Where(s => s.serviceid == int.Parse(r.servicecode)).Select(m => m.servicename).FirstOrDefault() : "Drugs",
 
                 }).ToListAsync();
 
-            // item.Servicename = _context.ServiceCode.Where(p => p.serviceid == serviceId && p.ProviderID == accountId).Select(w => w.servicename).FirstOrDefault();
-            // retreive patient accountcategory
-            var patientAccountCategory = await _payerInsuranceRepository.GetPatientPayerInfo(patient.Payor);
+            var billByEncounter = billingInvoice1.GroupBy(e => e.encounterId).ToList();
 
-            PatientBillDto patientBillDto = new PatientBillDto()
+            List<EncounterBillingInvoicesDto> encounterBillingHistory = new List<EncounterBillingInvoicesDto>();
+
+            foreach (var billingInvoice in billByEncounter.ToList())
             {
-                //encounterid = encounterId,
-                patientAccountCategory = patientAccountCategory.AccountCategory != null ? patientAccountCategory.AccountCategory.Accountcattype : "",
-                //encounterdate = encounterDetails.CheckInDate,
-                patientname = patient.Lastname + " " + patient.Firstname,
-                totalbilledamount = (decimal)billingInvoice.Sum(e => e.billamount),
-                totaloutstanding = (decimal)billingInvoice.Sum(e => e.Outstanding),
-                invoices = billingInvoice,
-                billid = billingInvoice.Select(b => b.billid).FirstOrDefault()
-            };
+                if (billingInvoice.Key == null)
+                {
+                    continue;
+                }
 
-            return patientBillDto;
+                EncounterBillingInvoicesDto encounterBilling = new EncounterBillingInvoicesDto()
+                {
+                    EncounterId = (int)billingInvoice.Key,
+                    BillProvider = _context.AccountManager.Where(e => e.ProviderId == accountId).Select(r => r.HospitalName).FirstOrDefault(),
+                    EncounterDate = _context.CheckIn.Where(s => s.Encounterid == (int)billingInvoice.Key).Select(w => w.CheckInDate).FirstOrDefault(),
+                    Location = _context.Location.Where(e => e.AccountID == accountId && e.Locationid == billingInvoice.Select(r => r.locationid).FirstOrDefault()).Select(r => r.Locationname).FirstOrDefault(),
+                    PatientPayerInfo = payer.PayerType,
+                    BillingInvoiceHistory = new List<BillingInvoiceHistoryDto>()
+                };
 
+                var options = new ParallelOptions { MaxDegreeOfParallelism = 5 };
+                foreach (var item in billingInvoice)
+                {
+
+                    int? serviceId = null;
+                    if (!string.IsNullOrEmpty(item.servicecode))
+                    {
+                        serviceId = int.Parse(item.servicecode);
+                        item.Servicename = _context.ServiceCode.Where(p => p.serviceid == serviceId && p.ProviderID == accountId).Select(w => w.servicename).FirstOrDefault();
+                    }
+
+                    if (item.drugid != null || item.drugid > 0)
+                    {
+                        item.Servicename = _context.Drug.Where(p => p.Id == item.drugid && p.Providerid == accountId).Select(w => w.Name).FirstOrDefault();
+                    }
+
+                };
+
+                var orderCategories = await _context.OrderCategory.Where(o => o.ProviderID == accountId && o.Ordertypeid == 2 || o.Ordertypeid == 7).ToListAsync();
+
+                var dsd = billingInvoice.GroupBy(b => b.servicecode).ToList();
+
+                var services = billingInvoice.Where(k => k.servicecode != null).ToList();
+
+                List<BillingInvoiceHistoryDto> billingInvoiceHistoryDto = new List<BillingInvoiceHistoryDto>();
+                foreach (var orderCat in orderCategories.ToList())
+                {
+                    BillingInvoiceHistoryDto billingInvoiceHistoryDto1 = new BillingInvoiceHistoryDto()
+                    {
+                        ServiceCategoryName = orderCat.Ordercategory1,
+                        Invoices = new List<BillingInvoiceDto>(),
+                        TotalBillCharge = 0.00m,
+                        PatientPayable = 0.00m,
+                        PayerPayable = 0.00m,
+                        TotalDiscountAmount = 0.00,
+
+                    };
+
+                    var totalDiscountAmount = 0.00m;
+                    foreach (var item in services.ToList())
+                    {
+
+                        var serviceid = int.Parse(item.servicecode);
+                        var orderDetails = await _context.OrderDetails.Where(r => r.serviceid == serviceid).FirstOrDefaultAsync();
+
+                        if (orderDetails.ordercategoryid == orderCat.Ordercategoryid)
+                        {
+                            if (item.discount > 0)
+                            {
+                                var oppositePercent = 100 - (decimal)item.discount;
+                                var decimalPercent = oppositePercent / 100;
+                                var finalBillAmount = decimalPercent * (item.unit * item.unitcharge);
+                                var discount = (item.unit * item.unitcharge) - finalBillAmount;
+                                totalDiscountAmount = +(decimal)discount;
+                            }
+
+                            billingInvoiceHistoryDto1.Invoices.Add(item);
+                            services.Remove(item);
+
+                        }
+
+                    }
+
+                    if (billingInvoiceHistoryDto1.Invoices.Count > 0)
+                    {
+                        billingInvoiceHistoryDto1.PatientPayable = (decimal)billingInvoiceHistoryDto1.Invoices.Sum(m => m.amounttopay);
+                        billingInvoiceHistoryDto1.TotalBillCharge = (decimal)billingInvoiceHistoryDto1.Invoices.Sum(m => m.amounttopay);
+                        billingInvoiceHistoryDto1.TotalDiscountAmount = (double)totalDiscountAmount;
+
+                        // use this to find discount percentage
+                        var totalBillAmount = (decimal)billingInvoiceHistoryDto1.Invoices.Sum(m => m.unit * m.unitcharge);
+
+                        billingInvoiceHistoryDto.Add(billingInvoiceHistoryDto1);
+
+                        orderCategories.Remove(orderCat);
+                    }
+
+                }
+                    
+
+                var drugs = dsd.Where(k => k.Key == null).FirstOrDefault();
+
+                if (drugs != null)
+                {
+                    BillingInvoiceHistoryDto drugsHistory = new BillingInvoiceHistoryDto()
+                    {
+                        Invoices = drugs.ToList(),
+                        ServiceCategoryName = "Drugs",
+                        TotalBillCharge = (decimal)drugs.ToList().Sum(r => r.amounttopay),
+                        TotalDiscountAmount = 0,
+                        TotalDiscountPercent = 0.00,
+                        PatientPayable = (decimal)drugs.ToList().Sum(r => r.amounttopay),
+                        PayerPayable = 0.00m
+
+                    };
+                    billingInvoiceHistoryDto.Add(drugsHistory);
+                }
+
+                encounterBilling.BillingInvoiceHistory = billingInvoiceHistoryDto;
+                encounterBillingHistory.Add(encounterBilling);
+
+            }
+
+
+            return encounterBillingHistory;
         }
 
         public async Task<PatientBillDto> GetPatientEncounterBill (int accountId, string patientId, int? encounterId)
@@ -944,7 +1078,7 @@ namespace medicloud.emr.api.Services
                 {
                     billamount = r.billamount,
                     billid = r.billid,
-                    discount = r.discount,
+                    discount = (double)r.discount,
                     encounterId = r.encounterId,
                     locationid = r.locationid,
                     patientid = r.patientid,
@@ -956,10 +1090,11 @@ namespace medicloud.emr.api.Services
                     sponsorid = r.sponsorid,
                     drugid = r.drugid,
                     amounttopay = r.amounttopay,
-                    copay = r.copay,
-                    settouseprivatetariff = r.settouseprivatetariff
+                    copay = (decimal)r.copay,
+                    settouseprivatetariff = (bool)r.settouseprivatetariff
 
                 }).ToListAsync();
+
 
             // calculate patient outstanding bill
             foreach (var item in billingInvoice)
