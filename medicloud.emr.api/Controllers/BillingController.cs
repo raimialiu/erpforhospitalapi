@@ -140,28 +140,35 @@ namespace medicloud.emr.api.Controllers
 
         }
         
-        [Route("GetPatientBillingInvoiceHistory")]
-        [HttpGet]
-        public async Task<IActionResult> GetPatientBillingInvoiceHistory([FromQuery]int accountId, [FromQuery]string patientId)
+        [HttpGet("GetPatientBillingInvoiceHistory")]
+        public async Task<IActionResult> GetPatientBillingInvoiceHistory(int accountid, string patientId)
         {
-            //if(encounterId.HasValue)
-            //{
-            //    var patientBillingHistory = _conn.Query($"select a.*, b.serviceid, b.servicename, b.servicecategoryid, c.servicecategoryname, " +
-            //    $"c.servicecategorydesc from Billing_Invoice a join ServiceCode b on a.servicecode = b.serviceid join servicecategory " +
-            //    $"c on b.servicecategoryid = c.servicecategoryid where a.patientid = '{patientId}' and a.providerid = {accountId} and encounterid = {encounterId}");
-            //    //   var bills = await _billingRepository.GetPatientEncounterBill(accountId, patientId, encounterId);
-
-            //    return Ok(patientBillingHistory);
-            //}
-
-
-
-            var patientBillingViewHistory = _conn.Query($"select a.*, b.serviceid, b.servicename, b.servicecategoryid, c.servicecategoryname, ck.checkindate,ck.encounterno,ck.encounterid checkinencounterid," +
-                $"c.servicecategorydesc from Billing_Invoice a join checkin ck on a.encounterid = ck.encounterid join ServiceCode b on a.servicecode = b.serviceid join servicecategory " +
-                $"c on b.servicecategoryid = c.servicecategoryid where a.patientid = '{patientId}' and a.providerid = {accountId}");
-          //   var bills = await _billingRepository.GetPatientEncounterBill(accountId, patientId, encounterId);
-
-             return Ok(patientBillingViewHistory);
+            try
+            {
+                var billIvoices = await _billingRepository.GetPatientBillingInvoiceHistory(accountid, patientId);
+                return Ok(billIvoices);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+           
+          
+        }
+        
+        [HttpGet("GetPatientBillingInvoiceHistory2")]
+        public async Task<IActionResult> GetPatientBillingInvoiceHistory2(EncounterBillingInvoicesDto sdsdsd)
+        {
+            try
+            {
+                //var billIvoices = await _billingRepository.GetPatientBillingInvoiceHistory(accountid, patientId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+           
           
         }
 

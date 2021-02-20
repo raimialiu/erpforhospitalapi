@@ -18,12 +18,12 @@ namespace medicloud.emr.api.Entities
         public int? tariffid { get; set; }
         public int? billtypeid { get; set; }
         public decimal? billamount { get; set; }
-        public double discount { get; set; }
-        public decimal copay { get; set; }
+        public double? discount { get; set; }
+        public decimal? copay { get; set; }
         public decimal? amounttopay { get; set; }
         public decimal? unitcharge { get; set; }
         public bool isadjusted { get; set; }
-        public bool settouseprivatetariff { get; set; }
+        public bool? settouseprivatetariff { get; set; }
         public int? adjusterid { get; set; }
         public DateTime? billdate { get; set; }
         public string panumber { get; set; }

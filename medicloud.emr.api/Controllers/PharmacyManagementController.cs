@@ -112,6 +112,15 @@ namespace medicloud.emr.api.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("GetPrescriptiondetailsWithStatus")]
+        public async Task<IActionResult> GetPrescriptiondetailsWithStatus(int statusid, int prescriptionid)
+        {
+            var list = await _pharmacyManagementRepository.GetPrescriptiondetailsWithStatus(statusid, prescriptionid);
+            return Ok(list);
+        }
+
+
         [HttpGet, Route("getPrescriptionDetailsByPrescriptionId/{prescriptionid}")]
         public async Task<IActionResult> getPrescriptionDetailsByPrescriptionId(int prescriptionid)
         {
