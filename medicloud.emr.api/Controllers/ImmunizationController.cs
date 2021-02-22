@@ -32,11 +32,12 @@ namespace medicloud.emr.api.Controllers
         [HttpGet]
         public async Task<IActionResult> AllImunizationSchedule()
         {
-           var all =await _conn.QueryAsync("select * from Immunization_Schedule a join EmrImmunizationMaster b " +
-               "                            on a.immunizationid = b.Immunizationid");
+           // var all =await _conn.QueryAsync("select * from Immunization_Schedule a join EmrImmunizationMaster b " +
+           //     "                            on a.immunizationid = b.Immunizationid");
          // var all = await _conn.QueryAsync("select a.*, b.immunizationname, b.isactive,b.cptcode, b.encodeddate, c.duedate, c.givendatetime, c.remarks, c.batchno, c.brandid, c.givenby from Immunization_Schedule a join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid join immunization_details c on a.scheduleid = c.scheduleid");
-
-            return Ok(all);
+         var all = "select *, d.name drugname, im.givenby givennurse, (select concat(firstname, ' ', lastname) from ApplicationUser where appuserid = im.givenby)nursename from Immunization_Schedule a join immunization_details im on a.scheduleid = im.scheduleid join Drug d on im.brandid = d.id join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid";
+         var allResult = await _conn.QueryAsync(all);   
+         return Ok(allResult);
         }
 
         [Route("UpdateImmunizationSchedule/{id}")]
@@ -77,6 +78,7 @@ namespace medicloud.emr.api.Controllers
         {
             var all = await _conn.QueryAsync($"select b.* from Immunization_Schedule a join immunization_details b " +
                 $"                          on a.scheduleid = b.scheduleid where a.scheduleid = {scheduleid} and b.patientid = '{patientid}'");
+            //Console.Wri
             return Ok(all);
         }
 
@@ -146,7 +148,12 @@ namespace medicloud.emr.api.Controllers
 
         {
             var query = "select * from Immunization_details a join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid";
+            // string query = "select a.*, d.name drugname, d.drugcode, (concat(u.firstname, ' ', u.lastname))nursename " + 
+            // "from Immunization_details a join EmrImmunizationMaster b on a.immunizationid = b.Immunizationid full outer " +
+            // "join Drug d on d.id = a.brandid full outer join ApplicationUser u on " +
+            //     "a.givenby = u.appuserid where u.departmentid in (select departmentid from ApplicationUser where u.departmentid in (12))";
             var all = _conn.QueryAsync(query);
+            
             return Ok(all);
         }
 
