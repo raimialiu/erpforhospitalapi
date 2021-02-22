@@ -33,6 +33,8 @@ namespace medicloud.emr.api.DataContextRepo
         Task<IEnumerable<Patient>> searchForPatientToUpdate(string filter, string filterValue);
         string MinimalPatientReg(MinimalPatientRegistration _patient);
         Task<(List<Sponsor>, List<Payer>, List<Plan>, List<AccountCategory>)> patientDetails();
+        Task<Patient> GetPatientById(string patientId, int accountId);
+        Task<PlanType> GetPatientPlantype(string patientPlanType);
     }
 
     public class PatientRepo : IPatientRepo
@@ -380,6 +382,20 @@ namespace medicloud.emr.api.DataContextRepo
 
             _db.AddNew(patientObject);
             return patientId;
+        }
+        
+        public async Task<Patient> GetPatientById(string patientId, int accountId)
+        {
+            var patient = await ctx.Patient.Where(p => p.Patientid == patientId && p.ProviderId == accountId).FirstOrDefaultAsync();
+
+            return patient;
+        }
+        
+        public async Task<PlanType> GetPatientPlantype(string patientPlanType)
+        {
+            var plantype = await _context.PlanType.Where(p => p.planid == int.Parse(patientPlanType)).FirstOrDefaultAsync();
+
+            return plantype;
         }
 
         public string registerPatientFromLink(string link, Patient patientToUpdate)

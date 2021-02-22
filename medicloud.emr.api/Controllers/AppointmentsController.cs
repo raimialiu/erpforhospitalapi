@@ -179,21 +179,55 @@ namespace medicloud.emr.api.Controllers
                 {
                     return BadRequest(new ErrorResponse { ErrorMessage = "Record Not Found" });
                 }
-                    
+
 
                 if (model.StatusId == 3 && updated.Item2 != null)
                 {
-                    // add bill
-                    BillingInvoice billingInvoice = new BillingInvoice()
-                    {
-                        patientid = model.PatientNo,
-                        ProviderID = model.AccountId,
-                        locationid = model.LocationId,
-                        encodedby = int.Parse(model.Adjuster),
-                        encounterId = updated.Item2
-                    };
+                    var patient = await _patientRepo.GetPatientById(model.PatientNo, (int)model.AccountId);
 
-                    var billResult = await _billingRepository.WritePatientConsultationBill(billingInvoice);
+                    var plantype = await _patientRepo.GetPatientPlantype(patient.Plantype);
+
+                    if (plantype != null)
+                    {
+                        // checks if its a private patient
+                        if (plantype.payerid == 1162 && plantype.plantypeid == 32)
+                        {
+                            // check if this private patient has ever been billed for registration
+                            var regBill = await _billingRepository.CheckPrivatePatientBillForRegistration(model.PatientNo, (int)model.AccountId);
+
+                            if (regBill == null)
+                            {
+                                // if there is no registration bill record for this private
+                                // patient a reg bill is added for him or her
+                                // add bill
+                                BillingInvoice regBillingInvoice = new BillingInvoice()
+                                {
+                                    patientid = model.PatientNo,
+                                    ProviderID = model.AccountId,
+                                    locationid = model.LocationId,
+                                    encodedby = int.Parse(model.Adjuster),
+                                    encounterId = updated.Item2
+                                };
+
+                                var regBillResult = await _billingRepository.WritePatientRegistrationBill(regBillingInvoice);
+                            }
+
+                            // add bill
+                            BillingInvoice billingInvoice = new BillingInvoice()
+                            {
+                                patientid = model.PatientNo,
+                                ProviderID = model.AccountId,
+                                locationid = model.LocationId,
+                                encodedby = int.Parse(model.Adjuster),
+                                encounterId = updated.Item2
+                            };
+
+                            var billResult = await _billingRepository.WritePatientConsultationBill(billingInvoice);
+                        }
+
+                    }
+
+                    
                 }
 
                 return Ok(updated);

@@ -1,4 +1,5 @@
-﻿using medicloud.emr.api.DTOs;
+﻿using medicloud.emr.api.DataContextRepo;
+using medicloud.emr.api.DTOs;
 using medicloud.emr.api.Entities;
 using medicloud.emr.api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,13 @@ namespace medicloud.emr.api.Controllers
     {
         private readonly ICheckInRepository _checkInRepository;
         private readonly IBillingRepository _billingRepository;
+        private readonly IPatientRepo _patientRepo;
 
-        public CheckInController(ICheckInRepository checkInRepository, IBillingRepository billingRepository)
+        public CheckInController(ICheckInRepository checkInRepository, IPatientRepo patientRepo, IBillingRepository billingRepository)
         {
             _checkInRepository = checkInRepository;
             _billingRepository = billingRepository;
+            _patientRepo = patientRepo;
         }
 
         [HttpGet, Route("GetCheckedInList")]
@@ -51,18 +54,56 @@ namespace medicloud.emr.api.Controllers
             {
                 var result = await _checkInRepository.CreaateCheckIn(patientId, providerId, locationId, userid);
 
-                // add bill
-                BillingInvoice billingInvoice = new BillingInvoice()
+                // check that check-In was successfull
+                if (result.Item2)
                 {
-                    patientid = patientId,
-                    ProviderID = providerId,
-                    locationid = locationId,
-                    encodedby = userid,
-                    encounterId = result.Item3
-                };
+                    var patient = await _patientRepo.GetPatientById(patientId, providerId);
 
-                var billResult = _billingRepository.WritePatientConsultationBill(billingInvoice);
+                    var plantype = await _patientRepo.GetPatientPlantype(patient.Plantype);
 
+                    if (plantype != null)
+                    {
+                        // checks if its a private patient
+                        if (plantype.payerid == 1162 && plantype.plantypeid == 32)
+                        {
+                            // check if this private patient has ever been billed for registration
+                            var regBill = await _billingRepository.CheckPrivatePatientBillForRegistration(patientId, providerId);
+
+                            if (regBill == null)
+                            {
+                                // if there is no registration bill record for this private
+                                // patient a reg bill is added for him or her
+                                // add bill
+                                BillingInvoice regBillingInvoice = new BillingInvoice()
+                                {
+                                    patientid = patientId,
+                                    ProviderID = providerId,
+                                    locationid = locationId,
+                                    encodedby = userid,
+                                    encounterId = result.Item3
+                                };
+
+                                var regBillResult = await _billingRepository.WritePatientRegistrationBill(regBillingInvoice);
+                            }
+
+                            // add bill
+                            BillingInvoice billingInvoice = new BillingInvoice()
+                            {
+                                patientid = patientId,
+                                ProviderID = providerId,
+                                locationid = locationId,
+                                encodedby = userid,
+                                encounterId = result.Item3
+                            };
+
+                            // adds consultation bill for this private patieny
+                            var billResult = await _billingRepository.WritePatientConsultationBill(billingInvoice);
+                        }
+
+                    }
+                }
+
+               
                 MiniResponseBase response = new MiniResponseBase
                 {
                     ErrorMessage = result.Item1,
