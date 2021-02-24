@@ -290,42 +290,14 @@ namespace medicloud.emr.api.Controllers
             {
                 string spliResult = result;
 
-                (bool, string, decimal?) billingResult = default;
-                bool isSuccessResponse = false;
+                
                 var resultOut = new
                 {
                     PatientRegNumber = spliResult,
-                    message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please ensure that the patient is billed appropriately"
+                    message = "" 
 
                 };
-                try
-                {
-                    //billingResult = await _Billingrepo.WritePatientRegistrationBill(new BillingInvoice()
-                    //{
-                    //    patientid = spliResult,
-                    //    ProviderID = patient.ProviderId,
-                    //    locationid = Int32.Parse(patient.locationid),
-
-                    //});
-                    isSuccessResponse = true;
-                    resultOut = new
-                    {
-                        PatientRegNumber = spliResult,
-                        message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please ensure that the patient is billed appropriately"
-
-                    };
-
-                }
-                catch (Exception)
-                {
-
-                    resultOut = new
-                    {
-                        PatientRegNumber = spliResult,
-                        message = isSuccessResponse ? "" : "Registration Successfull, but failed to create billing, please ensure that the patient is billed appropriately"
-
-                    };
-                }
+           
                 
               
                 _reponse = BaseResponse.GetResponse(resultOut, "patient registered", "00");
@@ -345,49 +317,20 @@ namespace medicloud.emr.api.Controllers
             {   
                 string[] spliResult = result.Split(":");
 
-                (bool, string, decimal?) billingResult = default;
-                bool isSuccessResponse = false;
+                
+                
                 var resultOut = new
                 {
                     PatientRegNumber = spliResult[0],
                     PatientFamilyNumber = spliResult[1],
-                    message = isSuccessResponse ? "" : "Registration Successful, but failed to create bill, please ensure the patient is billed appropriately"
+                    message = ""
                 };
-                try
+                resultOut = new
                 {
-                    
-                    billingResult = await _Billingrepo.WritePatientRegistrationBill(new BillingInvoice()
-                    {
-                        patientid = spliResult[0],
-                        ProviderID = patient.ProviderId,
-                        locationid = Int32.Parse(patient.locationid),
-                        encodedby = Int32.Parse(patient.encodedby)
-
-                    });
-                    isSuccessResponse = billingResult.Item1;
-                    resultOut = new
-                    {
-                        PatientRegNumber = spliResult[0],
-                        PatientFamilyNumber = spliResult[1],
-                        message = isSuccessResponse ? "" : "Registration Successful, but failed to create bill, please ensure the patient is billed appropriately"
-                    };
-                }
-                catch (Exception)
-                {
-
-                    resultOut = new
-                    {
-                        PatientRegNumber = spliResult[0],
-                        PatientFamilyNumber = spliResult[1],
-                        message = isSuccessResponse ? "" : "Registration Successful, but failed to create bill, please ensure the patient is billed appropriately"
-                    };
-                }
-               
-
-                        
-
-                
-
+                    PatientRegNumber = spliResult[0],
+                    PatientFamilyNumber = spliResult[1],
+                    message =  ""
+                };
                 if(patient.payors != null)
                 {
                     if (patient.payors.Count > 0)
